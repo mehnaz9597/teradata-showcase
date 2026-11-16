@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACE Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="ds/tokens.css">
+<link rel="stylesheet" href="ds/components.css">
+<link rel="stylesheet" href="ds/trace.css">
+<style>
+/* Preview-page scaffolding only. Every component shown here comes from ds/ */
+.ds-sec{padding-top:var(--sp-12);scroll-margin-top:calc(var(--topbar-h) + var(--sp-4))}
+.ds-sec>header{display:flex;align-items:baseline;gap:var(--sp-4);margin-bottom:var(--sp-5)}
+.ds-sec>header p{font-size:var(--fs-14);color:var(--text-3)}
+.ds-sub{margin:var(--sp-6) 0 var(--sp-3);font-size:var(--fs-13);font-weight:600;color:var(--text-2)}
+.ds-sub:first-child{margin-top:0}
+.ds-spec{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-6)}
+.ds-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3)}
+.ds-cols{display:grid;grid-template-columns:repeat(var(--c,2),minmax(0,1fr));gap:var(--sp-4);align-items:start}
+
+/* Overview */
+.ds-voices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4);margin-top:var(--sp-6)}
+.ds-voice{padding:var(--sp-4) var(--sp-5)}
+.ds-voice .sample{display:block;font-size:22px;line-height:1.3;color:var(--text)}
+.ds-voice b{display:block;margin-top:var(--sp-3);font-size:var(--fs-13);font-weight:600}
+.ds-voice p{font-size:var(--fs-13);color:var(--text-3)}
+
+/* Foundation */
+.ds-swatches{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:var(--sp-2)}
+.ds-sw i{display:block;height:44px;border-radius:var(--r-sm);border:1px solid var(--border)}
+.ds-sw b{display:block;margin-top:var(--sp-2);font-size:var(--fs-12);font-weight:600}
+.ds-sw code{display:block;color:var(--text-3)}
+.ds-type{display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:var(--sp-4);padding:var(--sp-2) 0}
+.ds-type+.ds-type{border-top:1px solid var(--border)}
+.ds-cap{font-size:var(--fs-12);color:var(--text-3)}
+.ds-layers{padding:var(--sp-4);border-radius:var(--r-lg);background:var(--bg-app);border:1px solid var(--border)}
+.ds-layers .card{padding:var(--sp-4)}
+.ds-layers .panel{margin-top:var(--sp-3)}
+.ds-space{display:flex;align-items:flex-end;gap:var(--sp-3);margin-top:var(--sp-4)}
+.ds-space div{text-align:center}
+.ds-space i{display:block;margin:0 auto var(--sp-1);background:var(--bg-active);border:1px solid var(--gray-300);border-radius:2px}
+
+.ds-app .sidebar{position:sticky;top:0;height:100vh;overflow:auto}
+.ds-app .content{max-width:1180px}
+</style>
+</head>
+<body>
+<div class="app ds-app">
+  <aside class="sidebar" aria-label="Design system sections">
+    <div class="brand"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</div>
+    <nav class="nav-group" aria-label="Sections">
+      <a class="nav-item" href="#overview"><i data-icon="record"></i>Overview</a>
+      <a class="nav-item" href="#foundation"><i data-icon="target"></i>Visual Foundation</a>
+      <a class="nav-item" href="#core"><i data-icon="cases"></i>Core Components</a>
+      <a class="nav-item" href="#trace"><i data-icon="database"></i>TRACE Components</a>
+      <a class="nav-item" href="#canvas"><i data-icon="branch"></i>Investigation Canvas</a>
+      <a class="nav-item" href="#agent"><i data-icon="message"></i>Agent Interaction</a>
+    </nav>
+    <div class="spacer"></div>
+    <a class="nav-item" href="index.html"><i data-icon="chevLeft"></i>Back to prototype</a>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">TRACE</a><span class="sep">/</span><span aria-current="page">Design system</span></nav>
+      <div class="end"><span class="t-meta">Version 0.3</span></div>
+    </header>
+
+    <main class="content" id="main">
+      <!-- ============ OVERVIEW ============ -->
+      <section id="overview" style="scroll-margin-top:80px">
+        <h1 class="t-page">TRACE design system</h1>
+        <p class="t-secondary" style="margin-top:var(--sp-2);font-size:var(--fs-14)">Calm neutral surfaces, three type voices, and colour only where it means something.</p>
+        <div class="ds-voices">
+          <div class="card ds-voice"><span class="sample" style="font-family:var(--serif)">The field was renamed upstream.</span><b>Trace's reasoning</b><p>Newsreader</p></div>
+          <div class="card ds-voice"><span class="sample" style="font-family:var(--mono)">0.4% → 31.7%</span><b>Machine facts</b><p>Fragment Mono</p></div>
+          <div class="card ds-voice"><span class="sample">Approve rollback</span><b>Interface and Maya</b><p>Schibsted Grotesk</p></div>
+        </div>
+      </section>
+
+      <!-- ============ VISUAL FOUNDATION ============ -->
+      <section class="ds-sec" id="foundation" aria-labelledby="h-foundation">
+        <header><h2 class="t-section" id="h-foundation">Visual Foundation</h2></header>
+        <div class="ds-spec">
+          <h3 class="ds-sub">Colour</h3>
+          <div class="ds-swatches" id="sw"></div>
+        </div>
+        <div class="ds-cols" style="margin-top:var(--sp-4);--c:2">
+          <div class="ds-spec">
+            <h3 class="ds-sub">Typography</h3>
+            <div class="ds-type"><span class="ds-cap">Page title</span><span class="t-page">Cases</span></div>
+            <div class="ds-type"><span class="ds-cap">Section</span><span class="t-section">Suspected causes</span></div>
+            <div class="ds-type"><span class="ds-cap">Body</span><span class="t-body">Fraud operations report more false positives.</span></div>
+            <div class="ds-type"><span class="ds-cap">Label</span><span class="t-label">Last updated</span></div>
+            <div class="ds-type"><span class="ds-cap">Trace's voice</span><span class="voice">The rename explains the drop.</span></div>
+            <div class="ds-type"><span class="ds-cap">Machine fact</span><span class="t-id">run_8f2c41&nbsp;&nbsp;fraud-xgb@v14</span></div>
+          </div>
+          <div class="ds-spec">
+            <h3 class="ds-sub">Surfaces, borders and spacing</h3>
+            <div class="ds-layers">
+              <span class="ds-cap">App background</span>
+              <div class="card" style="margin-top:var(--sp-2)"><span class="ds-cap">Card: white, 1px border, 16px corners</span>
+                <div class="panel"><span class="ds-cap">Panel inside a card: sunken grey, 10px corners</span></div>
+              </div>
+            </div>
+            <div class="ds-space" id="space"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CORE COMPONENTS ============ -->
+      <section class="ds-sec" id="core" aria-labelledby="h-core">
+        <header><h2 class="t-section" id="h-core">Core Components</h2></header>
+        <div class="ds-cols" style="--c:2">
+          <div class="ds-spec">
+            <h3 class="ds-sub">Buttons</h3>
+            <div class="ds-row">
+              <button class="btn btn-primary">Investigate further</button>
+              <button class="btn btn-secondary"><i data-icon="message"></i>Challenge</button>
+              <button class="btn btn-human"><i data-icon="shieldCheck"></i>Approve rollback</button>
+              <button class="icon-btn outline" aria-label="Copy run ID"><i data-icon="copy"></i></button>
+              <button class="icon-btn outline" aria-label="More actions"><i data-icon="more"></i></button>
+            </div>
+            <h3 class="ds-sub">Status</h3>
+            <div class="ds-row">
+              <span class="status" data-status="investigating"></span>
+              <span class="status" data-status="completed"></span>
+              <span class="status" data-status="needs-review"></span>
+              <span class="status" data-status="conflicting"></span>
+              <span class="status" data-status="awaiting-approval"></span>
+              <span class="status" data-status="queued"></span>
+            </div>
+          </div>
+          <article class="card">
+            <div class="card-hd"><h3>Card</h3><div class="end"><button class="icon-btn" aria-label="More options"><i data-icon="more"></i></button></div></div>
+            <div class="tabs" role="tablist" aria-label="Example tabs" style="padding:0 var(--sp-6)">
+              <button class="tab" role="tab" aria-selected="true">Evidence <span class="count">12</span></button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Sources</button>
+            </div>
+            <div class="card-bd"><p class="t-secondary">One topic per card. Tabs switch views inside it.</p></div>
+          </article>
+        </div>
+        <div class="card" style="margin-top:var(--sp-4)">
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th scope="col">Case</th><th scope="col">Model</th><th scope="col">Severity</th><th scope="col">Change</th><th scope="col">Status</th></tr></thead>
+              <tbody>
+                <tr><td class="primary">Precision dropped on the card fraud model<span class="sub t-id">FR-2611</span></td><td><span class="tag mono">fraud-xgb@v14</span></td><td><span class="sev high">High</span></td><td><span class="shift"><span class="was">91.2%</span><i class="to"></i><span class="now bad">83.2%</span></span></td><td><span class="status" data-status="investigating"></span></td></tr>
+                <tr><td class="primary">Scoring slower than target<span class="sub t-id">FR-2604</span></td><td><span class="tag mono">fraud-xgb@v14</span></td><td><span class="sev medium">Medium</span></td><td><span class="shift"><span class="was">41 ms</span><i class="to"></i><span class="now bad">79 ms</span></span></td><td><span class="status" data-status="awaiting-approval"></span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TRACE COMPONENTS ============ -->
+      <section class="ds-sec" id="trace" aria-labelledby="h-trace">
+        <header><h2 class="t-section" id="h-trace">TRACE Components</h2></header>
+        <div class="ds-cols" style="--c:2">
+          <div class="stack gap-4">
+            <a class="tcard case attention" href="#trace">
+              <div class="case-top"><span class="status" data-status="needs-review"></span><span class="t-id">FR-2611</span><div class="end"><span class="sev high">High</span></div></div>
+              <h3>Precision dropped on the card fraud model</h3>
+              <div class="case-metric"><span class="shift"><span class="was">91.2%</span><i class="to"></i><span class="now bad">83.2%</span></span><span class="tag mono">fraud-xgb@v14</span></div>
+              <div class="case-foot"><div class="progress-bar" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span></span></div><span>4 of 5 checks completed</span><span class="end">2 min ago</span></div>
+            </a>
+            <article class="evidence" data-relation="supports">
+              <span class="source-ic"><i data-icon="database"></i></span>
+              <div>
+                <div class="evidence-src"><b>Feature store</b><span class="cite">1</span></div>
+                <h3>merchant_category null rate</h3>
+                <div class="obs"><span class="shift"><span class="was">0.4%</span><i class="to"></i><span class="now bad">31.7%</span></span></div>
+                <p>Starts with the first batch after the schema change.</p>
+              </div>
+              <time class="when">Nov 09 02:14</time>
+              <div class="rel"><span class="rel-tag supports"><i data-icon="check"></i>Supports</span><span class="hypo-link">Hypothesis <b>H1, schema change</b></span></div>
+            </article>
+            <div class="card card-bd">
+              <ol class="activity">
+                <li class="act" data-state="completed"><span class="act-ic"><i data-icon="check"></i></span><div><b>Confirmed the drop in monitoring</b><small>4 seconds</small></div></li>
+                <li class="act" data-state="finding"><span class="act-ic"><i data-icon="lightbulb"></i></span><div><b>Compared 42 features</b><small>18 seconds</small><p class="reason">One feature stands out: merchant_category, from the hour precision fell. <a class="cite" href="#trace">1</a></p></div></li>
+                <li class="act" data-state="running"><span class="act-ic"><i data-icon="pipeline"></i></span><div><b>Reviewing pipeline runs</b><small>Running</small></div></li>
+              </ol>
+            </div>
+          </div>
+          <div class="stack gap-4">
+            <article class="tcard hypo">
+              <div class="finding-hd"><span class="rank">H1</span><span class="status" data-status="leading"></span><div class="end"><span class="conf" data-level="4"><span class="conf-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b>High</b><small>3 of 4 sources agree</small></span></div></div>
+              <div class="hypo-bd"><h3>An upstream schema change emptied merchant_category.</h3><p class="why">Timing matches to the hour, and only features reading that field drifted.</p></div>
+              <div class="hypo-ft"><div class="tally"><span class="sup"><i data-icon="check"></i>3 support</span><span class="con"><i data-icon="x"></i>0 contradict</span><span class="mis"><i data-icon="circleDash"></i>1 missing</span></div></div>
+            </article>
+            <article class="tcard action-card">
+              <div class="action-top"><span class="status" data-status="proposed"></span><span class="t-meta">Recommended by Trace</span><div class="end"><span class="tag"><i data-icon="undo"></i>Reversible</span></div></div>
+              <h3>Map merchant_cat back to merchant_category</h3>
+              <p class="why">Fixes the cause and leaves the model untouched.</p>
+              <dl class="action-grid">
+                <div><dt>Expected effect</dt><dd><span class="shift"><span class="was">83.2%</span><i class="to"></i><span class="now good">~90%</span></span></dd></div>
+                <div><dt>Risk</dt><dd>Low</dd></div>
+                <div><dt>Undo</dt><dd>Revert the mapping</dd></div>
+              </dl>
+              <div class="action-foot"><button class="btn btn-secondary btn-sm"><i data-icon="eye"></i>Evidence</button><span class="end"><button class="btn btn-human btn-sm">Review and decide</button></span></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ INVESTIGATION CANVAS ============ -->
+      <section class="ds-sec" id="canvas" aria-labelledby="h-canvas">
+        <header><h2 class="t-section" id="h-canvas">Investigation Canvas</h2><p>Select a node to inspect it.</p></header>
+        <div class="investigation">
+          <div class="canvas" role="group" aria-label="Investigation for case FR-2611" style="min-height:0">
+            <div class="canvas-legend"><span><i class="done"></i>Completed</span><span><i></i>Next</span><span><i class="pending"></i>Queued</span></div>
+            <div class="wf">
+              <span class="node-pill trigger"><i data-icon="alert"></i>Precision alert</span>
+              <div class="wf-link done"></div>
+              <button class="node" data-type="agent" data-state="completed" data-node="confirm"><span class="node-hd"><span class="node-ic"><i data-icon="trace"></i></span><span class="node-kind">Agent action</span><span class="node-st" data-status="completed"></span></span><span class="node-bd"><span class="node-title">Confirm the drop and when it started</span><span class="node-meta">4 seconds</span></span></button>
+              <div class="wf-link done"><span class="lbl">Read two sources</span></div>
+              <div class="wf-split join">
+                <div class="wf"><span class="branch-lbl lead">Lead</span>
+                  <button class="node" data-type="source" data-state="completed" data-node="fs"><span class="node-hd"><span class="node-ic"><i data-icon="database"></i></span><span class="node-kind">Feature store</span><span class="node-st" data-status="completed"></span></span><span class="node-bd"><span class="node-title">Compare 42 features</span></span></button>
+                  <div class="wf-link supports"></div>
+                  <button class="node" data-type="evidence" data-relation="supports" data-state="supports" data-node="fs-ev"><span class="node-hd"><span class="node-ic"><i data-icon="check"></i></span><span class="node-kind">Evidence 1</span><span class="node-st" data-status="supports"></span></span><span class="node-bd"><span class="node-title">merchant_category nulls</span><span class="node-meta"><span class="shift"><span class="was">0.4%</span><i class="to"></i><span class="now bad">31.7%</span></span></span></span></button>
+                  <i class="wf-tail"></i>
+                </div>
+                <div class="wf ruled-out"><span class="branch-lbl">Ruled out</span>
+                  <button class="node" data-type="source" data-state="completed" data-node="reg"><span class="node-hd"><span class="node-ic"><i data-icon="registry"></i></span><span class="node-kind">Model registry</span><span class="node-st" data-status="completed"></span></span><span class="node-bd"><span class="node-title">Look for a recent release</span></span></button>
+                  <div class="wf-link contradicts"></div>
+                  <button class="node" data-type="evidence" data-relation="contradicts" data-state="contradicts" data-node="reg-ev"><span class="node-hd"><span class="node-ic"><i data-icon="x"></i></span><span class="node-kind">Evidence 2</span><span class="node-st" data-status="contradicts"></span></span><span class="node-bd"><span class="node-title">Last deploy Oct 28</span><span class="node-meta">Against a bad release</span></span></button>
+                  <i class="wf-tail"></i>
+                </div>
+              </div>
+              <div class="wf-link"></div>
+              <button class="node" data-type="hypothesis" data-state="testing" data-node="h1" aria-current="true"><span class="node-hd"><span class="node-ic"><i data-icon="lightbulb"></i></span><span class="node-kind">Hypothesis H1</span><span class="node-st" data-status="testing"></span></span><span class="node-bd"><span class="node-title">A schema change emptied merchant_category</span><span class="node-conf conf" data-level="4"><span class="conf-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b>High</b></span></span></button>
+            </div>
+          </div>
+          <aside class="inspector" aria-label="Selected node" aria-live="polite">
+            <div class="inspector-hd"><span class="node-ic" id="ins-ic"></span><h3 id="ins-kind">Hypothesis H1</h3><div class="end"><button class="icon-btn" aria-label="Close inspector"><i data-icon="x"></i></button></div></div>
+            <div class="inspector-bd" id="ins-body"></div>
+          </aside>
+        </div>
+
+        <template id="ins-h1"><p class="ins-title voice-claim">A schema change emptied merchant_category.</p><div class="row gap-2" style="margin-top:var(--sp-3)"><span class="status" data-status="testing"></span><span class="conf" data-level="4"><span class="conf-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b>High</b><small>3 of 4 sources agree</small></span></div><div class="ins-sec"><h4>Evidence</h4><div class="ins-ev"><span class="ins-ev-item"><span class="rel-tag supports"><i data-icon="check"></i></span><span>Null rate 0.4% → 31.7% at 02:00 <a class="cite" href="#canvas">1</a></span></span><span class="ins-ev-item"><span class="rel-tag missing"><i data-icon="circleDash"></i></span><span>Label data, due Wednesday</span></span></div></div><div class="ins-actions"><button class="btn btn-secondary btn-sm"><i data-icon="eye"></i>All evidence</button><button class="btn btn-ghost btn-sm"><i data-icon="message"></i>Challenge</button></div></template>
+        <template id="ins-fs-ev"><p class="ins-title">merchant_category null rate</p><div style="margin-top:var(--sp-3)"><span class="shift shift-lg"><span class="was">0.4%</span><i class="to"></i><span class="now bad">31.7%</span></span></div><dl class="kv ins-sec"><dt>Source</dt><dd>Feature store</dd><dt>Recorded</dt><dd class="mono">Nov 09 02:14</dd><dt>Relation</dt><dd><span class="status" data-status="supports"></span></dd><dt>Hypothesis</dt><dd>H1, schema change</dd></dl></template>
+      </section>
+
+      <!-- ============ AGENT INTERACTION ============ -->
+      <section class="ds-sec" id="agent" aria-labelledby="h-agent">
+        <header><h2 class="t-section" id="h-agent">Agent Interaction</h2></header>
+        <div class="ds-cols" style="--c:2">
+          <div class="stack gap-4">
+            <div class="ds-spec">
+              <span class="agent-status" role="status"><span class="avatar agent"><i data-icon="trace"></i></span><span class="txt"><b>Trace</b> is checking pipeline logs</span></span>
+              <div class="progress" style="margin-top:var(--sp-4)" role="group" aria-label="2 of 5 checks completed">
+                <div class="progress-top"><span><b>2 of 5</b> checks completed</span><span>About 3 minutes left</span></div>
+                <div class="progress-bar" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="active"></span><span></span><span></span></div>
+              </div>
+            </div>
+            <article class="finding">
+              <div class="finding-hd"><span class="rank">Finding</span><span class="tag"><i data-icon="database"></i>Feature store</span><div class="end"><span class="conf" data-level="4"><span class="conf-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b>High</b></span></div></div>
+              <div class="finding-bd">
+                <h3>A renamed field upstream left merchant_category empty for a third of transactions.</h3>
+                <p class="why">The null rate jumped at 02:00 on Saturday <a class="cite" href="#trace">1</a>, the hour the field was renamed <a class="cite" href="#trace">2</a>.</p>
+              </div>
+            </article>
+          </div>
+          <div class="ds-spec">
+            <div class="thread">
+              <div class="msg human"><span class="avatar">MR</span><div><div class="msg-hd"><b>Maya Rao</b><span class="kind">Challenge</span><span>08:41</span></div><div class="msg-bd">Fraud ops changed a decline rule on Friday. Could that explain it instead?</div></div></div>
+              <div class="msg agent"><span class="avatar agent"><i data-icon="trace"></i></span><div><div class="msg-hd"><b>Trace</b><span>08:42</span></div><div class="msg-bd">I checked. The rule started nine hours before the drop and touches 2% of transactions, so the timing doesn't fit.</div><span class="effect"><i data-icon="refresh" class="icon-xs"></i>Ranking unchanged.</span></div></div>
+            </div>
+            <div class="composer" style="margin-top:var(--sp-4)">
+              <label class="sr" for="c-in">Ask Trace or challenge a finding</label>
+              <textarea id="c-in" rows="2" placeholder="Ask a question, add context, or challenge a finding"></textarea>
+              <div class="composer-ft"><div class="end"><button class="send" aria-label="Send" disabled><i data-icon="send"></i></button></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="ds/icons.js"></script>
+<script>
+// Swatches read live token values, so this page can't drift from tokens.css
+const css = getComputedStyle(document.documentElement);
+document.getElementById('sw').innerHTML = [
+  ['--bg-app','Background'],['--bg-surface','Surface'],['--border','Border'],['--text','Text'],['--text-3','Muted'],
+  ['--accent','Agent'],['--human','Maya'],['--success','Success'],['--warning','Warning'],['--danger','Danger']
+].map(([t, n]) => `<div class="ds-sw"><i style="background:var(${t})"></i><b>${n}</b><code>${css.getPropertyValue(t).trim()}</code></div>`).join('');
+document.getElementById('space').innerHTML = [1,2,3,4,6,8].map(n => { const v = css.getPropertyValue('--sp-'+n).trim(); return `<div><i style="width:${v};height:${v}"></i><span class="ds-cap">${v}</span></div>`; }).join('');
+TRACE.paint();
+
+// Sidebar highlights the section in view
+const links = [...document.querySelectorAll('.ds-app > .sidebar .nav-item[href^="#"]')];
+const secs = links.map(l => document.querySelector(l.getAttribute('href')));
+function spy(){
+  let cur = secs[0];
+  for (const s of secs) if (s.getBoundingClientRect().top < 140) cur = s;
+  if (innerHeight + scrollY >= document.body.scrollHeight - 4) cur = secs[secs.length - 1];
+  links.forEach((l, i) => secs[i] === cur ? l.setAttribute('aria-current','page') : l.removeAttribute('aria-current'));
+}
+addEventListener('scroll', spy, {passive:true}); spy();
+
+// Tabs: click and arrow keys
+function selectTab(tab){ [...tab.parentElement.querySelectorAll('.tab')].forEach(t => { t.setAttribute('aria-selected', t === tab); t.tabIndex = t === tab ? 0 : -1; }); tab.focus(); }
+document.querySelectorAll('[role="tablist"]').forEach(list => {
+  list.querySelectorAll('.tab').forEach(t => { t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1; t.addEventListener('click', () => selectTab(t)); });
+  list.addEventListener('keydown', e => {
+    if (!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+    const tabs = [...list.querySelectorAll('.tab')], i = tabs.indexOf(document.activeElement);
+    selectTab(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]); e.preventDefault();
+  });
+});
+
+// Canvas: selecting a node fills the inspector
+const insBody = document.getElementById('ins-body');
+function inspect(btn){
+  document.querySelectorAll('.investigation button.node').forEach(n => n.setAttribute('aria-current', n === btn));
+  document.getElementById('ins-kind').textContent = btn.querySelector('.node-kind').textContent;
+  document.getElementById('ins-ic').innerHTML = btn.querySelector('.node-ic').innerHTML;
+  const tpl = document.getElementById('ins-' + btn.dataset.node);
+  if (tpl) insBody.replaceChildren(tpl.content.cloneNode(true));
+  else insBody.innerHTML = `<p class="ins-title">${btn.querySelector('.node-title').textContent}</p><div style="margin-top:var(--sp-3)"><span class="status" data-status="${btn.dataset.state}"></span></div>${btn.querySelector('.node-meta') ? `<p class="t-secondary" style="margin-top:var(--sp-3)">${btn.querySelector('.node-meta').innerHTML}</p>` : ''}`;
+  TRACE.paint(insBody);
+}
+document.querySelectorAll('.investigation button.node').forEach(n => n.addEventListener('click', () => inspect(n)));
+inspect(document.querySelector('.investigation button.node[data-node="h1"]'));
+
+document.getElementById('c-in').addEventListener('input', e => { document.querySelector('.send').disabled = !e.target.value.trim(); });
+</script>
+</body>
+</html>

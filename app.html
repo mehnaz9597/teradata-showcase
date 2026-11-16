@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="ds/tokens.css">
+<link rel="stylesheet" href="ds/components.css">
+<link rel="stylesheet" href="ds/trace.css">
+<style>
+/* App layout only. Everything visual comes from ds/ */
+[hidden]{display:none!important}
+/* Light surfaces: white workspace, the faintest grey for the frame. Grey only where it means something */
+body{background:var(--bg-surface)}
+.tapp{background:var(--bg-surface)}
+.tapp .sidebar{background:var(--gray-25);border-right:1px solid var(--border)}
+.tapp .sidebar .nav-item[aria-current="page"],.tapp .sb-sub[aria-current="page"]{background:var(--bg-surface);box-shadow:0 0 0 1px var(--border),var(--shadow-1)}
+.tmain .topbar{background:var(--bg-surface)}
+.tbody{background:var(--bg-surface)}
+.tcontent .tcard,.tcontent .card,.tcontent .evidence{box-shadow:var(--shadow-1)}
+/* Trace's live status, in the panel header */
+.ap-avatar{position:relative;width:22px;height:22px}
+.ap-avatar svg{width:12px;height:12px}
+.ap-state{display:inline-flex;align-items:center;gap:6px;margin-left:var(--sp-1);font-size:var(--fs-12);color:var(--text-3)}
+.ap-state::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--gray-300)}
+.ap-hd[data-state="busy"] .ap-state{color:var(--accent)}
+.ap-hd[data-state="waiting"] .ap-state{color:var(--human)}
+.ap-hd[data-state="busy"] .ap-avatar::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--accent);opacity:0;animation:ping 1.8s var(--ease) infinite}
+#view:focus{outline:none}
+html,body{height:100%}
+body{overflow:hidden}
+.tapp{display:grid;grid-template-columns:216px minmax(0,1fr) 304px;height:100vh}
+.tapp .sidebar{overflow:auto}
+.tmain{display:flex;flex-direction:column;min-width:0;min-height:0}
+.tmain .topbar{position:static}
+.sim-tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border:1px dashed var(--border-strong);border-radius:var(--r-full);font-size:var(--fs-12);color:var(--text-2)}
+.sim-tag .icon{width:12px;height:12px}
+
+/* Investigation steps: a real sequence, so numbered */
+.steps{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-6);border-bottom:1px solid var(--border);background:var(--bg-surface);min-height:48px}
+.steps ol{list-style:none;display:flex;gap:2px;margin:0 auto;padding:0;overflow-x:auto}
+.step-btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:0;border-radius:var(--r-sm);background:none;font-size:var(--fs-12);font-weight:500;color:var(--text-3);white-space:nowrap}
+.step-btn .n{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--border-strong);font-size:var(--fs-12);font-variant-numeric:tabular-nums}
+.step-btn .n .icon{width:11px;height:11px;stroke-width:2.4}
+.step-btn:not(:disabled):hover{background:var(--bg-hover);color:var(--text)}
+.step-btn:disabled{cursor:default;opacity:.7}
+.step-btn.done{color:var(--text-2)}
+.step-btn.done .n{background:var(--bg-active);border-color:var(--bg-active);color:var(--text)}
+.step-btn[aria-current="step"]{background:var(--bg-active);color:var(--text)}
+.step-btn .lbl{display:none}
+.step-btn[aria-current="step"] .lbl{display:inline}
+.step-btn[aria-current="step"] .n{background:var(--text);border-color:var(--text);color:var(--text-inverse)}
+
+.tbody{flex:1;min-height:0;overflow:auto}
+.tcontent{max-width:1040px;margin:0 auto;padding:var(--sp-6) var(--sp-8) var(--sp-12)}
+.tcontent .page-hd{margin-bottom:var(--sp-5)}
+.tcontent .page-hd .sub{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3);margin-top:var(--sp-2)}
+.sec{margin-top:var(--sp-8)}
+.sec>h2{margin-bottom:var(--sp-3);font-size:var(--fs-14);font-weight:600}
+.sec>h2 small{margin-left:var(--sp-2);font-weight:400;color:var(--text-3);font-size:var(--fs-13)}
+.banner{margin-bottom:var(--sp-5)}
+.page-actions{display:flex;align-items:center;gap:var(--sp-3);margin-top:var(--sp-8);padding-top:var(--sp-5);border-top:1px solid var(--border)}
+.page-actions .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+.edge{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--text-2)}
+.edge .tag{border-style:dashed}
+.objective{font-size:var(--fs-16);line-height:1.5;max-width:64ch}
+.split{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:var(--sp-5);align-items:start}
+.list-plain{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2)}
+.chips{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-2)}
+.plan-steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.plan-steps li{display:grid;grid-template-columns:28px 1fr auto;gap:var(--sp-3);align-items:start;padding:var(--sp-3) 0;border-top:1px solid var(--border)}
+.plan-steps li:first-child{border-top:0}
+.plan-steps .when{font-size:var(--fs-12);font-weight:600;color:var(--text-3)}
+.plan-steps b{display:block;font-size:var(--fs-14);font-weight:600}
+.plan-steps p{font-size:var(--fs-13);color:var(--text-2)}
+.chart{display:block;width:100%;height:160px}
+.big-check{display:grid;place-items:center;width:40px;height:40px;border-radius:50%}
+
+/* Selected item in lists */
+.hypo-list{display:grid;gap:var(--sp-3)}
+.hypo-list .tcard{cursor:pointer}
+.mini-hypo{padding:var(--sp-3) var(--sp-4)}
+.mini-hypo .row{gap:var(--sp-2)}
+.mini-hypo p{margin-top:var(--sp-2);font-family:var(--serif);font-size:var(--fs-16);line-height:1.35}
+
+/* Right-side agent panel */
+.agentpanel{display:flex;flex-direction:column;min-height:0;background:var(--bg-surface);border-left:1px solid var(--border)}
+.ap-hd{display:flex;align-items:center;gap:var(--sp-2);height:var(--topbar-h);padding:0 var(--sp-4);border-bottom:1px solid var(--border);flex:none}
+.ap-hd h2{font-size:var(--fs-13);font-weight:600}
+.ap-bd{flex:1;min-height:0;overflow:auto;padding:var(--sp-4)}
+.ap-say{font-family:var(--serif);font-size:var(--fs-16);line-height:1.45;color:var(--text)}
+.ap-sec{margin-top:var(--sp-5)}
+.ap-sec h3{margin-bottom:var(--sp-3);font-size:var(--fs-12);font-weight:600;color:var(--text-3)}
+.ap-ft{flex:none;padding:var(--sp-3) var(--sp-4) var(--sp-4);border-top:1px solid var(--border)}
+.ap-ft .composer textarea{min-height:44px}
+.thread{margin-top:var(--sp-3)}
+/* Maya pushing back: her colour (ink on warm paper), clearly hers */
+.pushback{margin-top:var(--sp-6);padding:var(--sp-4) var(--sp-5);border:1px solid var(--human-line);border-radius:var(--r-lg);background:var(--human-soft)}
+.pushback .pb-hd{display:flex;gap:var(--sp-3);align-items:flex-start}
+.pushback h2{font-size:var(--fs-14);font-weight:600}
+.pushback .pb-hd p{font-size:var(--fs-13);color:var(--text-2)}
+.pushback .input{background:var(--bg-surface)}
+.pushback .msg.agent .msg-bd{display:none}
+/* ---------- Left sidebar ---------- */
+.sb-count{min-width:20px;height:20px;padding:0 6px;display:inline-grid;place-items:center;border-radius:var(--r-full);background:var(--danger-soft);color:var(--danger)!important;font-weight:600}
+.sb-sub{display:flex;align-items:center;gap:var(--sp-2);height:28px;margin:0 0 2px 30px;padding:0 10px;border-radius:var(--r-sm);font-size:var(--fs-12);color:var(--text-2);text-decoration:none!important}
+.sb-sub:hover{background:var(--bg-hover);color:var(--text)}
+.sb-sub[aria-current="page"]{background:var(--bg-active);color:var(--text)}
+.sb-sub .t-id{color:inherit}
+.sb-sub #nav-step{margin-left:auto;color:var(--text-3)}
+.sb-sources ul{list-style:none;margin:0;padding:0}
+.sb-sources li{display:flex;align-items:center;gap:10px;height:28px;padding:0 10px;font-size:var(--fs-12);color:var(--text-2)}
+.sb-sources li .icon{width:14px;height:14px;color:var(--text-3)}
+.sb-sources .dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--success)}
+.sb-sources li[data-off] .dot{background:var(--danger)}
+.sb-sources li[data-off]{color:var(--danger)}
+.sb-note{padding:var(--sp-1) 10px 0;font-size:var(--fs-12);color:var(--text-3)}
+
+/* Canvas inside the workspace: three branches must fit beside the agent panel */
+.tcontent .node{width:228px}
+.tcontent .wf-split{grid-auto-columns:minmax(228px,1fr)}
+.tcontent .canvas{padding:var(--sp-6) var(--sp-4)}
+/* ---------- Screen 01: Cases. Refines the original case card ---------- */
+.tcontent.is-cases{padding-top:var(--sp-5);padding-bottom:var(--sp-4)}
+.is-cases .page-hd{margin-bottom:var(--sp-4)}
+.is-cases .sec{margin-top:var(--sp-5)}
+.is-cases .table td{height:42px}
+.cx{padding:var(--sp-5) var(--sp-6)}
+.cx-top{display:flex;align-items:baseline;gap:var(--sp-3);font-size:var(--fs-13);color:var(--text-3)}
+.cx-top .sev{margin-left:auto}
+.cx h3{margin-top:var(--sp-1)}
+.cx h3 a{color:inherit;text-decoration:none}
+.cx h3 a:hover{text-decoration:underline;text-underline-offset:3px}
+.cx-metric{margin-top:var(--sp-4)}
+.cx-vals{display:inline-flex;align-items:baseline;gap:var(--sp-3);font-family:var(--mono);letter-spacing:-.03em}
+.cx-vals .was{font-size:20px;color:var(--text-3)}
+.cx-vals .now{font-size:40px;line-height:1;color:var(--text)}
+.cx-vals .to{align-self:center;width:22px;height:1px;background:var(--gray-300);position:relative}
+.cx-vals .to::after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid var(--gray-300);border-right:1px solid var(--gray-300);transform:rotate(45deg)}
+.cx-label{font-family:var(--font);font-size:var(--fs-14);letter-spacing:0;color:var(--text-3)}
+.cx-why{margin-top:var(--sp-2);font-size:var(--fs-14);color:var(--text-2)}
+.cx-delta{display:inline-flex;align-items:center;gap:2px;font-weight:600;color:var(--danger)}
+.cx-delta .icon{width:14px;height:14px;stroke-width:2.2}
+.cx-foot{display:flex;align-items:center;gap:var(--sp-3);margin-top:var(--sp-4);padding-top:var(--sp-3);border-top:1px solid var(--border)}
+.cx-foot .avatar{width:24px;height:24px}
+.cx-foot .avatar svg{width:13px;height:13px}
+.cx-trace{flex:1;min-width:0;font-family:var(--serif);font-size:var(--fs-16);line-height:1.35;color:var(--text)}
+.cx-trace b{font-family:var(--font);font-size:var(--fs-13);font-weight:600;color:var(--accent);margin-right:4px}
+.cx-act{display:flex;gap:var(--sp-2);flex:none}
+.fade-in{animation:fadeIn 260ms var(--ease) both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="tapp" id="app">
+  <aside class="sidebar" aria-label="TRACE navigation">
+    <div class="brand"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</div>
+    <nav class="nav-group" aria-label="Main">
+      <a class="nav-item" href="#/cases" data-nav="cases"><i data-icon="cases"></i>Cases<span class="count sb-count" id="nav-count"></span></a>
+      <a class="sb-sub" href="#/investigate" id="nav-current"><span class="t-id">FR-2611</span><span id="nav-step">Not started</span></a>
+      <a class="nav-item" href="#/models" data-nav="models"><i data-icon="registry"></i>Models</a>
+      <a class="nav-item" href="#/record" data-nav="activity"><i data-icon="history"></i>Decision records</a>
+    </nav>
+    <section class="nav-group sb-sources" aria-labelledby="sb-src-title">
+      <span class="nav-label" id="sb-src-title">Connected sources</span>
+      <ul>
+        <li id="src-mon"><i data-icon="monitor"></i>Model Monitoring<span class="dot"></span></li>
+        <li id="src-fs"><i data-icon="database"></i>Feature Store<span class="dot"></span></li>
+        <li id="src-pl"><i data-icon="pipeline"></i>Data Pipeline Logs<span class="dot"></span></li>
+        <li id="src-mr"><i data-icon="registry"></i>Model Registry<span class="dot"></span></li>
+      </ul>
+      <p class="sb-note">Trace can read these, not change them.</p>
+    </section>
+    <div class="spacer"></div>
+    <div class="user"><span class="avatar">MR</span><span><b>Maya Rao</b><small>Data scientist</small></span></div>
+  </aside>
+
+  <div class="tmain">
+    <header class="topbar">
+      <nav class="crumbs" aria-label="Breadcrumb" id="crumbs"></nav>
+    </header>
+    <div class="steps" id="steps" hidden></div>
+    <div class="tbody" id="tbody"><main class="tcontent" id="view" tabindex="-1"></main></div>
+  </div>
+
+  <aside class="agentpanel" aria-label="Trace">
+    <div class="ap-hd" id="ap-hd"><span class="avatar agent ap-avatar"><i data-icon="trace"></i></span><h2>Trace</h2><span class="ap-state" id="ap-state" role="status" aria-live="polite"></span></div>
+    <div class="ap-bd" id="ap-bd"></div>
+    <div class="ap-ft">
+      <div class="composer">
+        <label class="sr" for="ask">Ask Trace or challenge a finding</label>
+        <textarea id="ask" rows="2" placeholder="Ask, add context or challenge a finding"></textarea>
+        <div class="composer-ft"><span class="t-meta" id="ask-hint"></span><div class="end"><button class="send" id="send" aria-label="Send" disabled><i data-icon="send"></i></button></div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+<script src="ds/icons.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

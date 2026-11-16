@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACE Voice Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --frame:#f1f1ee; --rail:#f8f8f6; --sunken:#f3f3f1; --line:#e9e9e5; --line-2:#d5d5cf; --dot:#b3b3ac;
+  --text:#18181a; --text-2:#45454a; --text-3:#6a6a70;
+  --agent:#2457d6; --agent-ink:#1d3f99; --agent-soft:#eef3fe; --agent-line:#d3e0fb;
+  --ink:#1c1917; --ink-soft:#f4f1ec; --ink-line:#e2d9cb;
+  --ok:#1b7548; --warn:#8f5708; --warn-soft:#fcf5e6; --warn-line:#f1deb6; --bad:#b3372e;
+  --sans:"Schibsted Grotesk",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"Fragment Mono",ui-monospace,Menlo,monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--frame);color:var(--text);font:400 14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--agent);outline-offset:2px;border-radius:4px}
+.icon{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.page{max-width:1440px;margin:0 auto;padding:28px 24px 48px}
+.intro{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:20px}
+.intro h1{font-size:24px;letter-spacing:-.02em}
+.intro p{margin-top:4px;color:var(--text-2);max-width:72ch}
+.toggle{margin-left:auto;display:flex;align-items:center;gap:4px;padding:3px;background:#fff;border:1px solid var(--line);border-radius:var(--r-md)}
+.toggle span{font-size:12.5px;color:var(--text-3);padding:0 8px}
+.toggle button{border:0;background:none;min-height:30px;padding:0 12px;border-radius:7px;font-size:13px;color:var(--text-2)}
+.toggle button[aria-pressed="true"]{background:var(--text);color:#fff}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.variant{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column}
+.v-hd{display:flex;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--rail)}
+.v-hd .k{font:600 13px/1 var(--sans);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:#fff;flex:none;align-self:center}
+.v-hd h2{font-size:15px}
+.v-hd p{font-size:12.5px;color:var(--text-3)}
+.v-hd .rec{margin-left:auto;font-size:12px;font-weight:600;color:var(--agent);white-space:nowrap}
+.v-bd{padding:18px 20px 20px;display:grid;gap:14px}
+
+/* Shared Findings excerpt */
+.ph h3{font-size:20px;letter-spacing:-.02em}
+.pill{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid transparent;white-space:nowrap}
+.pill.agent{background:var(--agent-soft);color:var(--agent);border-color:var(--agent-line)}
+.conf{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2)}
+.meter{display:inline-flex;gap:2px}.meter i{width:6px;height:11px;border-radius:1px;background:#e7e7e3}.meter i:nth-child(-n+2){background:var(--text-2)}
+.card{border:1px solid var(--line);border-radius:var(--r-lg)}
+.lead{border-color:var(--agent-line);box-shadow:0 0 0 1px var(--agent-line)}
+.lead-in{padding:16px 18px;display:grid;gap:10px}
+.meta{display:flex;align-items:center;gap:10px}
+.meta .end{margin-left:auto}
+.claim{font-size:19px;font-weight:500;line-height:1.35;letter-spacing:-.012em}
+.small{font-size:13.5px;color:var(--text-2)}
+.small b{color:var(--text);font-weight:600}
+.ev{padding:12px 14px;display:grid;gap:6px}
+.ev .src{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3)}
+.ev .src .end{margin-left:auto}
+.data{font:400 12.5px/1.55 var(--mono);color:var(--text)}
+.time{font:400 11.5px/1 var(--mono);color:var(--text-3)}
+.rel{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:500;color:var(--ok)}
+.push{padding:14px 16px;border:1px solid var(--ink-line);border-radius:var(--r-lg);background:var(--ink-soft);display:grid;gap:12px}
+.maya{display:grid;grid-template-columns:22px 1fr;gap:10px}
+.av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:600;flex:none}
+.av.m{background:var(--ink);color:#fff}
+.av.t{background:var(--agent);color:#fff}.av.t .icon{width:12px;height:12px}
+.maya .who{font-size:12px;color:var(--text-3)}.maya .who b{color:var(--text)}
+.maya .bd{margin-top:3px;padding:8px 11px;background:#fff;border:1px solid var(--ink-line);border-radius:var(--r-md);font-size:13.5px}
+.chat{border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;display:grid;gap:10px;background:#fff}
+.chat .lbl{font-size:12px;font-weight:600;color:var(--text-3)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-3);padding-top:4px;border-top:1px dashed var(--line)}
+.legend b{color:var(--text-2);font-weight:600}
+
+/* ---------- The AI-authored text, four treatments ----------
+   .ai       = a block TRACE wrote (claim, reasoning, reply)
+   .ai-who   = the "TRACE" attribution line
+   All variants use the same sans font. Only the marker changes. */
+.ai-who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--agent)}
+.ai-who time{font:400 11px/1 var(--mono);color:var(--text-3);font-weight:400}
+.ai p+p{margin-top:6px}
+
+/* A: Blue rule */
+.va .ai{border-left:2px solid var(--agent);padding-left:12px}
+.va .ai-who .av{display:none}
+
+/* B: Tinted surface (flat, no gradient) */
+.vb .ai{background:var(--agent-soft);border-radius:8px;padding:10px 12px}
+.vb .lead .ai{background:var(--agent-soft)}
+.vb .ai-who .av{display:none}
+
+/* C: Agent mark only */
+.vc .ai{display:grid;grid-template-columns:18px 1fr;column-gap:10px}
+.vc .ai::before{content:"";grid-row:1 / span 9;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--agent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20l4.5-5.5 4 3L15 13'/%3E%3Ccircle cx='18' cy='9.5' r='3.5'/%3E%3C/svg%3E") center/11px no-repeat}
+.vc .ai > *{grid-column:2}
+.vc .ai-who .av{display:none}
+
+/* D: Blue ink text */
+.vd .ai{color:var(--agent-ink)}
+.vd .ai .small,.vd .ai .claim{color:var(--agent-ink)}
+.vd .ai-who .av{display:none}
+
+/* Data font switch: Fragment Mono vs sans with tabular figures */
+body.sansdata .data,body.sansdata .time,body.sansdata .ai-who time{font-family:var(--sans);font-variant-numeric:normal;letter-spacing:0}
+body.sansdata .data{background:var(--sunken);border-radius:4px;padding:6px 8px;font-size:13px}
+
+@media (max-width:1100px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="intro">
+    <div>
+      <h1>How TRACE’s voice could look with one font</h1>
+      <p>The same Findings excerpt, four ways. Each uses Schibsted Grotesk for TRACE’s writing instead of the serif. Only the marker for “TRACE wrote this” changes. Maya’s words keep the ink colour; source data stays separate.</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Font for source data">
+      <span>Source data</span>
+      <button aria-pressed="true" data-data="mono">Mono font</button>
+      <button aria-pressed="false" data-data="sans">Same sans, tabular</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+const ic = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l4.5-5.5 4 3L15 13"/><circle cx="18" cy="9.5" r="3.5"/><path d="M18 3.5v1.5M18 14v1.5M12 9.5h1.5"/></svg>';
+const check = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:12px;height:12px;stroke-width:2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const V = [
+  ['va','A','Blue rule','A thin TRACE-blue line on the left of anything TRACE wrote. Quiet, works in cards, lists and chat.', true],
+  ['vb','B','Tinted surface','A flat pale-blue background behind TRACE’s writing. No gradient. Strongest separation, heaviest look.'],
+  ['vc','C','Agent mark','A small TRACE mark beside each block, text stays neutral. Reads like a signed note.'],
+  ['vd','D','Blue ink','TRACE’s writing is set in a deep blue. Lightest touch, but colour is the only signal.']
+];
+const excerpt = `
+  <div class="ph"><h3>Findings</h3></div>
+  <article class="card lead"><div class="lead-in">
+    <div class="meta"><span class="pill agent">${ic}Leading hypothesis</span><span class="end conf"><span class="meter"><i></i><i></i><i></i></span><b>Moderate confidence</b></span></div>
+    <div class="ai">
+      <p class="claim">An upstream field rename left the model without merchant-category data for about a third of payments.</p>
+      <p class="small"><b>Why it ranks first.</b> It’s the only explanation that matches the timing to the hour, the size of the gap and the kind of error.</p>
+    </div>
+  </div></article>
+  <article class="card ev">
+    <span class="src">Feature Store<span class="end time">Mon 08:03</span></span>
+    <p class="data">merchant_category empty in 31.7% of payments from Sat 02:10 (baseline 0.4%).</p>
+    <div class="ai"><p class="small">One input changed sharply, minutes before precision fell.</p></div>
+    <span class="rel">${check}Supports H1</span>
+  </article>
+  <div class="push">
+    <div class="maya"><span class="av m">MR</span><div><span class="who"><b>Maya</b> challenged, 08:12</span><p class="bd">I think Friday’s decline-rule change caused this, not a data issue.</p></div></div>
+    <div class="ai"><span class="ai-who"><span class="av t">${ic}</span>TRACE <time>08:14</time></span><p>I’m keeping the rename first. Precision held at 90.9% for nine hours after the threshold change, and only moved after the rename. Few flags in that band had been reviewed, so I’ve recorded that as a gap.</p></div>
+  </div>
+  <div class="chat"><span class="lbl">Conversation panel</span>
+    <div class="ai"><span class="ai-who">TRACE <time>08:07</time></span><p>First pass complete. The field rename upstream is my leading signal.</p></div>
+    <div class="maya"><span class="av m">MR</span><div><span class="who"><b>Maya</b> 08:15</span><p class="bd">Why does missingness lower precision?</p></div></div>
+  </div>
+  <div class="legend"><span><b>TRACE wrote</b> marked</span><span><b>Maya</b> ink box</span><span><b>Source data</b> data style</span></div>`;
+document.getElementById('grid').innerHTML = V.map(([cls, k, t, d, rec]) => `
+  <section class="variant ${cls}" aria-labelledby="h-${cls}">
+    <header class="v-hd"><span class="k">${k}</span><div><h2 id="h-${cls}">${t}</h2><p>${d}</p></div>${rec ? '<span class="rec">Recommended</span>' : ''}</header>
+    <div class="v-bd">${excerpt}</div>
+  </section>`).join('');
+document.querySelectorAll('[data-data]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-data]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  document.body.classList.toggle('sansdata', b.dataset.data === 'sans');
+}));
+</script>
+</body>
+</html>

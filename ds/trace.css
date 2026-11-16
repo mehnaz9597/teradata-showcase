@@ -1,0 +1,343 @@
+/* =========================================================
+   TRACE · Investigation components
+   Domain components for investigating a model. Load after tokens.css and components.css.
+   Reads only from tokens; reuses .status, .shift, .conf, .cite, .rel-tag and .btn.
+
+   Status colour semantics (one meaning each, always paired with a label and an icon):
+     blue   the agent is working, or this came from the agent
+     green  done, supports, approved, recovered
+     amber  uncertain, needs a look: low confidence, missing evidence, needs review
+     red    a problem: failed, contradicts, conflicting, rejected, a regression
+     grey   not active: queued, ruled out, read-only, disabled
+     ink    Maya: her input and her decisions (a role, not a status)
+   ========================================================= */
+
+/* ---------- Status pills for the full vocabulary (extends .status) ---------- */
+.status[data-status="running"],.status[data-status="testing"],.status[data-status="leading"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line)}
+.status[data-status="supports"],.status[data-status="applied"]{background:var(--success-soft);color:var(--success);border-color:var(--success-line)}
+.status[data-status="missing"]{background:var(--warning-soft);color:var(--warning);border-color:var(--warning-line)}
+.status[data-status="contradicts"]{background:var(--danger-soft);color:var(--danger);border-color:var(--danger-line)}
+.status[data-status="queued"],.status[data-status="ruled-out"],.status[data-status="proposed"]{background:var(--bg-surface);color:var(--text-2);border-color:var(--border-strong);border-style:dashed}
+.status[data-status="conditional"]{background:var(--warning-soft);color:var(--warning);border-color:var(--warning-line)}
+
+/* ---------- Shared: states every interactive TRACE card supports ---------- */
+.tcard{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);transition:border-color var(--dur-fast),box-shadow var(--dur)}
+a.tcard,button.tcard{cursor:pointer;text-decoration:none!important}
+a.tcard:hover,button.tcard:hover,.tcard.is-hover{border-color:var(--border-strong);box-shadow:var(--shadow-2)}
+.tcard:active,.tcard.is-active{box-shadow:var(--shadow-1)}
+.tcard[aria-current="true"],.tcard.is-selected{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
+.tcard[aria-disabled="true"]{background:var(--bg-subtle);color:var(--text-3);cursor:not-allowed;box-shadow:none}
+.tcard[aria-disabled="true"] *{color:var(--text-3)!important}
+.tcard.is-error{border-color:var(--danger-line)}
+
+/* Loading placeholder: shown only while data is on its way */
+.skel{display:block;height:12px;border-radius:var(--r-xs);background:var(--bg-hover);animation:skel 1.4s ease-in-out infinite}
+.skel+.skel{margin-top:var(--sp-2)}
+@keyframes skel{50%{opacity:.45}}
+
+/* Small labelled counts: "2 support", "1 contradicts" */
+.tally{display:flex;flex-wrap:wrap;gap:var(--sp-3);font-size:var(--fs-12);color:var(--text-2)}
+.tally span{display:inline-flex;align-items:center;gap:4px}
+.tally .icon{width:12px;height:12px;stroke-width:2.2}
+.tally .sup .icon{color:var(--success)} .tally .con .icon{color:var(--danger)} .tally .mis .icon{color:var(--warning)}
+
+/* ---------- 1. Investigation case card ---------- */
+.case{padding:var(--sp-5) var(--sp-6)}
+.case-top{display:flex;align-items:center;gap:var(--sp-3)}
+.case-top .end{margin-left:auto;display:flex;align-items:center;gap:var(--sp-3)}
+.case h3{margin-top:var(--sp-3);font-size:var(--fs-16);font-weight:600;letter-spacing:-.01em}
+.case-metric{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-13);color:var(--text-3)}
+.case-foot{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-4);padding-top:var(--sp-4);border-top:1px solid var(--border);font-size:var(--fs-12);color:var(--text-3)}
+.case-foot .progress-bar{width:120px}
+.case-foot .end{margin-left:auto}
+.case.attention{border-color:var(--warning-line);background:linear-gradient(var(--warning-soft),var(--warning-soft)) top/100% 52px no-repeat,var(--bg-surface)}
+
+/* ---------- 2. Evidence card (extends .evidence) ---------- */
+.evidence .ev-id{font:var(--fs-12)/1 var(--mono);color:var(--text-3)}
+.evidence .trace-row{grid-column:2/-1;display:flex;align-items:center;gap:var(--sp-3);margin-top:var(--sp-3)}
+.evidence .trace-row .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+.evidence .hypo-link{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-12);color:var(--text-2)}
+.evidence .hypo-link b{font-weight:600;color:var(--text)}
+.evidence details{grid-column:2/-1;margin-top:var(--sp-3);border-top:1px solid var(--border)}
+.evidence summary{list-style:none;display:flex;align-items:center;gap:6px;min-height:36px;font-size:var(--fs-12);font-weight:600;color:var(--text-2);cursor:pointer}
+.evidence summary::-webkit-details-marker{display:none}
+.evidence summary .chev{transition:transform var(--dur) var(--ease)}
+.evidence details[open] summary .chev{transform:rotate(180deg)}
+.evidence summary:hover{color:var(--text)}
+.ev-raw{margin:0 0 var(--sp-2);padding:var(--sp-3);border-radius:var(--r-sm);background:var(--bg-sunken);font:var(--fs-12)/1.6 var(--mono);color:var(--text-2);white-space:pre-wrap;overflow-wrap:anywhere}
+.evidence[aria-current="true"]{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
+
+/* Evidence hierarchy legend */
+.ev-anatomy{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3) var(--sp-6)}
+.ev-anatomy li{display:grid;grid-template-columns:24px 1fr;gap:var(--sp-2);align-items:start}
+.ev-anatomy .key{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--bg-sunken);border:1px solid var(--border);font-size:var(--fs-12);font-weight:600;color:var(--text-2)}
+.ev-anatomy b{display:block;font-size:var(--fs-13);font-weight:600}
+.ev-anatomy p{font-size:var(--fs-13);color:var(--text-2)}
+
+/* ---------- 3. Reasoning timeline (extends .activity) ---------- */
+.act .reason{margin-top:var(--sp-2);font-family:var(--serif);font-size:var(--fs-16);line-height:1.45;color:var(--text)}
+.act .reason .cite{font-family:var(--font)}
+.act[data-state="human"] .act-ic{background:var(--human-soft);border-color:var(--human-line);color:var(--human)}
+.act .human-note{margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-sm);background:var(--human-soft);font-size:var(--fs-13);color:var(--text)}
+.act[data-state="failed"] .act-ic{border-color:var(--danger-line);background:var(--danger-soft);color:var(--danger)}
+.act .act-actions{display:flex;gap:var(--sp-2);margin-top:var(--sp-2)}
+
+/* ---------- 4. Hypothesis card (extends .finding) ---------- */
+.hypo{padding:0;overflow:hidden}
+.hypo .finding-hd{border-bottom:1px solid var(--border)}
+.hypo-bd{padding:var(--sp-4) var(--sp-5)}
+.hypo-bd h3{font-family:var(--serif);font-size:var(--fs-20);line-height:1.3;font-weight:500;letter-spacing:-.012em}
+.hypo-bd .why{margin-top:var(--sp-2);font-family:var(--serif);font-size:var(--fs-16);line-height:1.45;color:var(--text-2)}
+.hypo-ft{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-5);border-top:1px solid var(--border);background:var(--bg-subtle)}
+.hypo-ft .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+.hypo[data-state="ruled-out"]{background:var(--bg-subtle)}
+.hypo[data-state="ruled-out"] .hypo-bd h3{color:var(--text-2);text-decoration:line-through;text-decoration-color:var(--gray-300);text-decoration-thickness:1px}
+.hypo[data-state="conflicting"]{border-color:var(--danger-line)}
+
+/* ---------- 5. Confidence indicator (extends .conf) ---------- */
+.conf[data-level="1"] .conf-meter i:nth-child(-n+1),
+.conf[data-level="2"] .conf-meter i:nth-child(-n+2){background:var(--warning)}
+.conf[data-level="1"] b,.conf[data-level="2"] b{color:var(--warning)}
+.conf[data-level="0"] .conf-meter i{background:none;box-shadow:inset 0 0 0 1px var(--border-strong)}
+.conf-lg{display:grid;gap:var(--sp-2)}
+.conf-lg .conf-meter{gap:3px}
+.conf-lg .conf-meter i{width:auto;flex:1;height:6px;border-radius:2px}
+.conf-lg .conf-meter{display:flex;width:100%}
+.conf-lg .conf-top{display:flex;align-items:baseline;justify-content:space-between;font-size:var(--fs-13)}
+.conf-lg .conf-top b{font-size:var(--fs-14);font-weight:600}
+.conf-lg p{font-size:var(--fs-12);color:var(--text-3)}
+
+/* ---------- 6. Evidence comparison panel (extends .compare) ---------- */
+.compare-wrap{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-surface);overflow:hidden}
+.compare-wrap .compare{border:0;border-radius:0}
+.compare-hd{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border)}
+.compare-hd :is(h3,h4){font-size:var(--fs-14);font-weight:600}
+.compare-hd .end{margin-left:auto}
+.compare-ft{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--border);font-family:var(--serif);font-size:var(--fs-16);line-height:1.45;background:var(--bg-subtle)}
+
+/* ---------- 7. Root-cause summary ---------- */
+.rootcause{padding:0;overflow:hidden}
+.rc-hd{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4) var(--sp-6);border-bottom:1px solid var(--border)}
+.rc-hd h3{font-size:var(--fs-14);font-weight:600}
+.rc-hd .end{margin-left:auto;display:flex;align-items:center;gap:var(--sp-3)}
+.rc-claim{padding:var(--sp-6) var(--sp-6) var(--sp-5)}
+.rc-claim p{font-family:var(--serif);font-size:24px;line-height:1.3;font-weight:500;letter-spacing:-.015em;max-width:34ch}
+.rc-claim .rc-impact{display:flex;align-items:center;gap:var(--sp-3);margin-top:var(--sp-4);font-size:var(--fs-13);color:var(--text-3)}
+.rc-cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;border-top:1px solid var(--border)}
+.rc-cols>div{padding:var(--sp-4) var(--sp-6)}
+.rc-cols>div+div{border-left:1px solid var(--border)}
+.rc-cols h4{display:flex;align-items:center;gap:6px;margin-bottom:var(--sp-3);font-size:var(--fs-12);font-weight:600;color:var(--text-2)}
+.rc-cols h4 .icon{width:13px;height:13px;stroke-width:2}
+.rc-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2)}
+.rc-cols li{display:flex;align-items:baseline;gap:var(--sp-2);font-size:var(--fs-13);color:var(--text-2)}
+.rc-cols .ok .icon{color:var(--success)} .rc-cols .out{color:var(--text-3)} .rc-cols .unk .icon{color:var(--warning)}
+.rc-ft{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-3) var(--sp-6);border-top:1px solid var(--border);background:var(--bg-subtle)}
+.rc-ft .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+
+/* ---------- 8. Recommended action card ---------- */
+.action-card{padding:var(--sp-5) var(--sp-6)}
+.action-top{display:flex;align-items:center;gap:var(--sp-3)}
+.action-top .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+.action-card h3{margin-top:var(--sp-3);font-size:var(--fs-16);font-weight:600}
+.action-card .why{margin-top:var(--sp-2);font-family:var(--serif);font-size:var(--fs-16);line-height:1.45;color:var(--text-2)}
+.action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4);margin-top:var(--sp-4);padding-top:var(--sp-4);border-top:1px solid var(--border)}
+.action-grid dt{font-size:var(--fs-12);font-weight:600;color:var(--text-3)}
+.action-grid dd{margin:4px 0 0;font-size:var(--fs-13);color:var(--text)}
+.action-foot{display:flex;align-items:center;gap:var(--sp-2);margin-top:var(--sp-5)}
+.action-foot .end{margin-left:auto}
+/* "Proposed" vs "Applied": a recommendation never looks like a change that has happened */
+.applied-tag,.proposed-tag{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:var(--r-full);font-size:var(--fs-12);font-weight:500}
+.proposed-tag{border:1px dashed var(--border-strong);color:var(--text-2)}
+.applied-tag{background:var(--success-soft);color:var(--success);border:1px solid var(--success-line)}
+.proposed-tag .icon,.applied-tag .icon{width:12px;height:12px;stroke-width:2}
+.action-card.secondary-option{background:var(--bg-subtle)}
+
+/* ---------- 9. Approval panel ---------- */
+.approval{border:1px solid var(--human-line);border-radius:var(--r-lg);background:var(--bg-surface);overflow:hidden}
+.approval-hd{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4) var(--sp-6);background:var(--human-soft);border-bottom:1px solid var(--human-line)}
+.approval-hd .avatar{width:28px;height:28px}
+.approval-hd h3{font-size:var(--fs-16);font-weight:600}
+.approval-hd p{font-size:var(--fs-13);color:var(--text-2)}
+.approval-bd{padding:var(--sp-5) var(--sp-6)}
+.approval .check{display:flex;align-items:flex-start;gap:var(--sp-3);margin-top:var(--sp-4);font-size:var(--fs-13)}
+.approval .check input{width:16px;height:16px;margin-top:2px;accent-color:var(--human)}
+.approval textarea.input{height:auto;min-height:64px;padding:var(--sp-2) var(--sp-3);resize:vertical}
+.approval-ft{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-4) var(--sp-6);border-top:1px solid var(--border)}
+.approval-ft .end{margin-left:auto;display:flex;gap:var(--sp-2)}
+.approval[data-state="approved"]{border-color:var(--success-line)}
+.approval[data-state="approved"] .approval-hd{background:var(--success-soft);border-bottom-color:var(--success-line)}
+.approval[data-state="rejected"]{border-color:var(--danger-line)}
+.approval[data-state="rejected"] .approval-hd{background:var(--danger-soft);border-bottom-color:var(--danger-line)}
+.approval-result .icon{width:20px;height:20px}
+.approval[data-state="approved"] .approval-result{color:var(--success)}
+.approval[data-state="rejected"] .approval-result{color:var(--danger)}
+
+/* ---------- 10. Audit history ---------- */
+.audit{list-style:none;margin:0;padding:0}
+.audit>li{display:grid;grid-template-columns:72px 24px minmax(0,1fr) auto;gap:var(--sp-3);align-items:start;padding:var(--sp-3) 0;border-bottom:1px solid var(--border)}
+.audit>li:last-child{border-bottom:0}
+.audit time{font:var(--fs-12)/22px var(--mono);color:var(--text-3)}
+.audit .avatar{width:22px;height:22px;font-size:var(--fs-12)}
+.audit .avatar.system{background:var(--bg-sunken);color:var(--text-2);border:1px solid var(--border)}
+.audit .avatar.system svg,.audit .avatar.agent svg{width:12px;height:12px}
+.audit b{font-size:var(--fs-13);font-weight:600}
+.audit .what{font-size:var(--fs-13);color:var(--text-2)}
+.audit .detail{margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-sm);background:var(--bg-sunken);font-size:var(--fs-12);color:var(--text-2)}
+.audit .detail.human{background:var(--human-soft);color:var(--text)}
+.audit .refs{display:flex;gap:var(--sp-1);align-items:center;padding-top:2px}
+
+/* ---------- 11. Investigation canvas: node types + inspector ---------- */
+.investigation{display:grid;grid-template-columns:minmax(0,1fr) var(--inspector-w);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--bg-surface)}
+.investigation .canvas{border:0;border-radius:0;min-height:640px}
+.investigation .inspector{border-left:1px solid var(--border)}
+.inspector .ins-title{font-size:var(--fs-16);font-weight:600;line-height:1.3}
+.inspector .ins-title.voice-claim{font-family:var(--serif);font-weight:500;font-size:var(--fs-20)}
+.inspector .ins-sec{margin-top:var(--sp-5)}
+.inspector .ins-sec h4{margin-bottom:var(--sp-2);font-size:var(--fs-12);font-weight:600;color:var(--text-3)}
+.inspector .ins-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-5)}
+.inspector .ins-ev{display:grid;gap:var(--sp-2)}
+.ins-ev-item{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2);align-items:baseline;font-size:var(--fs-13);color:var(--text-2)}
+.ins-ev-item .icon{width:12px;height:12px;stroke-width:2.2}
+
+/* Node type sets the icon tile and shape; node state (data-state) sets the status label */
+.node[data-type="agent"] .node-ic{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.node[data-type="source"] .node-ic{background:var(--bg-sunken);color:var(--text-2)}
+.node[data-type="evidence"]{width:232px}
+.node[data-type="evidence"] .node-ic{background:var(--bg-surface)}
+.node[data-type="evidence"][data-relation="supports"] .node-ic{color:var(--success);border-color:var(--success-line);background:var(--success-soft)}
+.node[data-type="evidence"][data-relation="contradicts"] .node-ic{color:var(--danger);border-color:var(--danger-line);background:var(--danger-soft)}
+.node[data-type="evidence"] .node-title{font-family:var(--mono);font-size:var(--fs-12);font-weight:400}
+.node[data-type="hypothesis"] .node-title{font-family:var(--serif);font-size:var(--fs-16);font-weight:500;line-height:1.3}
+.node[data-type="hypothesis"] .node-ic{background:var(--bg-surface);color:var(--text)}
+.node[data-type="conflict"]{border-color:var(--danger);border-style:dashed}
+.node[data-type="conflict"] .node-ic{background:var(--danger-soft);border-color:var(--danger-line);color:var(--danger)}
+.node[data-type="decision"]{border-color:var(--human)}
+.node[data-type="decision"] .node-ic{background:var(--human);border-color:var(--human);color:var(--text-inverse)}
+.node[data-state="testing"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.node[data-state="testing"] .node-st{color:var(--accent)}
+.node[data-state="supports"] .node-st{color:var(--success)}
+.node[data-state="contradicts"] .node-st,.node[data-state="conflicting"] .node-st{color:var(--danger)}
+.node .node-conf{margin-top:var(--sp-2)}
+button.node[aria-current="true"]{border-color:var(--text);box-shadow:0 0 0 1px var(--text),var(--shadow-2)}
+.node-legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:var(--sp-4)}
+.node-legend .node{width:auto}
+.node-legend figcaption{margin-top:var(--sp-2);font-size:var(--fs-12);color:var(--text-3)}
+.wf-link.contradicts{background:var(--danger)}
+.wf-link.contradicts::after{border-color:var(--danger)}
+.wf-link.supports{background:var(--success)}
+.wf-link.supports::after{border-color:var(--success)}
+
+/* =========================================================
+   Patterns that emerged from Screen 01 (Cases). Reused across the journey.
+   ========================================================= */
+
+/* ---------- Performance change ----------
+   Previous value small and high; current value large and low. A dashed line carries the
+   previous level across, so the new value visibly sits below where the metric used to be. */
+.perf{display:grid;grid-template-columns:auto 88px auto minmax(0,1fr);grid-template-rows:auto auto auto;column-gap:var(--sp-4);align-items:end}
+.perf-num{display:block;font-family:var(--mono);letter-spacing:-.045em;line-height:1;white-space:nowrap}
+.perf-num .pt{margin:0 -.2em}
+.perf-before{grid-column:1;grid-row:1}
+.perf-before .perf-num{font-size:40px;color:var(--text-3)}
+.perf-was{grid-column:3/-1;grid-row:1;align-self:center;height:0;border-top:1px dashed var(--gray-300)}
+.perf-link{grid-column:2;grid-row:1/3;align-self:stretch;width:88px;height:100%;min-height:80px;color:var(--gray-300)}
+.perf-after{grid-column:3;grid-row:2;margin-top:var(--sp-2)}
+.perf-after .perf-num{font-size:84px;color:var(--text)}
+.perf-delta{grid-column:4;grid-row:2;align-self:center;padding-left:var(--sp-2)}
+.perf-delta b{display:flex;align-items:center;gap:4px;font:400 26px/1 var(--mono);letter-spacing:-.03em;color:var(--danger)}
+.perf-delta b .icon{width:20px;height:20px;stroke-width:1.8}
+.perf-delta span{display:block;margin-top:6px;font-size:var(--fs-13);color:var(--text-2)}
+.perf-cap{font-size:var(--fs-12);color:var(--text-3)}
+.perf-cap.c1{grid-column:1;grid-row:2;align-self:start;margin-top:var(--sp-2)}
+.perf-cap.c3{grid-column:3;grid-row:3;margin-top:var(--sp-2)}
+.perf-metric{font-size:var(--fs-13);font-weight:600;color:var(--text-2);margin-bottom:var(--sp-2)}
+
+/* ---------- Agent update: a compact, labelled note from Trace ----------
+   Each row names its status in words (Verified, Unknown, Next) with a provenance marker.
+   Trace's judgements are in its serif voice; planned actions in the interface voice. */
+.au{border-radius:var(--r-md);background:color-mix(in srgb,var(--accent-soft) 60%,var(--bg-surface));padding:var(--sp-3) var(--sp-5) var(--sp-4)}
+.au-hd{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-2);font-size:var(--fs-13)}
+.au-hd .avatar{width:20px;height:20px}
+.au-hd .avatar svg{width:12px;height:12px}
+.au-hd b{font-weight:600}
+.au-hd span{color:var(--text-3)}
+.au-rows{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2)}
+.au-row{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:baseline;column-gap:var(--sp-3)}
+.au-row .k{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-12);font-weight:600;align-self:center}
+.au-row .k .prov-mark{margin:0}
+.au-row .v{font-size:var(--fs-14);color:var(--text)}
+.au-row .v.voice{font-family:var(--serif);font-size:var(--fs-17);line-height:1.35}
+.au-row[data-kind="finding"] .k{color:var(--success)}
+.au-row[data-kind="unknown"] .k{color:var(--warning)}
+.au-row[data-kind="agent"] .k{color:var(--accent)}
+.au-row[data-kind="decision"] .k{color:var(--human)}
+
+/* ---------- Provenance: every statement says where it came from ----------
+   system   a signal from a connected system (grey square)
+   agent    something Trace did (blue dot)
+   finding  something Trace has verified (green tick)
+   unknown  not established yet (amber dashed ring) — never styled like a finding
+   decision something only Maya can decide (ink square) */
+.prov{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-4)}
+.prov-item{display:grid;grid-template-columns:18px minmax(0,1fr);column-gap:var(--sp-3);align-items:start}
+.prov-mark{width:18px;height:18px;margin-top:2px;display:grid;place-items:center;flex:none}
+.prov-mark .icon{width:12px;height:12px;stroke-width:2.4}
+[data-kind="system"] .prov-mark{border:1.5px solid var(--text-3);border-radius:3px}
+[data-kind="system"] .prov-mark::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--text-3)}
+[data-kind="agent"] .prov-mark::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+[data-kind="finding"] .prov-mark{border-radius:50%;background:var(--success-soft);color:var(--success);box-shadow:inset 0 0 0 1.5px var(--success)}
+[data-kind="unknown"] .prov-mark{border-radius:50%;border:1.5px dashed var(--warning);color:var(--warning);font:700 11px/1 var(--font)}
+[data-kind="decision"] .prov-mark{border-radius:3px;background:var(--human);color:var(--text-inverse)}
+.prov-text{font-size:var(--fs-14);line-height:1.4;color:var(--text)}
+.prov-text.voice{font-family:var(--serif);font-size:var(--fs-17);line-height:1.35}
+.prov-meta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2);margin-top:4px;font-size:var(--fs-12);color:var(--text-3)}
+.prov-meta b{font-weight:600}
+.prov-item[data-kind="finding"] .prov-meta b{color:var(--success)}
+.prov-item[data-kind="unknown"] .prov-meta b{color:var(--warning)}
+.prov-item[data-kind="agent"] .prov-meta b{color:var(--accent)}
+.prov-item[data-kind="decision"] .prov-meta b{color:var(--human)}
+
+/* ---------- Case card: one component for every case ----------
+   Compact by default; .is-featured adds the full performance change, Trace's update and the action.
+   Identity row → title → the change → Trace's one-line status. */
+.ccard{display:flex;flex-direction:column;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-3) var(--sp-4)}
+.ccard-meta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-3);font-size:var(--fs-12);color:var(--text-3)}
+.ccard-meta .t-id{font-size:var(--fs-12)}
+.ccard-meta .when{margin-left:auto}
+.ccard-title{margin-top:6px;font-size:var(--fs-14);font-weight:600;letter-spacing:-.01em;line-height:1.3;color:var(--text)}
+a.ccard-title{text-decoration:none!important}
+a.ccard-title:hover{text-decoration:underline!important;text-underline-offset:4px;text-decoration-thickness:1px}
+.ccard-change{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);margin-top:4px;font-size:var(--fs-12);color:var(--text-3)}
+.ccard-status{list-style:none;margin:auto 0 0;padding:0}
+.ccard-status .au-row{grid-template-columns:auto minmax(0,1fr);column-gap:var(--sp-3);margin-top:var(--sp-2);padding-top:var(--sp-2);border-top:1px solid var(--border)}
+.ccard-status .au-row .v{font-size:var(--fs-13)}
+.ccard-status .au-row .v.voice{font-size:var(--fs-16);line-height:1.25}
+.ccard[data-state="resolved"] .ccard-title{color:var(--text-2);font-weight:500}
+
+.ccard.is-featured{padding:var(--sp-5) var(--sp-8)}
+.ccard.is-featured .ccard-meta{font-size:var(--fs-13)}
+.ccard.is-featured .ccard-title{margin-top:var(--sp-2);font-size:var(--fs-22);letter-spacing:-.02em;font-weight:600}
+.ccard.is-featured{padding:var(--sp-5) var(--sp-8)}
+.ccard-hero{margin-top:var(--sp-4)}
+.ccard-why{margin-top:var(--sp-3);font-size:var(--fs-14);color:var(--text-2)}
+.ccard-why b{font-weight:600;color:var(--text)}
+.ccard-lower{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:var(--sp-6);align-items:end;margin-top:var(--sp-4);padding-top:var(--sp-4);border-top:1px solid var(--border)}
+.ccard-act .btn{width:100%}
+.ccard-act p{margin-top:var(--sp-2);font-size:var(--fs-12);color:var(--text-3);text-align:center}
+.ccard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3)}
+
+/* ---------- Priority notice: the one thing that needs Maya now ----------
+   A soft red glow, a breathing dot and words, so it reads without relying on colour.
+   The glow stops for reduced motion (handled globally in tokens.css). */
+.priority{display:flex;align-items:center;gap:var(--sp-3);width:max-content;max-width:100%;padding:8px 16px 8px 12px;border:1px solid var(--danger-line);border-radius:var(--r-full);background:var(--bg-surface);box-shadow:0 0 0 4px color-mix(in srgb,var(--danger) 6%,transparent),0 6px 24px -6px color-mix(in srgb,var(--danger) 35%,transparent)}
+.priority b{font-size:var(--fs-12);font-weight:700;letter-spacing:.08em;color:var(--danger)}
+.priority span{font-size:var(--fs-14);color:var(--text)}
+.priority i.glow{position:relative;width:10px;height:10px;border-radius:50%;background:var(--danger);flex:none}
+.priority i.glow::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:var(--danger);opacity:.25;animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{transform:scale(1.5);opacity:0}}
+.ccard.is-alert{border-color:var(--danger-line);box-shadow:0 10px 40px -24px color-mix(in srgb,var(--danger) 45%,transparent)}
+
+/* Highlighted change: the size of the drop, said in full */
+.perf-delta.is-chip{align-self:center}
+.perf-delta.is-chip b{display:inline-flex;padding:6px 10px;border-radius:var(--r-sm);background:var(--danger-soft);font-size:24px}
+.perf-delta.is-chip span{margin-top:6px}

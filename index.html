@@ -6,181 +6,90 @@
 <title>Trace Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ds/tokens.css">
+<link rel="stylesheet" href="ds/components.css">
 <style>
-/* Tokens match the deck (deck/index.html) */
-:root{
-  --page:#f4f3ef;
-  --dark:#17181c;
-  --dark2:#2a2c32;
-  --slide:#f4f3ef;
-  --card:#fdfcfa;
-  --ink:#15171c;
-  --ink2:#464951;
-  --muted:#62656d;
-  --line:#dcd9d2;
-  --line2:#c6c3bb;
-  --conn:#9a9890;
-  --accent:#2f4cf5;
-  --accent-ink:#2238c8;
-  --accent-soft:#e7eafe;
-  --sans:"Plus Jakarta Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
-  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
-  --ease:cubic-bezier(.16,1,.3,1);
-  --gutter:clamp(16px,5vw,80px);
-  --shadow:0 1px 2px rgb(20 20 18/.05),0 24px 60px -28px rgb(20 20 18/.28);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--page);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
-::selection{background:var(--accent);color:#fff}
-a{color:inherit}
-button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.skip{position:absolute;left:16px;top:-60px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px;z-index:100;text-decoration:none}
+/* Landing-page layout only. Colours, type and components come from ds/ */
+html{scroll-behavior:smooth}
+.skip{position:absolute;left:16px;top:-60px;background:var(--text);color:var(--text-inverse);padding:10px 14px;border-radius:var(--r-sm);z-index:100}
 .skip:focus{top:12px}
 [hidden]{display:none!important}
 #main:focus,.sheet h2:focus{outline:none}
-#main{flex:1;display:flex;flex-direction:column}
 
 /* ================= HOME ================= */
-.home{max-width:1440px;margin:0 auto;padding:0 var(--gutter);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-
+.home{max-width:1440px;margin:0 auto;padding:0 var(--sp-12);min-height:100vh;display:flex;flex-direction:column}
 .bar{display:flex;align-items:center;height:72px;flex:none}
-.mark{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.02em;text-decoration:none}
-.mark i{width:14px;height:14px;border-radius:4px;background:var(--accent);display:block}
-.foot-nav{flex:none;display:flex;gap:8px;align-items:center;justify-content:center;padding:20px 0 28px}
-.foot-nav a{position:relative;font-size:13.5px;font-weight:500;color:var(--ink2);text-decoration:none;height:34px;padding:0 14px;border-radius:999px;display:inline-flex;align-items:center;background:#ebe9e4;transition:background .2s,color .2s}
-.foot-nav a::after{content:"";position:absolute;inset:-5px 0}
-.foot-nav a:hover{background:#e2e0da;color:var(--ink)}
+.bar .brand{margin:0;padding:0;text-decoration:none!important;color:var(--text)}
+#main{flex:1;display:flex;flex-direction:column}
 
-/* hero: thumbnail left, copy right */
-.hero{flex:1;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:clamp(32px,5vw,80px);align-items:center;padding:24px 0}
+.hero{flex:1;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:72px;align-items:center;padding:var(--sp-6) 0}
 
-.thumb{display:block;text-decoration:none;border-radius:18px;transition:transform .5s var(--ease)}
-.thumb:hover{transform:translateY(-3px)}
-.thumb:hover .win{box-shadow:0 1px 2px rgb(20 20 18/.06),0 36px 80px -30px rgb(20 20 18/.4)}
-.thumb-cap{display:flex;justify-content:space-between;margin-top:14px;font-size:13.5px;color:var(--muted)}
-.thumb-cap b{font-weight:500;color:var(--ink2)}
+/* Thumbnail: the real Cases screen, built from DS components and scaled to fit */
+.thumb{display:block;border-radius:var(--r-lg);text-decoration:none!important;color:inherit}
+.thumb-frame{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:var(--r-lg);border:1px solid var(--border-strong);background:var(--bg-app);box-shadow:var(--shadow-2);transition:box-shadow var(--dur) var(--ease),transform 400ms var(--ease)}
+.thumb:hover .thumb-frame{box-shadow:var(--shadow-3);transform:translateY(-2px)}
+.thumb-screen{position:absolute;left:0;top:0;width:1000px;height:625px;transform:scale(var(--s,.76));transform-origin:0 0;pointer-events:none;
+  /* Preview type is set larger so it stays readable after scaling (smallest text renders at about 10.5px) */
+  --fs-12:14px;--fs-13:15px;--fs-14:16px;--fs-16:20px;--fs-30:30px;--sidebar-w:216px}
+.thumb-screen .app{min-height:0;height:100%}
+.thumb-screen .content{padding-top:var(--sp-6)}
+.thumb-screen .page-hd{margin-bottom:var(--sp-5)}
+.thumb-cap{display:flex;justify-content:space-between;margin-top:var(--sp-3);font-size:var(--fs-13);color:var(--text-3)}
+.thumb-cap b{font-weight:600;color:var(--text-2)}
 
-/* desktop window frame, shared by thumbnail and viewer */
-.win{background:var(--card);border:1px solid var(--line2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .5s var(--ease);display:flex;flex-direction:column}
-.chrome{height:34px;flex:none;display:flex;align-items:center;gap:7px;padding:0 14px;background:var(--slide);border-bottom:1px solid var(--line)}
-.chrome span{width:10px;height:10px;border-radius:50%;background:var(--line2)}
-.chrome em{font:normal 500 11.5px/1 var(--sans);color:var(--muted);margin-left:auto;margin-right:auto;transform:translateX(-24px)}
+.copy h1{font-size:64px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.copy .what{margin-top:var(--sp-5);font-size:var(--fs-20);line-height:1.4;letter-spacing:-.012em;color:var(--text);max-width:30ch;text-wrap:pretty}
+.copy .how{margin-top:var(--sp-3);font-size:var(--fs-14);line-height:1.55;color:var(--text-2);max-width:44ch;text-wrap:pretty}
+.facts{display:flex;gap:var(--sp-8);margin:var(--sp-8) 0;padding:var(--sp-4) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.facts div{font-size:var(--fs-13);color:var(--text-3)}
+.facts b{display:block;font-size:var(--fs-16);font-weight:600;color:var(--text)}
 
-/* schematic of the Cases home screen inside the thumbnail */
-.mini{aspect-ratio:16/10;display:grid;grid-template-columns:19% 1fr}
-.mini .side{background:var(--slide);border-right:1px solid var(--line);padding:8% 10%;display:flex;flex-direction:column;gap:9%}
-.mini .side i{display:block;height:7px;border-radius:4px;background:var(--line2)}
-.mini .side i:first-child{width:60%;background:var(--accent);height:9px}
-.mini .side i:nth-child(2){width:80%;background:var(--ink);opacity:.75}
-.mini .side i:nth-child(n+3){width:70%}
-.mini .main{padding:6% 12%;display:flex;flex-direction:column;gap:4%}
-.mini h4{margin:0;font-weight:500;font-size:clamp(13px,1.5vw,22px);letter-spacing:-.02em}
-.mini .ln{height:7px;border-radius:4px;background:var(--line)}
-.mini .lab{font-size:clamp(9px,.8vw,12px);color:var(--muted);margin-top:3%}
-.mini .row{display:flex;align-items:center;gap:3%;border:1px solid var(--line);border-radius:8px;padding:3% 4%;background:#fff}
-.mini .row.on{border-color:var(--line2)}
-.mini .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--line2)}
-.mini .row.on .dot{background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
-.mini .rt{flex:1;display:flex;flex-direction:column;gap:6px}
-.mini .rt .ln:first-child{width:72%;background:var(--ink2);opacity:.5}
-.mini .rt .ln:last-child{width:46%}
-.mini .pill{width:20%;height:14px;border-radius:999px;background:var(--accent-soft)}
+.foot-nav{flex:none;display:flex;gap:var(--sp-2);justify-content:center;padding:var(--sp-5) 0 var(--sp-6)}
 
-.copy h1{margin:0;font-weight:300;font-size:clamp(56px,7vw,104px);line-height:.95;letter-spacing:-.05em}
-.copy .what{margin:22px 0 0;font-size:clamp(19px,1.6vw,23px);line-height:1.4;letter-spacing:-.015em;color:var(--ink);max-width:30ch;text-wrap:pretty}
-.copy .how{margin:14px 0 0;font-size:15.5px;line-height:1.55;color:var(--ink2);max-width:44ch;text-wrap:pretty}
-.facts{display:flex;gap:28px;margin:30px 0 34px;padding:16px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);font-size:14px;color:var(--muted)}
-.facts b{display:block;font-weight:500;font-size:15px;color:var(--ink)}
-.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border-radius:999px;font-size:15px;font-weight:500;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:background .2s,border-color .2s,transform .15s}
-.btn:active{transform:scale(.98)}
-.btn svg{width:16px;height:16px}
-.btn-primary{background:var(--ink);color:var(--slide)}
-.btn-primary:hover{background:var(--accent-ink)}
-.btn-ghost{border-color:var(--line2);color:var(--ink)}
-.btn-ghost:hover{border-color:var(--ink)}
+/* ================= FLOW + ALL SCREENS PAGES ================= */
+.subpage{max-width:1440px;margin:0 auto;padding:0 var(--sp-12) var(--sp-12)}
+.sub-bar{height:64px;display:flex;align-items:center}
+.sheet{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-10) var(--sp-10)}
+.sheet-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-6);padding-bottom:var(--sp-4);border-bottom:1px solid var(--border)}
+.sheet-hd p{font-size:var(--fs-14);color:var(--text-2);max-width:56ch}
 
-/* sections below the fold, styled like deck slides */
-.sheet{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:40px clamp(20px,5vw,80px) 56px;margin-top:32px;scroll-margin-top:24px}
-.sheet-hd{display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
-.sheet-hd h2{margin:0;font-weight:300;font-size:clamp(32px,3.4vw,46px);letter-spacing:-.035em;line-height:1.1}
-.sheet-hd p{margin:0;font-size:14px;color:var(--muted);max-width:52ch}
-.ph-note{display:inline-block;margin-top:28px;font-size:13px;color:var(--ink2);background:var(--card);border:1px dashed var(--line2);border-radius:999px;padding:6px 12px}
-
-/* flow map */
-.flow{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:40px 40px;counter-reset:step}
+.flow{list-style:none;margin:var(--sp-6) 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--sp-8) var(--sp-10)}
 .flow li{position:relative}
-.flow li::after{content:"";position:absolute;top:50%;right:-34px;width:28px;height:1px;background:var(--conn)}
-.flow li::before{content:"";position:absolute;top:calc(50% - 3px);right:-35px;width:6px;height:6px;border-top:1px solid var(--conn);border-right:1px solid var(--conn);transform:rotate(45deg)}
+.flow li::after{content:"";position:absolute;top:50%;right:-34px;width:28px;height:1px;background:var(--connector)}
+.flow li::before{content:"";position:absolute;top:calc(50% - 3px);right:-35px;width:6px;height:6px;border-top:1px solid var(--connector);border-right:1px solid var(--connector);transform:rotate(45deg)}
 .flow li:nth-child(5n)::after,.flow li:nth-child(5n)::before,.flow li:last-child::after,.flow li:last-child::before{display:none}
-.node{background:var(--slide);border:1px solid var(--line);border-radius:12px;padding:14px 16px 16px;min-height:118px}
-.node .ix{font:500 12px/1 var(--mono);color:var(--accent)}
-.node h3{margin:18px 0 4px;font-size:16px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
-.node p{margin:0;font-size:13.5px;line-height:1.4;color:var(--muted)}
-.branch{margin-top:40px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;border-top:1px solid var(--line);padding-top:20px}
-.branch h3{margin:0;font-size:16px;font-weight:500}
-.branch > div > p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
-.branch ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.branch .node{border-style:dashed;border-color:var(--line2);background:transparent;min-height:0}
-.branch .node .ix{color:var(--ink2)}
-.branch .node h3{margin-top:12px}
+.step{height:100%;min-height:112px;padding:var(--sp-4);background:var(--bg-sunken);border:1px solid var(--border);border-radius:var(--r-md)}
+.step .ix{font-size:var(--fs-12);font-weight:600;color:var(--text-3);font-variant-numeric:tabular-nums}
+.step h3{margin-top:var(--sp-4);font-size:var(--fs-14);font-weight:600}
+.step p{margin-top:2px;font-size:var(--fs-13);color:var(--text-3)}
+.branch{margin-top:var(--sp-10);padding-top:var(--sp-5);border-top:1px solid var(--border);display:grid;grid-template-columns:220px 1fr;gap:var(--sp-6)}
+.branch h3{font-size:var(--fs-14);font-weight:600}
+.branch>div>p{margin-top:4px;font-size:var(--fs-13);color:var(--text-3)}
+.branch ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+.branch .step{background:transparent;border-style:dashed;border-color:var(--border-strong);min-height:0}
+.branch .step h3{margin-top:var(--sp-3)}
+.ph-note{display:inline-block;margin-top:var(--sp-6)}
 
-/* all screens */
-.grid{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 24px}
-.shot a{display:block;text-decoration:none;border-radius:12px}
-.shot .frame{aspect-ratio:16/10;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,box-shadow .3s}
-.shot .frame::before{content:"";height:14px;flex:none;background:var(--slide);border-bottom:1px solid var(--line)}
-.shot .frame span{flex:1;display:grid;place-items:center;font-size:12.5px;color:var(--muted);background:repeating-linear-gradient(135deg,transparent 0 10px,rgb(198 195 187/.18) 10px 11px)}
-.shot a:hover .frame{border-color:var(--line2);box-shadow:var(--shadow)}
-.shot .meta{display:flex;gap:10px;align-items:baseline;margin-top:10px}
-.shot .meta i{font:normal 500 12px/1 var(--mono);color:var(--accent);min-width:22px}
-.shot .meta b{font-size:14.5px;font-weight:500}
-.shot.alt .meta i{color:var(--ink2)}
-.foot{margin:40px 0 0;font-size:13px;color:var(--muted)}
-.sub{max-width:1600px;margin:0 auto;padding:0 var(--gutter) 64px}
-.sub-bar{height:56px;display:flex;align-items:center}
-.sub .sheet{margin-top:0}
-.sub .vbtn{height:30px;padding:0 12px;font-size:12.5px}
+.grid{list-style:none;margin:var(--sp-6) 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sp-6) var(--sp-5)}
+.shot a{display:block;border-radius:var(--r-md);color:inherit;text-decoration:none!important}
+.shot .frame{aspect-ratio:16/10;border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-sunken);display:grid;place-items:center;font-size:var(--fs-13);color:var(--text-3);transition:border-color var(--dur-fast),box-shadow var(--dur)}
+.shot a:hover .frame{border-color:var(--border-strong);box-shadow:var(--shadow-2)}
+.shot .meta{display:flex;gap:var(--sp-2);align-items:baseline;margin-top:var(--sp-2)}
+.shot .meta i{font-style:normal;font-size:var(--fs-12);font-weight:600;color:var(--text-3);min-width:22px;font-variant-numeric:tabular-nums}
+.shot .meta b{font-size:var(--fs-14);font-weight:600}
+.sheet .foot{margin-top:var(--sp-8);font-size:var(--fs-13);color:var(--text-3)}
 
 /* ================= VIEWER ================= */
-.viewer{position:fixed;inset:0;background:var(--page);display:flex;flex-direction:column;z-index:10}
-.vbar{height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
-.vbtn{position:relative;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:999px;border:0;background:#ebe9e4;color:var(--ink2);font-size:12px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .2s,color .2s}
-.vbtn::after{content:"";position:absolute;inset:-7px -2px}
-.vbtn:hover{background:#e2e0da;color:var(--ink)}
-.vbtn svg{width:13px;height:13px}
-.vbtn[aria-pressed="true"]{background:var(--ink);color:var(--slide)}
-.stage{flex:1;min-height:0;display:flex;padding:0 16px 16px}
-.stage .win{flex:1;min-width:0}
-.screen{flex:1;background:var(--card)}
-.viewer.enter .win{animation:rise .55s var(--ease) both}
-@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width:1100px){
-  .flow{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .flow li:nth-child(5n)::after,.flow li:nth-child(5n)::before{display:block}
-  .flow li:nth-child(3n)::after,.flow li:nth-child(3n)::before,.flow li:last-child::after,.flow li:last-child::before{display:none}
-  .branch{grid-template-columns:1fr}
-}
-@media (max-width:860px){
-  .hero{grid-template-columns:1fr;min-height:0;padding:36px 0 48px;gap:36px}
-  .copy{order:-1}
-  .facts{gap:20px}
-  .branch ul{grid-template-columns:1fr}
-}
-@media (max-width:620px){
-  .flow{grid-template-columns:1fr;gap:28px}
-  .flow li::after,.flow li::before{display:none!important}
-  .flow li:not(:last-child)::after{display:block!important;top:auto;bottom:-22px;right:auto;left:24px;width:1px;height:16px}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-}
+.viewer{position:fixed;inset:0;background:var(--bg-app);display:flex;flex-direction:column;z-index:10}
+.vbar{height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 var(--sp-4)}
+.vbar-end{display:flex;align-items:center;gap:var(--sp-2)}
+.vsim{display:inline-flex;align-items:center;gap:6px;margin-right:var(--sp-2);font-size:var(--fs-12);color:var(--text-3)}
+.vsim .icon{width:13px;height:13px}
+.stage{flex:1;min-height:0;display:flex;padding:0 var(--sp-4) var(--sp-4)}
+.screen{flex:1;min-width:0;display:flex;overflow:hidden;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-2)}
+.screen iframe{flex:1;width:100%;height:100%;border:0;display:block}
+.viewer.enter .screen{animation:rise 450ms var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -189,25 +98,51 @@ button{font:inherit;color:inherit}
 <!-- ================= HOME ================= -->
 <div class="home" id="home">
   <header class="bar">
-    <a class="mark" href="#top" aria-label="Trace, back to top"><i aria-hidden="true"></i>TRACE</a>
+    <a class="brand" href="#top" aria-label="Trace, back to top"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</a>
   </header>
 
   <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="t-title">
       <div>
         <a class="thumb" href="#prototype" aria-label="Open the prototype at the Cases screen">
-          <div class="win" aria-hidden="true">
-            <div class="chrome"><span></span><span></span><span></span><em>Trace</em></div>
-            <div class="mini">
-              <div class="side"><i></i><i></i><i></i><i></i><i></i></div>
-              <div class="main">
-                <h4>Cases</h4>
-                <div class="ln" style="width:58%"></div>
-                <div class="lab">Open</div>
-                <div class="row on"><span class="dot"></span><div class="rt"><div class="ln"></div><div class="ln"></div></div><span class="pill"></span></div>
-                <div class="lab">Closed this month</div>
-                <div class="row"><span class="dot"></span><div class="rt"><div class="ln"></div><div class="ln"></div></div></div>
-                <div class="row"><span class="dot"></span><div class="rt"><div class="ln"></div><div class="ln"></div></div></div>
+          <div class="thumb-frame">
+            <!-- The real Cases screen, rendered with DS components at 1280×800 and scaled down -->
+            <div class="thumb-screen" aria-hidden="true" inert>
+              <div class="app">
+                <aside class="sidebar">
+                  <div class="brand"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</div>
+                  <div class="nav-group">
+                    <span class="nav-item" aria-current="page"><i data-icon="cases"></i>Cases<span class="live"></span></span>
+                    <span class="nav-item"><i data-icon="record"></i>Decision records<span class="count">24</span></span>
+                    <span class="nav-item"><i data-icon="history"></i>Watching<span class="count">2</span></span>
+                  </div>
+                  <div class="nav-group">
+                    <span class="nav-label">Sources</span>
+                    <span class="nav-item"><i data-icon="monitor"></i>Monitoring</span>
+                    <span class="nav-item"><i data-icon="database"></i>Feature store</span>
+                    <span class="nav-item"><i data-icon="pipeline"></i>Pipeline logs</span>
+                  </div>
+                  <div class="spacer"></div>
+                  <span class="user"><span class="avatar">MR</span><span><b>Maya Rao</b><small>Data scientist</small></span></span>
+                </aside>
+                <div class="main">
+                  <div class="topbar"><span class="crumbs"><span aria-current="page">Cases</span></span><div class="end"><span class="agent-status"><span class="avatar agent"><i data-icon="trace"></i></span><span class="txt"><b>Trace</b> is investigating</span></span></div></div>
+                  <div class="content">
+                    <div class="page-hd"><div><p class="t-page">Cases</p><p class="sub">Trace opens a case when monitoring raises an alert.</p></div></div>
+                    <div class="card attention" style="margin-bottom:var(--sp-5)"><div class="card-bd">
+                      <div class="row gap-3"><span class="status" data-status="investigating"></span><span class="t-id">FR-2611</span></div>
+                      <p class="t-card" style="margin-top:var(--sp-5)">Precision dropped on the card fraud model</p>
+                      <div class="row gap-4" style="margin-top:var(--sp-3)"><span class="shift"><span class="was">91.2%</span><i class="to"></i><span class="now bad">83.2%</span></span><span class="t-meta">Opened Monday 08:30</span></div>
+                    </div></div>
+                    <div class="card"><table class="table">
+                      <thead><tr><th>Closed this month</th><th>Cause</th><th>Status</th></tr></thead>
+                      <tbody>
+                        <tr><td class="primary">Scoring slower than usual<span class="sub t-id">FR-2588</span></td><td>Server memory limit</td><td><span class="status" data-status="completed"></span></td></tr>
+                        <tr><td class="primary">More declines flagged in one region<span class="sub t-id">FR-2561</span></td><td>Real fraud spike</td><td><span class="status" data-status="completed"></span></td></tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -218,90 +153,86 @@ button{font:inherit;color:inherit}
       <div class="copy">
         <h1 id="t-title">Trace</h1>
         <p class="what">An investigation agent that finds why a production model got worse, and shows its evidence.</p>
-        <p class="how">Follow Maya, an ML engineer, from a Monday precision alert to a fix she can approve and defend.</p>
+        <p class="how">Follow Maya, a data scientist, from a Monday precision alert to a fix she can approve and defend.</p>
         <div class="facts">
-          <div><b>10 screens</b>main flow</div>
-          <div><b>3 more</b>edge cases</div>
-          <div><b>About 5 min</b>to click through</div>
+          <div><b>7 screens</b>Main flow</div>
+          <div><b>3 more</b>Edge cases</div>
+          <div><b>About 5 min</b>To click through</div>
         </div>
-        <div class="actions">
-          <a class="btn btn-primary" href="#prototype">Start prototype
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-        </div>
+        <a class="btn btn-primary btn-lg" href="#prototype"><i data-icon="play"></i>Start prototype</a>
       </div>
     </section>
-
   </main>
+
   <nav class="foot-nav" aria-label="More about the prototype">
-    <a href="#flow">The flow</a>
-    <a href="#screens">View all screens</a>
+    <a class="btn btn-soft" href="#flow">The flow</a>
+    <a class="btn btn-soft" href="#screens">View all screens</a>
+    <a class="btn btn-soft" href="design-system.html">Design system</a>
   </nav>
 </div>
 
 <!-- ================= FLOW PAGE ================= -->
-<div class="sub" id="page-flow" hidden>
-  <div class="sub-bar"><a class="vbtn" href="#top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>Back</a></div>
+<div class="subpage" id="page-flow" hidden>
+  <div class="sub-bar"><a class="btn btn-soft btn-sm" href="#top"><i data-icon="chevLeft"></i>Back</a></div>
   <section class="sheet" aria-labelledby="flow-title">
-      <div class="sheet-hd">
-        <h2 id="flow-title">The flow</h2>
-        <p>How the prototype moves from the alert to the decision record.</p>
-      </div>
-      <ol class="flow">
-        <li><div class="node"><span class="ix">01</span><h3>Cases</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">02</span><h3>Investigate</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">03</span><h3>Suspects</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">04</span><h3>Re-checked</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">05</span><h3>Root cause</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">06</span><h3>Recommended plan</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">07</span><h3>Approve</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">08</span><h3>Decided</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">09</span><h3>Watching</h3><p>Short description goes here</p></div></li>
-        <li><div class="node"><span class="ix">10</span><h3>Decision record</h3><p>Short description goes here</p></div></li>
-      </ol>
-      <div class="branch">
-        <div><h3>When things aren't smooth</h3><p>Branches off the main flow.</p></div>
-        <ul>
-          <li><div class="node"><span class="ix">from 02</span><h3>Low confidence</h3><p>Short description goes here</p></div></li>
-          <li><div class="node"><span class="ix">from 03</span><h3>Conflicting evidence</h3><p>Short description goes here</p></div></li>
-          <li><div class="node"><span class="ix">from 09</span><h3>Wrong diagnosis</h3><p>Short description goes here</p></div></li>
-        </ul>
-      </div>
-      <span class="ph-note">Placeholder: connections and descriptions to come</span>
-    </section>
+    <div class="sheet-hd">
+      <h2 class="t-section" id="flow-title">The flow</h2>
+      <p>How the prototype moves from the alert to the decision record.</p>
+    </div>
+    <ol class="flow">
+      <li><div class="step"><span class="ix">01</span><h3>Cases</h3><p>The alert arrives. Precision fell from 91% to 83% and fraud ops are complaining.</p></div></li>
+      <li><div class="step"><span class="ix">02</span><h3>Investigate</h3><p>Trace shows its plan and the four sources it will read. Maya starts it.</p></div></li>
+      <li><div class="step"><span class="ix">03</span><h3>Suspects</h3><p>Three possible causes with their evidence. Maya pushes back on the ranking.</p></div></li>
+      <li><div class="step"><span class="ix">04</span><h3>Root cause</h3><p>The diagnosis, how sure Trace is, what it ruled out and how it confirmed it.</p></div></li>
+      <li><div class="step"><span class="ix">05</span><h3>Decide</h3><p>The recommended fix, its risk and undo. Maya approves, rejects or asks for more.</p></div></li>
+      <li><div class="step"><span class="ix">06</span><h3>Watching</h3><p>The fix is applied by the data team. Trace checks precision recovers.</p></div></li>
+      <li><div class="step"><span class="ix">07</span><h3>Decision record</h3><p>Every step, who took it and when, for anyone who asks why.</p></div></li>
+    </ol>
+    <div class="branch">
+      <div><h3>When things aren't smooth</h3><p>Branches off the main flow.</p></div>
+      <ul>
+        <li><div class="step"><span class="ix">From step 02</span><h3>Low confidence</h3><p>A source doesn’t respond. Trace says it can’t be sure and asks to retry.</p></div></li>
+        <li><div class="step"><span class="ix">From step 03</span><h3>Conflicting evidence</h3><p>Two sources disagree. Trace finds out why before trusting either.</p></div></li>
+        <li><div class="step"><span class="ix">From step 04 or 06</span><h3>Wrong diagnosis</h3><p>Maya challenges the diagnosis. Trace re-investigates and keeps what it found.</p></div></li>
+      </ul>
+    </div>
+    
+  </section>
 </div>
 
 <!-- ================= ALL SCREENS PAGE ================= -->
-<div class="sub" id="page-screens" hidden>
-  <div class="sub-bar"><a class="vbtn" href="#top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>Back</a></div>
+<div class="subpage" id="page-screens" hidden>
+  <div class="sub-bar"><a class="btn btn-soft btn-sm" href="#top"><i data-icon="chevLeft"></i>Back</a></div>
   <section class="sheet" aria-labelledby="screens-title">
-      <div class="sheet-hd">
-        <h2 id="screens-title">All screens</h2>
-        <p>Every screen in the prototype. Select one to open it.</p>
-      </div>
-      <ul class="grid" id="grid"></ul>
-      <p class="foot">Thumbnails are placeholders until the screens are built.</p>
-    </section>
+    <div class="sheet-hd">
+      <h2 class="t-section" id="screens-title">All screens</h2>
+      <p>Every screen in the prototype. Select one to open it.</p>
+    </div>
+    <ul class="grid" id="grid"></ul>
+    <p class="foot">Thumbnails are placeholders until the screens are built.</p>
+  </section>
 </div>
 
 <!-- ================= VIEWER ================= -->
 <div class="viewer" id="viewer" hidden role="region" aria-label="Prototype">
   <div class="vbar">
-    <a class="vbtn" href="#top" id="back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>Back</a>
-    <button class="vbtn" type="button" id="notes" aria-pressed="false" title="Screen notes (coming soon)">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="2" width="10" height="12" rx="2"/><path d="M6 6h4M6 9h4"/></svg>Notes</button>
+    <a class="btn btn-soft btn-sm" href="#top" id="back"><i data-icon="chevLeft"></i>Back</a>
+    <div class="vbar-end">
+      <span class="vsim" title="Every name, number and date in this prototype is fictional"><i data-icon="flask"></i>Simulated scenario</span>
+      <button class="btn btn-soft btn-sm" type="button" id="proto-restart"><i data-icon="refresh"></i>Restart</button>
+      <button class="btn btn-soft btn-sm" type="button" id="notes" aria-pressed="false" title="Screen notes (coming soon)"><i data-icon="record"></i>Notes</button>
+    </div>
   </div>
   <div class="stage">
-    <div class="win">
-      <div class="screen" id="screen"><h1 class="sr" id="s-name">Cases</h1></div>
-    </div>
+    <div class="screen" id="screen"><h1 class="sr" id="s-name">Cases</h1><iframe id="app-frame" title="TRACE prototype" src="about:blank"></iframe></div>
   </div>
 </div>
 
+<script src="ds/icons.js"></script>
 <script>
 const SCREENS = [
-  ["cases","Cases"],["investigate","Investigate"],["suspects","Suspects"],["recheck","Re-checked"],
-  ["root-cause","Root cause"],["plan","Recommended plan"],["approve","Approve"],["decided","Decided"],
-  ["watch","Watching"],["record","Decision record"],
+  ["cases","Cases"],["investigate","Investigate"],["suspects","Suspects"],["root-cause","Root cause"],
+  ["approve","Decide"],["watch","Watching"],["record","Decision record"],
   ["low-confidence","Low confidence",1],["conflict","Conflicting evidence",1],["wrong","Wrong diagnosis",1]
 ];
 const MAIN = SCREENS.filter(s => !s[2]).length;
@@ -309,10 +240,29 @@ const MAIN = SCREENS.filter(s => !s[2]).length;
 // all-screens grid
 document.getElementById('grid').innerHTML = SCREENS.map((s, i) => {
   const ix = s[2] ? 'E' + (i - MAIN + 1) : String(i + 1).padStart(2, '0');
-  return `<li class="shot${s[2] ? ' alt' : ''}"><a href="#prototype/${s[0]}">
-    <div class="frame" aria-hidden="true"><span>Placeholder</span></div>
+  return `<li class="shot"><a href="#prototype/${s[0]}">
+    <div class="frame" aria-hidden="true">Placeholder</div>
     <div class="meta"><i>${ix}</i><b>${s[1]}</b></div></a></li>`;
 }).join('');
+TRACE.paint();
+
+// Scale the real Cases screen to the thumbnail's width
+const frame = document.querySelector('.thumb-frame'), shot = document.querySelector('.thumb-screen');
+new ResizeObserver(() => shot.style.setProperty('--s', frame.clientWidth / 1000)).observe(frame);
+
+// Restart the prototype inside the frame: clear its saved state and go back to Cases
+document.getElementById('proto-restart').addEventListener('click', () => {
+  const w = document.getElementById('app-frame').contentWindow;
+  if (w && w.TRACE_RESTART) w.TRACE_RESTART();
+});
+
+// Notes button styling for its pressed state
+const notes = document.getElementById('notes');
+notes.addEventListener('click', () => {
+  const on = notes.getAttribute('aria-pressed') !== 'true';
+  notes.setAttribute('aria-pressed', on);
+  notes.style.background = on ? 'var(--bg-active)' : '';
+});
 
 // routing: #prototype[/screen] → viewer, #flow / #screens → their pages, anything else → home
 const home = document.getElementById('home'), viewer = document.getElementById('viewer');
@@ -326,7 +276,10 @@ function route(){
     const id = h.split('/')[1] || 'cases';
     const s = SCREENS[Math.max(0, SCREENS.findIndex(x => x[0] === id))];
     document.getElementById('s-name').textContent = s[1];
-    document.title = s[1] + ' · Trace Prototype';
+    // The TRACE app runs inside the frame, opened at the chosen screen
+    const frame = document.getElementById('app-frame'), target = 'app.html#/' + s[0];
+    if (!frame.src.endsWith(target)) frame.src = target;
+    document.title = s[1] + ', Trace Prototype';
     show(viewer); prev = viewer;
     document.body.style.overflow = 'hidden';
     viewer.classList.remove('enter'); void viewer.offsetWidth; viewer.classList.add('enter');
@@ -336,9 +289,9 @@ function route(){
   document.body.style.overflow = '';
   const page = pages[h];
   if (page) {
-    document.title = (h === 'flow' ? 'The flow' : 'All screens') + ' · Trace Prototype';
+    document.title = (h === 'flow' ? 'The flow' : 'All screens') + ', Trace Prototype';
     show(page); scrollTo(0, 0);
-    if (started) page.querySelector('h2').setAttribute('tabindex','-1'), page.querySelector('h2').focus({preventScroll:true});
+    if (started) { const t = page.querySelector('h2'); t.setAttribute('tabindex','-1'); t.focus({preventScroll:true}); }
     prev = page; return;
   }
   const wasAway = started && prev !== home;
@@ -356,11 +309,6 @@ document.getElementById('back').addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !viewer.hidden) document.getElementById('back').click();
-});
-
-// Notes toggle: state only for now; note markers come later
-document.getElementById('notes').addEventListener('click', e => {
-  const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true');
 });
 </script>
 </body>
