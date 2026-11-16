@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trace Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="ds/tokens.css">
+<link rel="stylesheet" href="ds/components.css">
+<style>
+/* Landing-page layout only. Colours, type and components come from ds/ */
+html{scroll-behavior:smooth}
+.skip{position:absolute;left:16px;top:-60px;background:var(--text);color:var(--text-inverse);padding:10px 14px;border-radius:var(--r-sm);z-index:100}
+.skip:focus{top:12px}
+[hidden]{display:none!important}
+#main:focus,.sheet h2:focus{outline:none}
+
+/* ================= HOME ================= */
+.home{max-width:1440px;margin:0 auto;padding:0 var(--sp-12);min-height:100vh;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;height:72px;flex:none}
+.bar .brand{margin:0;padding:0;text-decoration:none!important;color:var(--text)}
+#main{flex:1;display:flex;flex-direction:column}
+
+.hero{flex:1;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:72px;align-items:center;padding:var(--sp-6) 0}
+
+/* Thumbnail: the real Cases screen, built from DS components and scaled to fit */
+.thumb{display:block;border-radius:var(--r-lg);text-decoration:none!important;color:inherit}
+.thumb-frame{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:var(--r-lg);border:1px solid var(--border-strong);background:var(--bg-app);box-shadow:var(--shadow-2);transition:box-shadow var(--dur) var(--ease),transform 400ms var(--ease)}
+.thumb:hover .thumb-frame{box-shadow:var(--shadow-3);transform:translateY(-2px)}
+.thumb-screen{position:absolute;left:0;top:0;width:1000px;height:625px;transform:scale(var(--s,.76));transform-origin:0 0;pointer-events:none;
+  /* Preview type is set larger so it stays readable after scaling (smallest text renders at about 10.5px) */
+  --fs-12:14px;--fs-13:15px;--fs-14:16px;--fs-16:20px;--fs-30:30px;--sidebar-w:216px}
+.thumb-screen .app{min-height:0;height:100%}
+.thumb-screen .content{padding-top:var(--sp-6)}
+.thumb-screen .page-hd{margin-bottom:var(--sp-5)}
+.thumb-cap{display:flex;justify-content:space-between;margin-top:var(--sp-3);font-size:var(--fs-13);color:var(--text-3)}
+.thumb-cap b{font-weight:600;color:var(--text-2)}
+
+.copy h1{font-size:64px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.copy .what{margin-top:var(--sp-5);font-size:var(--fs-20);line-height:1.4;letter-spacing:-.012em;color:var(--text);max-width:30ch;text-wrap:pretty}
+.copy .how{margin-top:var(--sp-3);font-size:var(--fs-14);line-height:1.55;color:var(--text-2);max-width:44ch;text-wrap:pretty}
+.facts{display:flex;gap:var(--sp-8);margin:var(--sp-8) 0;padding:var(--sp-4) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.facts div{font-size:var(--fs-13);color:var(--text-3)}
+.facts b{display:block;font-size:var(--fs-16);font-weight:600;color:var(--text)}
+
+.foot-nav{flex:none;display:flex;gap:var(--sp-2);justify-content:center;padding:var(--sp-5) 0 var(--sp-6)}
+
+/* ================= FLOW + ALL SCREENS PAGES ================= */
+.subpage{max-width:1440px;margin:0 auto;padding:0 var(--sp-12) var(--sp-12)}
+.sub-bar{height:64px;display:flex;align-items:center}
+.sheet{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-10) var(--sp-10)}
+.sheet-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-6);padding-bottom:var(--sp-4);border-bottom:1px solid var(--border)}
+.sheet-hd p{font-size:var(--fs-14);color:var(--text-2);max-width:56ch}
+
+.flow{list-style:none;margin:var(--sp-6) 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--sp-8) var(--sp-10)}
+.flow li{position:relative}
+.flow li::after{content:"";position:absolute;top:50%;right:-34px;width:28px;height:1px;background:var(--connector)}
+.flow li::before{content:"";position:absolute;top:calc(50% - 3px);right:-35px;width:6px;height:6px;border-top:1px solid var(--connector);border-right:1px solid var(--connector);transform:rotate(45deg)}
+.flow li:nth-child(5n)::after,.flow li:nth-child(5n)::before,.flow li:last-child::after,.flow li:last-child::before{display:none}
+.step{height:100%;min-height:112px;padding:var(--sp-4);background:var(--bg-sunken);border:1px solid var(--border);border-radius:var(--r-md)}
+.step .ix{font-size:var(--fs-12);font-weight:600;color:var(--text-3);font-variant-numeric:tabular-nums}
+.step h3{margin-top:var(--sp-4);font-size:var(--fs-14);font-weight:600}
+.step p{margin-top:2px;font-size:var(--fs-13);color:var(--text-3)}
+.branch{margin-top:var(--sp-10);padding-top:var(--sp-5);border-top:1px solid var(--border);display:grid;grid-template-columns:220px 1fr;gap:var(--sp-6)}
+.branch h3{font-size:var(--fs-14);font-weight:600}
+.branch>div>p{margin-top:4px;font-size:var(--fs-13);color:var(--text-3)}
+.branch ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+.branch .step{background:transparent;border-style:dashed;border-color:var(--border-strong);min-height:0}
+.branch .step h3{margin-top:var(--sp-3)}
+.ph-note{display:inline-block;margin-top:var(--sp-6)}
+
+.grid{list-style:none;margin:var(--sp-6) 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sp-6) var(--sp-5)}
+.shot a{display:block;border-radius:var(--r-md);color:inherit;text-decoration:none!important}
+.shot .frame{aspect-ratio:16/10;border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg-sunken);display:grid;place-items:center;font-size:var(--fs-13);color:var(--text-3);transition:border-color var(--dur-fast),box-shadow var(--dur)}
+.shot a:hover .frame{border-color:var(--border-strong);box-shadow:var(--shadow-2)}
+.shot .meta{display:flex;gap:var(--sp-2);align-items:baseline;margin-top:var(--sp-2)}
+.shot .meta i{font-style:normal;font-size:var(--fs-12);font-weight:600;color:var(--text-3);min-width:22px;font-variant-numeric:tabular-nums}
+.shot .meta b{font-size:var(--fs-14);font-weight:600}
+.sheet .foot{margin-top:var(--sp-8);font-size:var(--fs-13);color:var(--text-3)}
+
+/* ================= VIEWER ================= */
+.viewer{position:fixed;inset:0;background:var(--bg-app);display:flex;flex-direction:column;z-index:10}
+.vbar{height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 var(--sp-4)}
+.vbar-end{display:flex;align-items:center;gap:var(--sp-2)}
+.vsim{display:inline-flex;align-items:center;gap:6px;margin-right:var(--sp-2);font-size:var(--fs-12);color:var(--text-3)}
+.vsim .icon{width:13px;height:13px}
+.stage{flex:1;min-height:0;display:flex;padding:0 var(--sp-4) var(--sp-4)}
+.screen{flex:1;min-width:0;display:flex;overflow:hidden;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-2)}
+.screen iframe{flex:1;width:100%;height:100%;border:0;display:block}
+.viewer.enter .screen{animation:rise 450ms var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ================= HOME ================= -->
+<div class="home" id="home">
+  <header class="bar">
+    <a class="brand" href="#top" aria-label="Trace, back to top"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="t-title">
+      <div>
+        <a class="thumb" href="#prototype" aria-label="Open the prototype at the Cases screen">
+          <div class="thumb-frame">
+            <!-- The real Cases screen, rendered with DS components at 1280×800 and scaled down -->
+            <div class="thumb-screen" aria-hidden="true" inert>
+              <div class="app">
+                <aside class="sidebar">
+                  <div class="brand"><span class="brand-mark"><i data-icon="trace"></i></span>TRACE</div>
+                  <div class="nav-group">
+                    <span class="nav-item" aria-current="page"><i data-icon="cases"></i>Cases<span class="live"></span></span>
+                    <span class="nav-item"><i data-icon="record"></i>Decision records<span class="count">24</span></span>
+                    <span class="nav-item"><i data-icon="history"></i>Watching<span class="count">2</span></span>
+                  </div>
+                  <div class="nav-group">
+                    <span class="nav-label">Sources</span>
+                    <span class="nav-item"><i data-icon="monitor"></i>Monitoring</span>
+                    <span class="nav-item"><i data-icon="database"></i>Feature store</span>
+                    <span class="nav-item"><i data-icon="pipeline"></i>Pipeline logs</span>
+                  </div>
+                  <div class="spacer"></div>
+                  <span class="user"><span class="avatar">MR</span><span><b>Maya Rao</b><small>Data scientist</small></span></span>
+                </aside>
+                <div class="main">
+                  <div class="topbar"><span class="crumbs"><span aria-current="page">Cases</span></span><div class="end"><span class="agent-status"><span class="avatar agent"><i data-icon="trace"></i></span><span class="txt"><b>Trace</b> is investigating</span></span></div></div>
+                  <div class="content">
+                    <div class="page-hd"><div><p class="t-page">Cases</p><p class="sub">Trace opens a case when monitoring raises an alert.</p></div></div>
+                    <div class="card attention" style="margin-bottom:var(--sp-5)"><div class="card-bd">
+                      <div class="row gap-3"><span class="status" data-status="investigating"></span><span class="t-id">FR-2611</span></div>
+                      <p class="t-card" style="margin-top:var(--sp-5)">Precision dropped on the card fraud model</p>
+                      <div class="row gap-4" style="margin-top:var(--sp-3)"><span class="shift"><span class="was">91.2%</span><i class="to"></i><span class="now bad">83.2%</span></span><span class="t-meta">Opened Monday 08:30</span></div>
+                    </div></div>
+                    <div class="card"><table class="table">
+                      <thead><tr><th>Closed this month</th><th>Cause</th><th>Status</th></tr></thead>
+                      <tbody>
+                        <tr><td class="primary">Scoring slower than usual<span class="sub t-id">FR-2588</span></td><td>Server memory limit</td><td><span class="status" data-status="completed"></span></td></tr>
+                        <tr><td class="primary">More declines flagged in one region<span class="sub t-id">FR-2561</span></td><td>Real fraud spike</td><td><span class="status" data-status="completed"></span></td></tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+        <div class="thumb-cap"><span><b>Home screen</b>, Cases</span><span>Desktop app</span></div>
+      </div>
+
+      <div class="copy">
+        <h1 id="t-title">Trace</h1>
+        <p class="what">An investigation agent that finds why a production model got worse, and shows its evidence.</p>
+        <p class="how">Follow Maya, a data scientist, from a Monday precision alert to a fix she can approve and defend.</p>
+        <div class="facts">
+          <div><b>7 screens</b>Main flow</div>
+          <div><b>3 more</b>Edge cases</div>
+          <div><b>About 5 min</b>To click through</div>
+        </div>
+        <a class="btn btn-primary btn-lg" href="#prototype"><i data-icon="play"></i>Start prototype</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="foot-nav" aria-label="More about the prototype">
+    <a class="btn btn-soft" href="#flow">The flow</a>
+    <a class="btn btn-soft" href="#screens">View all screens</a>
+    <a class="btn btn-soft" href="design-system.html">Design system</a>
+  </nav>
+</div>
+
+<!-- ================= FLOW PAGE ================= -->
+<div class="subpage" id="page-flow" hidden>
+  <div class="sub-bar"><a class="btn btn-soft btn-sm" href="#top"><i data-icon="chevLeft"></i>Back</a></div>
+  <section class="sheet" aria-labelledby="flow-title">
+    <div class="sheet-hd">
+      <h2 class="t-section" id="flow-title">The flow</h2>
+      <p>How the prototype moves from the alert to the decision record.</p>
+    </div>
+    <ol class="flow">
+      <li><div class="step"><span class="ix">01</span><h3>Cases</h3><p>The alert arrives. Precision fell from 91% to 83% and fraud ops are complaining.</p></div></li>
+      <li><div class="step"><span class="ix">02</span><h3>Investigate</h3><p>Trace shows its plan and the four sources it will read. Maya starts it.</p></div></li>
+      <li><div class="step"><span class="ix">03</span><h3>Suspects</h3><p>Three possible causes with their evidence. Maya pushes back on the ranking.</p></div></li>
+      <li><div class="step"><span class="ix">04</span><h3>Root cause</h3><p>The diagnosis, how sure Trace is, what it ruled out and how it confirmed it.</p></div></li>
+      <li><div class="step"><span class="ix">05</span><h3>Decide</h3><p>The recommended fix, its risk and undo. Maya approves, rejects or asks for more.</p></div></li>
+      <li><div class="step"><span class="ix">06</span><h3>Watching</h3><p>The fix is applied by the data team. Trace checks precision recovers.</p></div></li>
+      <li><div class="step"><span class="ix">07</span><h3>Decision record</h3><p>Every step, who took it and when, for anyone who asks why.</p></div></li>
+    </ol>
+    <div class="branch">
+      <div><h3>When things aren't smooth</h3><p>Branches off the main flow.</p></div>
+      <ul>
+        <li><div class="step"><span class="ix">From step 02</span><h3>Low confidence</h3><p>A source doesn’t respond. Trace says it can’t be sure and asks to retry.</p></div></li>
+        <li><div class="step"><span class="ix">From step 03</span><h3>Conflicting evidence</h3><p>Two sources disagree. Trace finds out why before trusting either.</p></div></li>
+        <li><div class="step"><span class="ix">From step 04 or 06</span><h3>Wrong diagnosis</h3><p>Maya challenges the diagnosis. Trace re-investigates and keeps what it found.</p></div></li>
+      </ul>
+    </div>
+    
+  </section>
+</div>
+
+<!-- ================= ALL SCREENS PAGE ================= -->
+<div class="subpage" id="page-screens" hidden>
+  <div class="sub-bar"><a class="btn btn-soft btn-sm" href="#top"><i data-icon="chevLeft"></i>Back</a></div>
+  <section class="sheet" aria-labelledby="screens-title">
+    <div class="sheet-hd">
+      <h2 class="t-section" id="screens-title">All screens</h2>
+      <p>Every screen in the prototype. Select one to open it.</p>
+    </div>
+    <ul class="grid" id="grid"></ul>
+    <p class="foot">Thumbnails are placeholders until the screens are built.</p>
+  </section>
+</div>
+
+<!-- ================= VIEWER ================= -->
+<div class="viewer" id="viewer" hidden role="region" aria-label="Prototype">
+  <div class="vbar">
+    <a class="btn btn-soft btn-sm" href="#top" id="back"><i data-icon="chevLeft"></i>Back</a>
+    <div class="vbar-end">
+      <span class="vsim" title="Every name, number and date in this prototype is fictional"><i data-icon="flask"></i>Simulated scenario</span>
+      <button class="btn btn-soft btn-sm" type="button" id="proto-restart"><i data-icon="refresh"></i>Restart</button>
+      <button class="btn btn-soft btn-sm" type="button" id="notes" aria-pressed="false" title="Screen notes (coming soon)"><i data-icon="record"></i>Notes</button>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="screen" id="screen"><h1 class="sr" id="s-name">Cases</h1><iframe id="app-frame" title="TRACE prototype" src="about:blank"></iframe></div>
+  </div>
+</div>
+
+<script src="ds/icons.js"></script>
+<script>
+const SCREENS = [
+  ["cases","Cases"],["investigate","Investigate"],["suspects","Suspects"],["root-cause","Root cause"],
+  ["approve","Decide"],["watch","Watching"],["record","Decision record"],
+  ["low-confidence","Low confidence",1],["conflict","Conflicting evidence",1],["wrong","Wrong diagnosis",1]
+];
+const MAIN = SCREENS.filter(s => !s[2]).length;
+
+// all-screens grid
+document.getElementById('grid').innerHTML = SCREENS.map((s, i) => {
+  const ix = s[2] ? 'E' + (i - MAIN + 1) : String(i + 1).padStart(2, '0');
+  return `<li class="shot"><a href="#prototype/${s[0]}">
+    <div class="frame" aria-hidden="true">Placeholder</div>
+    <div class="meta"><i>${ix}</i><b>${s[1]}</b></div></a></li>`;
+}).join('');
+TRACE.paint();
+
+// Scale the real Cases screen to the thumbnail's width
+const frame = document.querySelector('.thumb-frame'), shot = document.querySelector('.thumb-screen');
+new ResizeObserver(() => shot.style.setProperty('--s', frame.clientWidth / 1000)).observe(frame);
+
+// Restart the prototype inside the frame: clear its saved state and go back to Cases
+document.getElementById('proto-restart').addEventListener('click', () => {
+  const w = document.getElementById('app-frame').contentWindow;
+  if (w && w.TRACE_RESTART) w.TRACE_RESTART();
+});
+
+// Notes button styling for its pressed state
+const notes = document.getElementById('notes');
+notes.addEventListener('click', () => {
+  const on = notes.getAttribute('aria-pressed') !== 'true';
+  notes.setAttribute('aria-pressed', on);
+  notes.style.background = on ? 'var(--bg-active)' : '';
+});
+
+// routing: #prototype[/screen] → viewer, #flow / #screens → their pages, anything else → home
+const home = document.getElementById('home'), viewer = document.getElementById('viewer');
+const pages = {flow: document.getElementById('page-flow'), screens: document.getElementById('page-screens')};
+let cameFromList = false, started = false, prev = null;
+function show(el){ [home, viewer, pages.flow, pages.screens].forEach(v => v.hidden = v !== el); }
+function route(){
+  const h = location.hash.slice(1);
+  if (h.startsWith('prototype')) {
+    cameFromList = started && prev !== viewer;
+    const id = h.split('/')[1] || 'cases';
+    const s = SCREENS[Math.max(0, SCREENS.findIndex(x => x[0] === id))];
+    document.getElementById('s-name').textContent = s[1];
+    // The TRACE app runs inside the frame, opened at the chosen screen
+    const frame = document.getElementById('app-frame'), target = 'app.html#/' + s[0];
+    if (!frame.src.endsWith(target)) frame.src = target;
+    document.title = s[1] + ', Trace Prototype';
+    show(viewer); prev = viewer;
+    document.body.style.overflow = 'hidden';
+    viewer.classList.remove('enter'); void viewer.offsetWidth; viewer.classList.add('enter');
+    document.getElementById('back').focus({preventScroll:true});
+    return;
+  }
+  document.body.style.overflow = '';
+  const page = pages[h];
+  if (page) {
+    document.title = (h === 'flow' ? 'The flow' : 'All screens') + ', Trace Prototype';
+    show(page); scrollTo(0, 0);
+    if (started) { const t = page.querySelector('h2'); t.setAttribute('tabindex','-1'); t.focus({preventScroll:true}); }
+    prev = page; return;
+  }
+  const wasAway = started && prev !== home;
+  document.title = 'Trace Prototype';
+  show(home); prev = home;
+  if (wasAway) { scrollTo(0, 0); document.getElementById('main').focus({preventScroll:true}); }
+}
+window.addEventListener('hashchange', route);
+route(); started = true;
+
+// Back from the viewer returns to the page the person came from
+document.getElementById('back').addEventListener('click', e => {
+  e.preventDefault();
+  if (cameFromList) history.back(); else location.hash = 'top';
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !viewer.hidden) document.getElementById('back').click();
+});
+</script>
+</body>
+</html>
