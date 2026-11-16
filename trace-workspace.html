@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TRACE Investigation Workspace</title>
+<title>VERITY Investigation Workspace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
-   TRACE v3: one workspace, four stages.
-   Voices: one sans (Schibsted Grotesk) for interface and TRACE; TRACE's writing carries the agent mark (option C),
+   VERITY v3: one workspace, four stages.
+   Voices: one sans (Schibsted Grotesk) for interface and VERITY; VERITY's writing carries the agent mark (option C),
            source data = Fragment Mono.
-   Colour has one job each: blue = TRACE, green = verified, amber = uncertain,
+   Colour has one job each: blue = VERITY, green = verified, amber = uncertain,
            red = degradation / error, ink = Maya, greys = supporting.
    ===================================================================== */
 :root{
@@ -30,7 +30,7 @@
   --shadow:0 1px 2px rgb(20 20 20/.05);
   --shadow-2:0 1px 2px rgb(20 20 20/.05),0 12px 32px -12px rgb(20 20 20/.18);
   --ease:cubic-bezier(.2,.8,.2,1);
-  --nav-w:212px; --panel-w:384px; --top-h:56px; --frame:#f1f1ee;
+  --pb-h:32px; --pb-t:8px; --nav-w:212px; --panel-w:384px; --top-h:56px; --frame:#f1f1ee;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -87,8 +87,8 @@ a{color:var(--agent)}
 .av.sm{width:20px;height:20px;font-size:10px}.av.sm .icon{width:11px;height:11px}
 
 /* ================= Start screen (outside the product) ================= */
-.start{position:fixed;inset:0;overflow:auto;background:var(--rail)}
-.start-in{max-width:1080px;margin:0 auto;padding:56px 40px 48px}
+.start{position:fixed;inset:0;overflow:auto;background:var(--rail);display:flex}
+.start-in{width:100%;max-width:1080px;margin:auto;padding:48px 40px}
 .mark{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.06em;font-size:14px}
 .brand-mark{width:26px;height:26px;border-radius:7px;background:var(--text);display:grid;place-items:center;color:#fff;flex:none}
 .brand-mark .icon{width:15px;height:15px}
@@ -121,18 +121,21 @@ a{color:var(--agent)}
 .stats .arr{align-self:center;width:16px;height:1px;background:var(--dot);position:relative}
 .stats .arr::after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid var(--dot);border-right:1px solid var(--dot);transform:rotate(45deg)}
 .edges{display:grid;gap:10px;align-content:start}
-.edges-h{font-size:13px;font-weight:600;color:var(--text-2)}
+.edges-h{font-size:13px;font-weight:600;color:var(--text-2);min-height:26px;display:flex;align-items:center}
+#edges-h{margin-bottom:2px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.edges-h .jump{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 11px 0 9px;border-radius:var(--r-full);background:var(--agent);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:0}
+.edges-h .jump .icon{width:14px;height:14px;stroke-width:2.2}
 .edge{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:start;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-lg);background:#fff;box-shadow:var(--shadow);transition:border-color .15s,box-shadow .15s}
-.edge:hover{border-color:var(--line-2);box-shadow:var(--shadow-2)}
+.edge:hover{border-color:var(--agent-line);box-shadow:var(--shadow-2)}
 .edge .ei{width:32px;height:32px;border-radius:8px;display:grid;place-items:center}
 .edge .ei.warn{background:var(--warn-soft);color:var(--warn)}
 .edge .ei.bad{background:var(--bad-soft);color:var(--bad)}
 .edge b{display:block;font-size:14px;font-weight:600}
 .edge span.d{display:block;margin-top:2px;font-size:13px;line-height:1.45;color:var(--text-3)}
 .edge span.w{display:block;margin-top:6px;font-size:12px;color:var(--text-3)}
-.edge .go-ar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--text-3);transition:background .15s,color .15s,transform .15s}
+.edge .go-ar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--agent);background:var(--agent-soft);transition:background .15s,color .15s,transform .15s}
 .edge .go-ar .icon{width:15px;height:15px}
-.edge:hover .go-ar{background:var(--agent-soft);color:var(--agent);transform:translate(1px,-1px)}
+.edge:hover .go-ar{background:var(--agent);color:#fff;transform:translate(1px,-1px)}
 .start-foot{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-top:24px;border-top:1px solid var(--line)}
 .start-foot h3{font-size:13px}
 .start-foot p,.start-foot li{font-size:13px;color:var(--text-2)}
@@ -141,7 +144,19 @@ a{color:var(--agent)}
 
 /* ================= App shell ================= */
 /* Frame: nav and header sit flat on a light frame; main and the two panel sections float as rounded boxes */
-.app{--gap:10px;display:grid;grid-template-columns:var(--nav-w) minmax(0,1fr) var(--panel-w);grid-template-rows:minmax(0,1fr);column-gap:var(--gap);height:100vh;padding:var(--gap) var(--gap) var(--gap) 0;background:var(--frame)}
+.app{--gap:10px;display:grid;grid-template-columns:var(--nav-w) minmax(0,1fr) var(--panel-w);grid-template-rows:minmax(0,1fr);column-gap:var(--gap);height:calc(100vh - var(--pb-h) - var(--pb-t));margin:var(--pb-t) 8px var(--pb-h);padding:var(--gap) var(--gap) var(--gap) 0;background:var(--frame);border:1px solid var(--line-2);border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgb(0 0 0/.25)}
+body:has(#app:not([hidden])){background:#3a3a3e}
+.proto-bar{position:fixed;left:0;right:0;display:flex;align-items:center;gap:2px;padding:0 14px;font-size:11px;color:rgb(255 255 255/.5);z-index:5}
+.pb-data{margin-left:auto}
+.proto-bar{bottom:0;height:var(--pb-h)}
+body:has(#app[hidden]) .proto-bar{display:none}
+.pb-btn{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border:0;border-radius:6px;background:none;font-size:11px;color:rgb(255 255 255/.55)}
+.pb-btn:hover{background:rgb(255 255 255/.08);color:rgb(255 255 255/.9)}
+.pb-btn .icon{width:11px;height:11px}
+.pb-sep{width:1px;height:14px;background:rgb(255 255 255/.4);margin:0 10px}
+.pb-lbl{margin-right:4px;color:rgb(255 255 255/.4)}
+.pb-btn.sc[aria-current="true"]{background:rgb(255 255 255/.12);color:#fff}
+.pb-btn:focus-visible{outline:2px solid rgb(255 255 255/.7);outline-offset:1px}
 .nav .brand{min-height:40px;padding:0 10px}
 .nav-top{display:flex;align-items:center;gap:2px;margin-bottom:14px}
 .nav-top .brand{flex:1;min-width:0}
@@ -150,7 +165,7 @@ a{color:var(--agent)}
 /* Main box top row: breadcrumb left, case vitals right */
 .m-bar{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 32px;border-bottom:1px solid var(--line);flex:none}
 .m-bar .end{margin-left:auto;display:flex;align-items:center;gap:8px}
-/* TRACE agent header: identity, status, notifications */
+/* VERITY agent header: identity, status, notifications */
 .p-agent{display:flex;align-items:center;gap:10px;min-height:54px;padding:0 10px 0 14px;border-bottom:1px solid var(--line);flex:none}
 .p-agent .nm{font-weight:700;letter-spacing:.04em;font-size:13px}
 .p-agent .end{margin-left:auto;display:flex;align-items:center;gap:2px}
@@ -198,10 +213,6 @@ a{color:var(--agent)}
 .conn-line .icon{margin-left:auto;width:13px;height:13px;color:var(--text-3)}
 .conn-line .dotst{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none}
 .conn-line .dotst.warn{background:var(--warn)}
-.sim-line{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;margin-top:-8px;padding:0 10px;border:0;border-radius:var(--r-sm);background:none;font-size:12.5px;color:var(--text-3);text-align:left}
-.sim-line:hover{background:rgb(0 0 0/.045);color:var(--text)}
-.sim-line .icon{width:13px;height:13px}
-.nav-min .sim-line{justify-content:center;padding:0}.nav-min .sim-line .lbl{display:none}
 /* Overview: one case block that ends in the next step, then quiet ruled lists */
 .ov{max-width:940px;container-type:inline-size}
 .ov-hd{display:flex;align-items:baseline;gap:16px}
@@ -270,8 +281,6 @@ a{color:var(--agent)}
 .me b{display:block;font-weight:600;font-size:13px;line-height:1.2}
 .me span.r{display:block;font-size:12px;color:var(--text-3)}
 .me .iconbtn{margin-left:auto}
-.proto{display:flex;gap:6px;padding:0 4px}
-.proto .btn{flex:1}
 
 /* Main column */
 .main{display:flex;flex-direction:column;min-height:0;background:#fff;position:relative;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
@@ -319,7 +328,7 @@ a{color:var(--agent)}
 .card-in{padding:18px 20px}
 .ruled>*+*{border-top:1px solid var(--line)}
 
-/* TRACE speaking */
+/* VERITY speaking */
 .tnote{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start}
 .tnote .who{font-size:12px;font-weight:600;color:var(--agent);display:flex;gap:8px;align-items:center}
 .tnote .who time{font:400 11px/1 var(--mono);color:var(--text-3)}
@@ -653,7 +662,7 @@ button.sim-tag:hover{border-style:solid;color:var(--text)}
 .table tr.click:hover td{background:var(--rail)}
 .table tr:last-child td{border-bottom:0}
 
-/* ================= Right TRACE panel ================= */
+/* ================= Right VERITY panel ================= */
 .panel{background:none;display:flex;flex-direction:column;gap:var(--gap,10px);min-height:0}
 .p-upper{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
 .p-hd{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 10px 0 16px;border-bottom:1px solid var(--line);background:var(--rail);flex:none}
@@ -663,7 +672,7 @@ button.sim-tag:hover{border-style:solid;color:var(--text)}
 .p-back:hover{background:var(--hover);color:var(--text)}
 .p-bd{flex:1;min-height:0;overflow:auto;padding:16px}
 .p-bd h3{font-size:16px;line-height:1.3}
-/* TRACE mark (voice option C): a small agent mark beside each block TRACE wrote; text stays neutral */
+/* VERITY mark (voice option C): a small agent mark beside each block VERITY wrote; text stays neutral */
 :root{--mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20l4.5-5.5 4 3L15 13'/%3E%3Ccircle cx='18' cy='9.5' r='3.5'/%3E%3C/svg%3E")}
 .lead h4,.rec h3,.claim,.p-int,.paused .voice,.obsbtn .voice,.d-sec .voice{position:relative;padding-left:28px}
 .lead h4~p,.rec h3~.why{padding-left:28px}
@@ -671,7 +680,7 @@ button.sim-tag:hover{border-style:solid;color:var(--text)}
 .ai-inline{position:relative;padding-left:22px;display:inline-block}
 .ai-inline::before{width:16px;height:16px;top:calc(.5lh - 8px);background-size:10px}
 
-/* Panel type scale: TRACE voice 14, body 13, secondary 12, data 12 mono, heading 15 */
+/* Panel type scale: VERITY voice 14, body 13, secondary 12, data 12 mono, heading 15 */
 .panel .voice{font-size:14px;line-height:1.55}
 .panel .tnote .who time{font-size:12px}
 .panel .mono{font-size:12px}
@@ -774,12 +783,11 @@ button.prow:hover{background:var(--rail)}
 /* Collapsed sidebar: Maya's choice via the toggle, forced below 1060px */
 .app{transition:grid-template-columns .22s var(--ease)}
 .app.nav-min{--nav-w:64px}
-.nav-min .nav-item span.lbl,.nav-min .nav-item .count,.nav-min .conn ul,.nav-min .conn p,.nav-min .me div,.nav-min .proto .btn span{display:none}
+.nav-min .nav-item span.lbl,.nav-min .nav-item .count,.nav-min .conn ul,.nav-min .conn p,.nav-min .me div{display:none}
 .nav-min .nav-item{justify-content:center;padding:0}
 .nav-min .conn{padding:8px;display:grid;place-items:center}
 .nav-min .conn-hd span{display:none}
 .nav-min .me{justify-content:center;padding:4px 0}.nav-min .me .iconbtn{display:none}
-.nav-min .proto{flex-direction:column;padding:0}
 .nav-min .nav .brand{font-size:0;gap:0;justify-content:center;padding:0;width:auto}
 .nav-min .nav-top{flex-direction:column;gap:6px;padding-bottom:12px;margin:0 6px 12px;border-bottom:1px solid var(--line-2)}
 .nav-min .conn-line{justify-content:center;padding:0}.nav-min .conn-line .lbl,.nav-min .conn-line .icon{display:none}
@@ -794,6 +802,9 @@ button.prow:hover{background:var(--rail)}
   .ev3>div+div,.cgrid>div+div,.summary>div+div,.metrics>div+div{border-left:0;border-top:1px solid var(--line)}
   .stg .s{display:none}
   .routes,.start-foot{grid-template-columns:1fr}
+  #start-chart .chart{max-height:200px}
+  .edges{grid-template-columns:repeat(3,minmax(0,1fr))}.edges-h{grid-column:1/-1}
+  .edge{grid-template-columns:1fr auto}.edge .ei{grid-column:1;margin-bottom:2px}.edge>span:nth-child(2){grid-column:1/-1}.edge .go-ar{grid-row:1;grid-column:2}
 }
 </style>
 </head>
@@ -804,7 +815,7 @@ button.prow:hover{background:var(--rail)}
 <div class="start" id="start" role="region" aria-labelledby="start-title">
   <div class="start-in">
     <header class="start-hero">
-      <div class="mark"><span class="brand-mark" aria-hidden="true"><i data-i="trace"></i></span><h1 id="start-title">TRACE</h1></div>
+      <div class="mark"><span class="brand-mark" aria-hidden="true"><i data-i="trace"></i></span><h1 id="start-title">VERITY</h1></div>
       <p class="lede">An investigation agent for ML models. It shows its work, and leaves the decision with you.</p>
     </header>
 
@@ -817,17 +828,15 @@ button.prow:hover{background:var(--rail)}
         <dl class="stats" aria-label="The scenario in numbers">
           <div><dt>Precision</dt><dd><span class="mono">91.2%</span><i class="arr" aria-hidden="true"></i><span class="mono bad">83.2%</span></dd></div>
           <div><dt>Alert to diagnosis</dt><dd><span class="mono was">~4 h</span><i class="arr" aria-hidden="true"></i><span class="mono">~5 min</span></dd></div>
-          <div><dt>Sources TRACE reads</dt><dd><span class="mono">4</span><small>read-only</small></dd></div>
-          <div><dt>Production changes</dt><dd><span class="mono">0</span><small>without Maya’s approval</small></dd></div>
         </dl>
           <div class="go"><button class="btn btn-ink btn-lg" data-scenario="main"><i data-i="search"></i>Start prototype</button><span>Alert to decision, about six minutes</span></div>
         </div>
       </div>
       <section class="edges" aria-labelledby="edges-h">
-        <h2 id="edges-h" class="edges-h">When trust is on the line</h2>
-        <button class="edge" data-scenario="low"><span class="ei warn"><i data-i="cloudoff"></i></span><span><b>Low confidence</b><span class="d">Data Pipeline Logs stop responding mid-investigation. TRACE holds back a root cause.</span><span class="w">Starts at Investigation</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
-        <button class="edge" data-scenario="conflict"><span class="ei warn"><i data-i="split"></i></span><span><b>Conflicting evidence</b><span class="d">Feature Store and Data Pipeline Logs disagree. TRACE won’t pick a side until it rechecks.</span><span class="w">Starts at Findings</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
-        <button class="edge" data-scenario="wrong"><span class="ei bad"><i data-i="undo"></i></span><span><b>Wrong diagnosis</b><span class="d">The fix only partly works. Maya adds context and TRACE revises its diagnosis.</span><span class="w">Starts at Decision, after the fix</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
+        <h2 id="edges-h" class="edges-h"><span class="jump"><i data-i="arrowur"></i>Jump to</span>When trust is on the line</h2>
+        <button class="edge" data-scenario="low"><span class="ei warn"><i data-i="cloudoff"></i></span><span><b>Low confidence</b><span class="d">Data Pipeline Logs stop responding mid-investigation. VERITY holds back a root cause.</span><span class="w">Starts at Investigation</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
+        <button class="edge" data-scenario="conflict"><span class="ei warn"><i data-i="split"></i></span><span><b>Conflicting evidence</b><span class="d">Feature Store and Data Pipeline Logs disagree. VERITY won’t pick a side until it rechecks.</span><span class="w">Starts at Findings</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
+        <button class="edge" data-scenario="wrong"><span class="ei bad"><i data-i="undo"></i></span><span><b>Wrong diagnosis</b><span class="d">The fix only partly works. Maya adds context and VERITY revises its diagnosis.</span><span class="w">Starts at Decision, after the fix</span></span><span class="go-ar" aria-hidden="true"><i data-i="arrowur"></i></span></button>
       </section>
     </div>
 
@@ -840,10 +849,21 @@ button.prow:hover{background:var(--rail)}
 </div>
 
 <!-- ===== The product ===== -->
+<div class="proto-bar" role="region" aria-label="Prototype controls">
+  <button class="pb-btn" data-act="restart"><i data-i="restart"></i>Restart</button>
+  <button class="pb-btn" data-act="home"><i data-i="home"></i>Start screen</button>
+  <span class="pb-sep" aria-hidden="true"></span>
+  <span class="pb-lbl">Jump to</span>
+  <button class="pb-btn sc" data-scenario="main">Main scenario</button>
+  <button class="pb-btn sc" data-scenario="low"><i data-i="cloudoff"></i>Low confidence</button>
+  <button class="pb-btn sc" data-scenario="conflict"><i data-i="split"></i>Conflicting evidence</button>
+  <button class="pb-btn sc" data-scenario="wrong"><i data-i="undo"></i>Wrong diagnosis</button>
+  <button class="pb-btn pb-data" data-panel="assumptions"><i data-i="flask"></i>Illustrative data</button>
+</div>
 <div class="app" id="app" hidden>
   <nav class="nav" id="nav" aria-label="Primary"></nav>
   <main class="main" id="main"></main>
-  <aside class="panel" id="panel" aria-label="TRACE panel"></aside>
+  <aside class="panel" id="panel" aria-label="VERITY panel"></aside>
 </div>
 <div id="drawer-root"></div>
 <div id="pop-root"></div>
@@ -915,9 +935,9 @@ const EV = {
   rename:{ src:'pl', title:'Upstream field renamed', obs:'txn_feature_enrichment run 8812 renamed merchant_category → merchant_cat_code for the card-network feed at Sat 01:55. No other schema or infrastructure changes since Fri.', q:'Schema changes, job runs and infrastructure events since Fri 13 Nov 00:00', when:'Mon 16 Nov 08:04', win:'Fri 13 Nov 00:00 → now', ba:[['Field before','merchant_category'],['Field after','merchant_cat_code','bad']], interp:'The card-network feed carries about a third of payments, which matches the 31.7% gap. The model’s input still asks for the old name.', lim:'Shows a likely mechanism. MLOps needs to confirm the mapping in the model input pipeline.', raw:'job txn_feature_enrichment  run 8812\n01:55:12Z schema change (card_network): merchant_category -> merchant_cat_code\n01:58:40Z status=succeeded rows=1,204,331 failed=0\nno deploys or config changes since Fri 13 Nov', rel:{ h1:'sup' } },
   job:{ src:'pl', title:'Enrichment job reported success', obs:'txn_feature_enrichment run 8812: succeeded, 1,204,331 rows, 0 failed.', q:'Job status for txn_feature_enrichment since Fri 13 Nov', when:'Mon 16 Nov 08:04', win:'Sat 14 Nov 01:55 – 01:58', ba:[['Status','succeeded','ok'],['Failed rows','0','ok']], interp:'On its own this says the data loaded fine, which conflicts with the empty field in the Feature Store.', lim:'Job status reports row counts, not column names.', raw:'job txn_feature_enrichment  run 8812\nstatus=succeeded rows=1,204,331 failed=0', rel:{ h1:'con' } },
   schema:{ src:'fs', title:'Column names differ across the job', obs:'Pipeline writes merchant_cat_code. The model’s Feature Store input still reads merchant_category, which is null for card-network rows.', q:'Compare column names written by run 8812 with the model’s feature definition', when:'Mon 16 Nov 08:11', win:'Run 8812 output vs feature view fraud_v14_inputs', ba:[['Written','merchant_cat_code'],['Read by model','merchant_category','bad']], interp:'Both sources were right. Every row loaded, but under a new name, so the model reads an empty field.', lim:'Read-only comparison. MLOps owns the fix.', raw:'run 8812 output columns: ..., merchant_cat_code, ...\nfeature view fraud_v14_inputs reads: merchant_category\ncard_network rows with merchant_category = null: 100%', rel:{ h1:'sup' } },
-  reg:{ src:'mr', title:'No model release in the window', obs:'card-fraud-xgb v14 in production since Wed 21 Oct. No new versions or deployments since. v13 reads the same input.', q:'Versions and deployments of card-fraud-xgb', when:'Mon 16 Nov 08:05', win:'Wed 21 Oct → now', ba:[['In production','v14 since 21 Oct'],['Deploys since','0','ok']], interp:'Rules out a bad model release. Rolling back to v13 would not help, because v13 uses the same missing input.', lim:'The Model Registry is not the Experiment Tracker. TRACE cannot see experiment runs.', raw:'card-fraud-xgb\n  v14  Production  deployed Wed 21 Oct  inputs incl. merchant_category\n  v13  Archived    deployed Wed 02 Sep  inputs incl. merchant_category', rel:{ h1:'sup', h3:'con' } },
-  thr:{ src:'mon', title:'Decision threshold lowered on Friday', obs:'Annotation: threshold 0.82 → 0.78 at Fri 13 Nov 17:00 (rule FR-R12, set by Fraud Ops). Planned impact: 2.1% more payments flagged.', q:'Threshold and alert-configuration annotations around the drop', when:'Mon 16 Nov 08:06', win:'Fri 13 Nov 00:00 → now', ba:[['Before','0.82'],['After','0.78','bad']], interp:'A lower threshold flags more payments, so it can lower precision. It started 10 hours before the main drop.', lim:'TRACE sees the annotation in Model Monitoring, not Fraud Ops’ rule system.', raw:'annotation  Fri 13 Nov 17:00Z\nrule FR-R12 (owner: Fraud Ops)\ndecision threshold 0.82 -> 0.78\nplanned impact +2.1% flagged', rel:{ h2:'sup' } },
-  thrCheck:{ src:'mon', title:'Precision held after the threshold change', obs:'Fri 17:00 – Sat 02:00: precision 90.9% (baseline 91.2%). Score band 0.78–0.82 was 2.4% of flags.', q:'Hourly precision between the threshold change and the rename, plus flag share by score band', when:'Mon 16 Nov 08:13', win:'Fri 13 Nov 17:00 – Sat 14 Nov 02:00', ba:[['Precision before','91.2%'],['Fri 17:00 – Sat 02:00','90.9%']], interp:'If the threshold were the main cause, precision would have dropped from Friday evening. It barely moved until the rename.', lim:'Only 12% of Friday-night flags in the 0.78–0.82 band had analyst reviews when TRACE checked.', raw:'window Fri 17:00 – Sat 02:00\nprecision 0.909  (baseline 0.912)\nflags in band 0.78–0.82: 2.4%\nanalyst reviews complete for band: 12%', rel:{ h2:'con' } },
+  reg:{ src:'mr', title:'No model release in the window', obs:'card-fraud-xgb v14 in production since Wed 21 Oct. No new versions or deployments since. v13 reads the same input.', q:'Versions and deployments of card-fraud-xgb', when:'Mon 16 Nov 08:05', win:'Wed 21 Oct → now', ba:[['In production','v14 since 21 Oct'],['Deploys since','0','ok']], interp:'Rules out a bad model release. Rolling back to v13 would not help, because v13 uses the same missing input.', lim:'The Model Registry is not the Experiment Tracker. VERITY cannot see experiment runs.', raw:'card-fraud-xgb\n  v14  Production  deployed Wed 21 Oct  inputs incl. merchant_category\n  v13  Archived    deployed Wed 02 Sep  inputs incl. merchant_category', rel:{ h1:'sup', h3:'con' } },
+  thr:{ src:'mon', title:'Decision threshold lowered on Friday', obs:'Annotation: threshold 0.82 → 0.78 at Fri 13 Nov 17:00 (rule FR-R12, set by Fraud Ops). Planned impact: 2.1% more payments flagged.', q:'Threshold and alert-configuration annotations around the drop', when:'Mon 16 Nov 08:06', win:'Fri 13 Nov 00:00 → now', ba:[['Before','0.82'],['After','0.78','bad']], interp:'A lower threshold flags more payments, so it can lower precision. It started 10 hours before the main drop.', lim:'VERITY sees the annotation in Model Monitoring, not Fraud Ops’ rule system.', raw:'annotation  Fri 13 Nov 17:00Z\nrule FR-R12 (owner: Fraud Ops)\ndecision threshold 0.82 -> 0.78\nplanned impact +2.1% flagged', rel:{ h2:'sup' } },
+  thrCheck:{ src:'mon', title:'Precision held after the threshold change', obs:'Fri 17:00 – Sat 02:00: precision 90.9% (baseline 91.2%). Score band 0.78–0.82 was 2.4% of flags.', q:'Hourly precision between the threshold change and the rename, plus flag share by score band', when:'Mon 16 Nov 08:13', win:'Fri 13 Nov 17:00 – Sat 14 Nov 02:00', ba:[['Precision before','91.2%'],['Fri 17:00 – Sat 02:00','90.9%']], interp:'If the threshold were the main cause, precision would have dropped from Friday evening. It barely moved until the rename.', lim:'Only 12% of Friday-night flags in the 0.78–0.82 band had analyst reviews when VERITY checked.', raw:'window Fri 17:00 – Sat 02:00\nprecision 0.909  (baseline 0.912)\nflags in band 0.78–0.82: 2.4%\nanalyst reviews complete for band: 12%', rel:{ h2:'con' } },
   seg:{ src:'mon', title:'Customer-segment mix barely moved', obs:'Segment shares moved ≤ 0.6 pp vs the prior 4 weeks. Precision fell 7–9 pp inside every segment.', q:'Aggregated segment shares and per-segment precision (no customer-level records)', when:'Mon 16 Nov 08:16', win:'Sat 14 – Mon 16 Nov vs prior 4 weeks', ba:[['Largest share shift','0.6 pp'],['Precision drop per segment','7–9 pp','bad']], interp:'The drop is spread across every segment, so a mix shift explains under 0.3 pp of it. More consistent with an input problem.', lim:'Uses aggregates only.', raw:'segment          share Δ   precision Δ\nretail           +0.4 pp   −8.1 pp\nsmall business   −0.6 pp   −7.4 pp\npremium          +0.1 pp   −8.9 pp\nnew-to-bank      +0.1 pp   −7.8 pp', rel:{ h4:'con' } },
   band:{ src:'mon', title:'Threshold band precision, reviews complete', obs:'Score band 0.78–0.82: 9.8% of weekend flags, precision 41% (reviews 96% complete). Estimated cost to overall precision ≈ 3 pp.', q:'Re-read precision by score band with completed analyst reviews, Fri 13 – Thu 19 Nov', when:'Thu 19 Nov 15:13', win:'Fri 13 Nov 17:00 – Thu 19 Nov 14:00', ba:[['Planned band share','2.1%'],['Actual weekend share','9.8%','bad']], interp:'Weekend card traffic sits much closer to the threshold than Friday traffic. The threshold change cost about 3 points by itself.', lim:'Chargebacks have now arrived and agree with the analyst reviews.', raw:'score band 0.78–0.82\nshare of flags  Fri night 2.4%   weekend 9.8%\nprecision       41%\nreviews complete 96%\nestimated overall precision cost ≈ 0.030', rel:{ h2:'sup' } },
   recov:{ src:'mon', title:'Precision after the mapping fix', obs:'', q:'Hourly precision, recall and merchant_category completeness since CR-1187 went live', when:'', win:'Mon 16 Nov 14:20 → Thu 19 Nov 14:20', interp:'', lim:'Illustrative monitoring data.', raw:'', chart:'recov' }
@@ -925,16 +945,16 @@ const EV = {
 // Documented assumptions: everything the brief didn't specify and the prototype invents
 const ASSUME = [
   ['Organisation', 'A fictional mid-size bank. Maya owns card-fraud-xgb v14, which scores every card payment through a real-time API.'],
-  ['TRACE’s access', 'Read-only access to Model Monitoring, Feature Store, Data Pipeline Logs and Model Registry, as the brief states. No access to the Experiment Tracker, Fraud Ops’ rule system or customer-level records.'],
-  ['Today’s effort', 'About half a day per investigation, from the brief. The ~5-minute TRACE figure is a simulated target, not a measurement.'],
+  ['VERITY’s access', 'Read-only access to Model Monitoring, Feature Store, Data Pipeline Logs and Model Registry, as the brief states. No access to the Experiment Tracker, Fraud Ops’ rule system or customer-level records.'],
+  ['Today’s effort', 'About half a day per investigation, from the brief. The ~5-minute VERITY figure is a simulated target, not a measurement.'],
   ['Precision measure', 'Daily evaluation on fraud-analyst reviews, alerting below 85%. Bank chargebacks confirm fraud 2–3 days later.'],
   ['Baseline', '91.2% precision and 88.9% recall, measured over the prior 28 days.'],
   ['Root cause', 'A schema change in txn_feature_enrichment renamed merchant_category for the card-network feed, about a third of payment volume.'],
-  ['Competing cause', 'Fraud Ops lowered decision threshold FR-R12 from 0.82 to 0.78 on Friday. It is visible to TRACE only as a Model Monitoring annotation.'],
-  ['Who changes production', 'MLOps own the feature pipeline; Fraud Ops own decision rules. Maya approves; those teams execute. TRACE never changes production.'],
+  ['Competing cause', 'Fraud Ops lowered decision threshold FR-R12 from 0.82 to 0.78 on Friday. It is visible to VERITY only as a Model Monitoring annotation.'],
+  ['Who changes production', 'MLOps own the feature pipeline; Fraud Ops own decision rules. Maya approves; those teams execute. VERITY never changes production.'],
   ['Recovery criteria', 'Over a 72-hour window: precision within 1 pp of baseline, recall ≥ 88%, merchant_category empty below 1%, and Fraud Ops reporting normal review volume.'],
   ['Simulated responses', 'MLOps and Fraud Ops replies, deployment times and all post-decision metrics are simulated to show how the flow would behave.'],
-  ['Not estimated', 'Customer or financial impact. TRACE has no data to support a figure, so none is shown.']
+  ['Not estimated', 'Customer or financial impact. VERITY has no data to support a figure, so none is shown.']
 ];
 const GAP = { title:'Chargebacks not in yet', note:'Precision so far uses fraud-analyst reviews. Bank chargebacks, the final confirmation of fraud for 14–16 Nov, arrive by Wed 18 Nov.' };
 const STEPS = [
@@ -970,7 +990,7 @@ const fresh = (scenario = 'main') => ({
   log:[
     { t:'Sun 15 Nov 08:05', who:'ops', name:'Dan Okafor, Fraud Ops', what:'Reported more false positives since Saturday', det:'Human-reported observation, not a verified metric' },
     { t:'Mon 16 Nov 07:40', who:'sys', name:'Model Monitoring', what:'Alert: precision 83.2%, below the 85% alert level (baseline 91.2%)' },
-    { t:'Mon 16 Nov 07:41', who:'trace', name:'TRACE', what:'Opened case FR-2041 and confirmed the drop is real', det:'Checked the hourly series for gaps and sampling changes. None found.' }
+    { t:'Mon 16 Nov 07:41', who:'trace', name:'VERITY', what:'Opened case FR-2041 and confirmed the drop is real', det:'Checked the hourly series for gaps and sampling changes. None found.' }
   ],
   seen:[]
 });
@@ -996,8 +1016,8 @@ function hyps() {
     whyFirst:'It is the only explanation that matches the timing to the hour, the size of the gap (the card-network feed is about a third of volume) and the kind of error (more false positives, recall unchanged).',
     for:['miss','rename','reg'], against:[], gap:['gap','mlops'] };
   if (mlopsOk) { h1.conf = 'High'; h1.confWhy = 'MLOps confirmed the mapping mismatch in a staging replay. Chargebacks still pending.'; h1.gap = ['gap']; h1.for = ['miss','rename','reg','mlops']; }
-  if (isLow()) { h1.title = 'merchant_category stopped arriving, but TRACE can’t yet see why.'; h1.expl = 'The field went empty minutes before precision fell. Without Data Pipeline Logs, a renamed field, a failed job and a feed outage all fit.'; h1.conf = 'Low'; h1.confWhy = 'One of four sources is unavailable, and it is the one that would explain the missing field.'; h1.for = ['miss','reg']; h1.gap = ['plOff','gap']; h1.whyFirst = 'The missing input is the only change that lines up with the drop, but its cause is unknown.'; }
-  if (conflictOpen()) { h1.title = 'merchant_category went missing upstream, but two sources disagree.'; h1.expl = 'Feature Store shows the field empty for 31.7% of payments. Data Pipeline Logs say the job loaded every row without errors.'; h1.conf = 'Low'; h1.confWhy = 'Feature Store and Data Pipeline Logs contradict each other.'; h1.for = ['miss','reg']; h1.against = ['job']; h1.gap = ['conflict']; h1.whyFirst = 'It still has the best timing fit, but TRACE won’t rank it with confidence until the conflict is explained.'; }
+  if (isLow()) { h1.title = 'merchant_category stopped arriving, but VERITY can’t yet see why.'; h1.expl = 'The field went empty minutes before precision fell. Without Data Pipeline Logs, a renamed field, a failed job and a feed outage all fit.'; h1.conf = 'Low'; h1.confWhy = 'One of four sources is unavailable, and it is the one that would explain the missing field.'; h1.for = ['miss','reg']; h1.gap = ['plOff','gap']; h1.whyFirst = 'The missing input is the only change that lines up with the drop, but its cause is unknown.'; }
+  if (conflictOpen()) { h1.title = 'merchant_category went missing upstream, but two sources disagree.'; h1.expl = 'Feature Store shows the field empty for 31.7% of payments. Data Pipeline Logs say the job loaded every row without errors.'; h1.conf = 'Low'; h1.confWhy = 'Feature Store and Data Pipeline Logs contradict each other.'; h1.for = ['miss','reg']; h1.against = ['job']; h1.gap = ['conflict']; h1.whyFirst = 'It still has the best timing fit, but VERITY won’t rank it with confidence until the conflict is explained.'; }
   if (S.conflict === 'resolved') { h1.for = ['miss','schema','reg'].concat(mlopsOk ? ['mlops'] : []); }
   if (revised()) { h1.status = 'Partial cause, fixed'; h1.tone = 'ok'; h1.title = 'The field rename explains about 5 of the 8 points. The mapping fix restored it.'; h1.conf = 'High'; h1.confWhy = 'Completeness recovered and precision rose by about 5 points after CR-1187.'; }
 
@@ -1009,28 +1029,28 @@ function hyps() {
   if (revised()) { h2.status = 'Contributing cause, open'; h2.tone = 'bad'; h2.rank = 1; h2.title = 'Friday’s threshold change explains the remaining ~3 points.'; h2.expl = 'Weekend traffic sat much closer to the threshold than Friday traffic: the 0.78–0.82 band was 9.8% of weekend flags, with 41% precision.'; h2.conf = 'High'; h2.confWhy = 'Analyst reviews are 96% complete and agree with chargebacks.'; h2.for = ['thr','band']; h2.against = []; h2.gap = []; }
 
   const h3 = { id:'h3', rank:3, status:'Ruled out', tone:'off', title:'A model-version or deployment change.', expl:'No model was released or deployed in the window. v14 has been in production since 21 Oct.', conf:null, for:[], against:['reg'], gap:[] };
-  const h4 = { id:'h4', rank:4, status:S.seg === 'done' ? 'Weakened' : 'Not yet investigated', tone:S.seg === 'done' ? 'warn' : 'off', title:'A change in customer-segment mix.', expl:S.seg === 'done' ? 'Segment shares barely moved, and precision fell inside every segment.' : 'TRACE hasn’t compared segment mix yet. It can, using aggregates only.', conf:S.seg === 'done' ? 'Low' : null, confWhy:'Explains under 0.3 pp of the drop.', for:[], against:S.seg === 'done' ? ['seg'] : [], gap:S.seg === 'done' ? [] : ['notChecked'] };
+  const h4 = { id:'h4', rank:4, status:S.seg === 'done' ? 'Weakened' : 'Not yet investigated', tone:S.seg === 'done' ? 'warn' : 'off', title:'A change in customer-segment mix.', expl:S.seg === 'done' ? 'Segment shares barely moved, and precision fell inside every segment.' : 'VERITY hasn’t compared segment mix yet. It can, using aggregates only.', conf:S.seg === 'done' ? 'Low' : null, confWhy:'Explains under 0.3 pp of the drop.', for:[], against:S.seg === 'done' ? ['seg'] : [], gap:S.seg === 'done' ? [] : ['notChecked'] };
   return revised() ? [h2, h1, h4, h3] : [h1, h2, h4, h3];
 }
 const GAPS = {
   gap:{ title:GAP.title, note:GAP.note },
-  mlops:{ title:'MLOps validation', note:'TRACE can’t read the model input pipeline’s mapping. MLOps needs to confirm it.' },
+  mlops:{ title:'MLOps validation', note:'VERITY can’t read the model input pipeline’s mapping. MLOps needs to confirm it.' },
   plOff:{ title:'Data Pipeline Logs unavailable', note:'No response after 30 s and one retry. Can’t see schema changes or job history.' },
   conflict:{ title:'Unresolved conflict', note:'Feature Store and Data Pipeline Logs disagree. One read-only check would separate the explanations.' },
   reviews:{ title:'Thin review coverage', note:'Only 12% of Friday-night flags in the 0.78–0.82 band had analyst reviews.' },
-  notChecked:{ title:'Not checked yet', note:'Ask TRACE to compare segment mix.' }
+  notChecked:{ title:'Not checked yet', note:'Ask VERITY to compare segment mix.' }
 };
 const MLOPS_EV = { title:'MLOps confirmed the mapping mismatch', note:'Staging replay of Sat 14 Nov traffic: model input reads merchant_category, feed sends merchant_cat_code. Restoring the mapping returned completeness to 99.6%.' };
 
 /* =====================================================================
-   5. ACTIONS (what can be approved). MLOps or Fraud Ops execute, never TRACE.
+   5. ACTIONS (what can be approved). MLOps or Fraud Ops execute, never VERITY.
    ===================================================================== */
 const ACT = {
   cr:{ team:'MLOps', teamFull:'MLOps, pipeline on-call', change:'CR-1187',
     rec:'Ask MLOps to restore the merchant_category mapping, validate it in staging, then deploy and backfill since Sat 01:55.',
     why:'The evidence points to a broken input mapping, not to the model. Restoring the input fixes the cause without retraining or rolling back.',
     expect:'If the diagnosis is right, precision returns to within 1 pp of the 91.2% baseline within 72 hours.',
-    risk:'Low. The model is unchanged. If precision doesn’t recover, the diagnosis is incomplete and TRACE will reopen the case.',
+    risk:'Low. The model is unchanged. If precision doesn’t recover, the diagnosis is incomplete and VERITY will reopen the case.',
     proposed:'Deploy CR-1187 to production: map merchant_cat_code → merchant_category in txn_feature_enrichment, and backfill feature values since Sat 14 Nov 01:55.',
     changes:'One field mapping in the feature pipeline, plus a backfill. The model, its threshold and its version stay the same.',
     reversible:'Yes. MLOps can revert the mapping in about 10 minutes.',
@@ -1057,16 +1077,16 @@ const ACT = {
     impact:'Expected: precision within 1 pp of baseline; recall within guardrail.',
     evidence:['thr','band','prec'] }
 };
-// Actions Maya can choose instead of TRACE's recommendation (override). Reason required; outcome simulated honestly.
+// Actions Maya can choose instead of VERITY's recommendation (override). Reason required; outcome simulated honestly.
 const OVR = {
   rollback:{ label:'Roll back to card-fraud-xgb v13', change:'Rollback to v13', team:'MLOps',
     proposed:'Deploy card-fraud-xgb v13 to the real-time scoring API in place of v14.',
     changes:'The production model version. The feature pipeline, including the renamed field, stays as it is.',
-    expect:'TRACE expects little or no recovery, because v13 reads the same missing merchant_category input.',
+    expect:'VERITY expects little or no recovery, because v13 reads the same missing merchant_category input.',
     risk:'High. Swaps the model without fixing the input. v13 is two months older than v14.',
     reversible:'Yes. MLOps can redeploy v14 in about 15 minutes.',
     note:'I don’t recommend this. v13 reads the same missing merchant_category field, so precision is unlikely to recover. If you have a reason I can’t see, add it below. I’ll record it and follow your decision.',
-    did:'Deployed card-fraud-xgb v13 in place of v14', after:'MLOps deployed v13 at Mon 14:20 UTC. TRACE is monitoring.',
+    did:'Deployed card-fraud-xgb v13 in place of v14', after:'MLOps deployed v13 at Mon 14:20 UTC. VERITY is monitoring.',
     mon:{ prec:'83.0%', recall:'88.7%', miss:'31.7%', ops:'Still elevated', pass:[0,1,0,0] },
     verdict:'As I expected, the rollback didn’t help: precision is 83.0%, because v13 is missing the same input. Nothing about the diagnosis has changed. I still recommend restoring the field mapping (CR-1187). You can reconsider at any time; your original reason stays in the record.' },
   wait:{ label:'Wait for chargebacks on Wed 18 Nov', change:'Hold until chargebacks', team:'Nobody',
@@ -1076,7 +1096,7 @@ const OVR = {
     risk:'Medium. About two more days of genuine customers being declined.',
     reversible:'Yes. Nothing changes.',
     note:'This keeps genuine customers declined for about two more days. If you’d rather wait for certainty, add your reason below. I’ll follow your decision and record why.',
-    did:'No change made, by Maya’s decision', after:'No production change was made. TRACE is watching precision and the chargebacks.',
+    did:'No change made, by Maya’s decision', after:'No production change was made. VERITY is watching precision and the chargebacks.',
     mon:{ prec:'83.4%', recall:'88.9%', miss:'31.7%', ops:'Still elevated', pass:[0,1,0,0] },
     verdict:'Chargebacks arrived and agree with the analyst reviews, which supports the diagnosis. Precision is still 83.4% because nothing has changed. I still recommend restoring the field mapping (CR-1187) when you’re ready.' }
 };
@@ -1093,9 +1113,9 @@ const MON = {
    6. SMALL COMPONENTS
    ===================================================================== */
 const pill = (cls, icon, text) => `<span class="pill ${cls}">${ic(icon)}${esc(text)}</span>`;
-const src = id => id === 'trace' ? `<span class="src">${ic('trace')}TRACE</span>` : `<span class="src">${ic(id)}${SRC[id].name}</span>`;
+const src = id => id === 'trace' ? `<span class="src">${ic('trace')}VERITY</span>` : `<span class="src">${ic(id)}${SRC[id].name}</span>`;
 const conf = (word, why, btn = true) => word ? `<${btn ? 'button' : 'span'} class="conf" data-l="${LVL[word]}" ${btn ? 'data-panel="conf" aria-label="' + word + ' confidence. What this means"' : ''}><span class="meter" aria-hidden="true"><i></i><i></i><i></i></span><b>${word} confidence</b>${why ? `<span>${esc(why)}</span>` : ''}</${btn ? 'button' : 'span'}>` : '';
-const tnote = (text, t) => `<div class="tnote"><span class="av trace" aria-hidden="true">${ic('trace')}</span><div><span class="who">TRACE${t ? `<time>${t}</time>` : ''}</span><p class="voice">${text}</p></div></div>`;
+const tnote = (text, t) => `<div class="tnote"><span class="av trace" aria-hidden="true">${ic('trace')}</span><div><span class="who">VERITY${t ? `<time>${t}</time>` : ''}</span><p class="voice">${text}</p></div></div>`;
 const hnote = (text, t, name = 'Maya', label = 'added context') => `<div class="hnote"><span class="av maya" aria-hidden="true">M</span><div><span class="who"><b>${name}</b> ${label}${t ? `, <span class="mono">${t}</span>` : ''}</span><p class="bd">${esc(text)}</p></div></div>`;
 const relIcon = { sup:['check','Supports'], con:['x','Contradicts'], cst:['tilde','Consistent with'], gap:['gap','Missing'] };
 const toneIcon = { agent:'trace', ok:'check', warn:'alert', bad:'alert', off:'x', grey:'minus', ink:'users' };
@@ -1134,9 +1154,9 @@ function agentState() {
 function agentBar() {
   const [s, word, sub] = agentState();
   return `<div class="p-agent" data-s="${s}">
-      <span class="av trace" aria-hidden="true">${ic('trace')}</span><span class="nm">TRACE</span>
-      <button class="agent-state" data-s="${s}" data-pop="status" aria-label="TRACE status: ${word}${sub ? ', ' + sub : ''}. What the statuses mean"><b>${word}</b>${sub ? `<span>${sub}</span>` : ''}</button>
-      <span class="sr" role="status" aria-live="polite">TRACE is ${word}</span>
+      <span class="av trace" aria-hidden="true">${ic('trace')}</span><span class="nm">VERITY</span>
+      <button class="agent-state" data-s="${s}" data-pop="status" aria-label="VERITY status: ${word}${sub ? ', ' + sub : ''}. What the statuses mean"><b>${word}</b>${sub ? `<span>${sub}</span>` : ''}</button>
+      <span class="sr" role="status" aria-live="polite">VERITY is ${word}</span>
       <span class="end"><button class="iconbtn" data-pop="notes" aria-label="Notifications${S.notes ? ', new updates' : ''}">${ic('bell')}${S.notes ? '<span class="badge"></span>' : ''}</button></span>
     </div>`;
 }
@@ -1144,24 +1164,23 @@ function crumbBar(right = '') {
   const loc = { case:null, overview:'Overview', cases:'Cases', models:'Models', activity:'Activity' }[S.nav];
   const stageName = ['Case overview','Investigation','Findings','Decision & follow-through'][S.stage - 1];
   return `<div class="m-bar"><nav class="crumb" aria-label="Breadcrumb">${loc ? `<b>${loc}</b>` : `<button data-nav="cases">Cases</button><span class="sep" aria-hidden="true">/</span><span class="mono">${CASE.id}</span><span class="sep" aria-hidden="true">/</span><b>${stageName}</b>`}</nav>
-    <span class="end">${right}<button class="iconbtn panel-toggle" data-act="toggle-panel" aria-label="Show TRACE panel">${ic('panel')}</button></span></div>`;
+    <span class="end">${right}<button class="iconbtn panel-toggle" data-act="toggle-panel" aria-label="Show VERITY panel">${ic('panel')}</button></span></div>`;
 }
 function renderTop() { const el = document.querySelector('.p-agent'); if (el) { el.outerHTML = agentBar(); paint($('panel')); } }
 let navMin = false;
 function renderNav() {
   const off = isLow(), forced = innerWidth <= 1060, min = navMin || forced;
   $('app').classList.toggle('nav-min', min);
+  document.querySelectorAll('.pb-btn.sc').forEach(b => b.setAttribute('aria-current', String(b.dataset.scenario === (S.scenario || 'main'))));
   const open = (S.closed ? 0 : 1) + 1; // FR-2041 (until closed) + FR-2043
   const items = [['overview','home','Overview',''],['cases','cases','Cases', String(open)],['models','models','Models','4'],['activity','activity','Activity', String(S.log.length)]];
   const cur = k => S.nav === k || (k === 'cases' && S.nav === 'case');
   $('nav').innerHTML = `
-    <div class="nav-top"><button class="brand" data-act="home" aria-label="TRACE. Return to the prototype start screen"><span class="brand-mark" aria-hidden="true">${ic('trace')}</span>TRACE</button>${forced ? '' : `<button class="iconbtn nav-tog" data-act="nav-min" aria-label="${min ? 'Expand' : 'Collapse'} sidebar" aria-expanded="${!min}" title="${min ? 'Expand' : 'Collapse'} sidebar">${ic('sidebar')}</button>`}</div>
+    <div class="nav-top"><button class="brand" data-act="home" aria-label="VERITY. Return to the prototype start screen"><span class="brand-mark" aria-hidden="true">${ic('trace')}</span>VERITY</button>${forced ? '' : `<button class="iconbtn nav-tog" data-act="nav-min" aria-label="${min ? 'Expand' : 'Collapse'} sidebar" aria-expanded="${!min}" title="${min ? 'Expand' : 'Collapse'} sidebar">${ic('sidebar')}</button>`}</div>
     ${items.map(([k, i, l, c]) => `<button class="nav-item" data-nav="${k}" ${cur(k) ? 'aria-current="page"' : ''} aria-label="${l}">${ic(i)}<span class="lbl">${l}</span><span class="count">${c}</span></button>`).join('')}
     <div class="nav-foot">
       <button class="conn-line" data-panel="sources" aria-label="Connected systems: ${off ? '3 of 4 available' : '4 connected, read-only'}. Show details"><span class="dotst ${off ? 'warn' : ''}"></span><span class="lbl">${off ? '3 of 4 sources' : '4 sources connected'}</span>${ic('right')}</button>
-      <button class="sim-line" data-panel="assumptions" aria-label="Illustrative data. See the scenario assumptions">${ic('flask')}<span class="lbl">Illustrative data</span></button>
       <div class="me"><span class="av maya" aria-hidden="true">M</span><div><b>Maya</b><span class="r">Data Scientist</span></div><button class="iconbtn" data-act="settings" aria-label="Settings">${ic('gear')}</button></div>
-      <div class="proto"><button class="btn btn-line btn-sm" data-act="restart" aria-label="Restart simulation">${ic('restart')}<span>Restart</span></button><button class="btn btn-ghost btn-sm" data-act="home" aria-label="Back to prototype start">${ic('home')}<span>Start</span></button></div>
     </div>`;
 }
 function stageInfo(n) {
@@ -1230,9 +1249,9 @@ function stage1() {
     </div>
   </div>
   <section class="sec" aria-labelledby="sig-h"><div class="sec-hd"><h3 id="sig-h">Operational signal</h3></div>
-    <div class="sig"><span class="av ops" aria-hidden="true">DO</span><div><span class="who"><b>Dan Okafor</b>, Fraud Ops lead, <span class="mono">Sun 15 Nov 08:05</span></span><p class="q">“We’re seeing a lot more false positives since Saturday. Customers are calling in about declined cards.”</p><p class="note">${ic('info')}Human-reported observation. Not independently verified by TRACE.</p></div></div>
+    <div class="sig"><span class="av ops" aria-hidden="true">DO</span><div><span class="who"><b>Dan Okafor</b>, Fraud Ops lead, <span class="mono">Sun 15 Nov 08:05</span></span><p class="q">“We’re seeing a lot more false positives since Saturday. Customers are calling in about declined cards.”</p><p class="note">${ic('info')}Human-reported observation. Not independently verified by VERITY.</p></div></div>
   </section>
-  <section class="sec" aria-labelledby="ia-h"><div class="sec-hd"><h3 id="ia-h">TRACE’s initial assessment</h3></div>
+  <section class="sec" aria-labelledby="ia-h"><div class="sec-hd"><h3 id="ia-h">VERITY’s initial assessment</h3></div>
     <div class="assess">${tnote('The drop is real. I checked the hourly series for gaps and sampling changes and found none. I haven’t looked for the cause yet. I can check all four connected sources in about five minutes, which usually takes half a day by hand, and I won’t change anything.', '07:41')}
       <ul class="checks"><li>${ic('check','ok')}Alert received from Model Monitoring</li><li>${ic('check','ok')}Degradation confirmed: precision down, recall steady</li><li>${ic('gap','gap')}Cause not yet established</li><li>${ic('trace','ag')}Ready to investigate Model Monitoring, Feature Store, Data Pipeline Logs and Model Registry</li></ul></div>
   </section>
@@ -1279,22 +1298,22 @@ function stage2() {
         <div><h4 style="color:var(--warn)">${ic('gap')}Still unknown</h4><ul>${low ? '<li>Why the field went missing</li>' : ''}<li>Chargebacks (due Wed 18 Nov)</li><li>Whether Friday’s threshold change contributes</li><li>Customer-segment mix, not checked</li></ul></div>
         <div><h4 style="color:var(--agent)">${ic('trace')}Proposed next</h4><ul>${low ? '<li>Retry Data Pipeline Logs</li><li>Or continue, with no production action</li>' : '<li>Review ranked hypotheses</li><li>Challenge or add context</li><li>Then MLOps validation</li>'}</ul></div>
       </div></div></section>` : '';
-  const lowBanner = S.inv.failed && done && !S.inv.retried ? `<div class="banner warn fade" style="margin-bottom:18px">${ic('cloudoff')}<div><b>Data Pipeline Logs didn’t respond. Confidence is low.</b><p>TRACE read three of four sources. Conclusions that depend on job history and schema changes can’t be established.</p>
+  const lowBanner = S.inv.failed && done && !S.inv.retried ? `<div class="banner warn fade" style="margin-bottom:18px">${ic('cloudoff')}<div><b>Data Pipeline Logs didn’t respond. Confidence is low.</b><p>VERITY read three of four sources. Conclusions that depend on job history and schema changes can’t be established.</p>
       <div class="affects"><div><h4>Can still infer</h4><ul><li>When precision fell and what kind of error grew</li><li>That merchant_category stopped arriving</li><li>That no model was released</li></ul></div><div><h4>Can’t establish</h4><ul><li>Why merchant_category is empty</li><li>Whether a fix is safe to recommend</li></ul></div></div></div>
       <div class="acts"></div></div>` : '';
   const retriedBanner = S.inv.failed && S.inv.retried ? `<div class="banner ok" style="margin-bottom:18px">${ic('check')}<div><b>Data Pipeline Logs responded on retry</b><p>All four sources reviewed. Confidence restored to moderate.</p></div><span></span></div>` : '';
   return {
     body:`<header class="page-hd"><div class="meta">${running || S.inv.retrying ? pill('agent','loader','Investigating') : done ? (low ? pill('warn','alert','Completed with gaps') : pill('ok','check','Completed')) : pill('grey','clock','Not started')}<span>Read-only</span></div>
-      <h2>Investigation</h2><p>TRACE checks the four authorised sources in order. Select any step or source to see what it queried and found.</p>
+      <h2>Investigation</h2><p>VERITY checks the four authorised sources in order. Select any step or source to see what it queried and found.</p>
       <div class="progress" style="margin-top:14px"><div class="bar ${low ? 'warn' : ''}"><i style="width:${S.inv.status === 'idle' ? 0 : pct}%"></i></div><span class="mono">${S.inv.done}/5 checks</span></div></header>
       ${lowBanner}${retriedBanner}
       <div class="srcgrid">${srcRow}</div>
       <section class="sec" aria-labelledby="run-h"><div class="sec-hd"><h3 id="run-h">Activity</h3><small>${running ? 'Findings appear as each check lands' : ''}</small></div>
-        ${S.inv.status === 'idle' ? `<div class="card card-in muted">Not started. Review the plan in the TRACE panel, then start the investigation.</div>` : `<ol class="run" aria-live="polite">${steps}</ol>`}</section>
+        ${S.inv.status === 'idle' ? `<div class="card card-in muted">Not started. Review the plan in the VERITY panel, then start the investigation.</div>` : `<ol class="run" aria-live="polite">${steps}</ol>`}</section>
       ${summary}`,
     foot:`<button class="btn btn-ghost" data-stage="1">${ic('left')}Case overview</button><div class="end">${
       S.inv.status === 'idle' ? `<button class="btn btn-agent" data-act="start-inv">${ic('search')}Start investigation</button>`
-      : running || S.inv.retrying ? `<span class="hint">You can move around. TRACE keeps going.</span><button class="btn btn-agent" aria-busy="true" disabled>Investigating</button>`
+      : running || S.inv.retrying ? `<span class="hint">You can move around. VERITY keeps going.</span><button class="btn btn-agent" aria-busy="true" disabled>Investigating</button>`
       : low ? `<button class="btn btn-line" data-act="continue-low">Continue with available sources</button><button class="btn btn-agent" data-act="retry">${ic('restart')}Retry Data Pipeline Logs</button>`
       : `<button class="btn btn-agent" data-stage="3">Continue to findings</button>`}</div>`
   };
@@ -1319,15 +1338,15 @@ function stage3() {
   const newEv = ['thrCheck','seg','schema','band'];
   const srcN = isLow() ? 3 : 4;
   // Conflict section
-  const conflict = S.conflict === 'open' || S.conflict === 'checking' ? `<section class="sec" aria-labelledby="cf-h"><div class="banner bad" style="border-bottom-left-radius:0;border-bottom-right-radius:0">${ic('split')}<div><b id="cf-h">Two sources disagree</b><p>TRACE has paused the root-cause recommendation until this is explained.</p></div><span></span></div>
+  const conflict = S.conflict === 'open' || S.conflict === 'checking' ? `<section class="sec" aria-labelledby="cf-h"><div class="banner bad" style="border-bottom-left-radius:0;border-bottom-right-radius:0">${ic('split')}<div><b id="cf-h">Two sources disagree</b><p>VERITY has paused the root-cause recommendation until this is explained.</p></div><span></span></div>
       <div class="compare" style="border:1px solid var(--bad-line);border-top:0;border-radius:0 0 var(--r-lg) var(--r-lg);overflow:hidden">
         <div>${src('fs')}<p class="big bad">31.7% empty</p><p>merchant_category since Sat 02:10</p><button class="link" data-ev="miss" style="margin-top:8px">${ic('eye')}Inspect</button></div>
         <div>${src('pl')}<p class="big">0 failed rows</p><p>txn_feature_enrichment run 8812 succeeded</p><button class="link" data-ev="job" style="margin-top:8px">${ic('eye')}Inspect</button></div></div>
       <div class="card card-in" style="margin-top:10px">${tnote('Both could be true. The check that would separate the explanations is to compare the column names written by the job with the ones the model reads. It’s read-only and takes seconds.', '08:09')}
-        <div class="p-actions" style="margin-left:38px"><button class="btn btn-agent btn-sm" data-act="resolve" ${S.conflict === 'checking' ? 'aria-busy="true" disabled' : ''}>${S.conflict === 'checking' ? 'Comparing column names' : 'Run the check'}</button><button class="btn btn-ghost btn-sm" data-act="ask" data-q="Could the feature store have run a backfill?">Ask TRACE about a backfill</button></div></div></section>`
+        <div class="p-actions" style="margin-left:38px"><button class="btn btn-agent btn-sm" data-act="resolve" ${S.conflict === 'checking' ? 'aria-busy="true" disabled' : ''}>${S.conflict === 'checking' ? 'Comparing column names' : 'Run the check'}</button><button class="btn btn-ghost btn-sm" data-act="ask" data-q="Could the feature store have run a backfill?">Ask VERITY about a backfill</button></div></div></section>`
     : S.conflict === 'resolved' ? `<div class="banner ok" style="margin-top:18px">${ic('check')}<div><b>Conflict resolved</b><p>The job loaded every row, but under a new column name. Both sources were right. This now supports the leading hypothesis.</p></div><button class="btn btn-ghost btn-sm" data-ev="schema">See the check</button></div>` : '';
-  const lowBanner = isLow() ? `<div class="banner warn" style="margin-top:18px">${ic('cloudoff')}<div><b>Low confidence: Data Pipeline Logs unavailable</b><p>TRACE is showing what it could establish from three sources. It will not recommend a production change on this evidence.</p></div><div class="acts"><button class="btn btn-line btn-sm" data-act="retry">Retry the source</button></div></div>` : '';
-  const revBanner = revised() ? `<div class="banner warn" style="margin-top:18px">${ic('undo')}<div><b>Diagnosis revised on Thu 19 Nov</b><p>After Maya’s context, TRACE found its earlier conclusion was incomplete. The previous diagnosis is kept below as superseded.</p></div><span></span></div>` : '';
+  const lowBanner = isLow() ? `<div class="banner warn" style="margin-top:18px">${ic('cloudoff')}<div><b>Low confidence: Data Pipeline Logs unavailable</b><p>VERITY is showing what it could establish from three sources. It will not recommend a production change on this evidence.</p></div><div class="acts"><button class="btn btn-line btn-sm" data-act="retry">Retry the source</button></div></div>` : '';
+  const revBanner = revised() ? `<div class="banner warn" style="margin-top:18px">${ic('undo')}<div><b>Diagnosis revised on Thu 19 Nov</b><p>After Maya’s context, VERITY found its earlier conclusion was incomplete. The previous diagnosis is kept below as superseded.</p></div><span></span></div>` : '';
 
   // Lead hypothesis
   const leadHtml = `<article class="lead" aria-labelledby="lead-h"><div class="lead-top">
@@ -1344,9 +1363,9 @@ function stage3() {
     return `<div class="alt ${h.tone === 'off' && h.status === 'Ruled out' ? 'out' : ''} ${revised() && h.id === 'h1' ? 'contrib' : ''}" ${open ? 'data-open' : ''}>
       <button aria-expanded="${!!open}" data-toggle="${h.id}"><span class="rk">${h.id.toUpperCase()}</span><span class="ttl">${esc(h.title)}</span>${pill(h.tone, toneIcon[h.tone], h.status)}${h.conf ? conf(h.conf, '', false) : '<span></span>'}${ic('chev','chev')}</button>
       ${open ? `<div class="body"><p>${esc(h.expl)}</p>${h.conf ? `<p><b>Confidence.</b> ${esc(h.confWhy)}</p>` : ''}<div style="border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden">${hypEv(h)}</div>
-        ${h.id === 'h4' && S.seg === 'idle' ? `<div><button class="btn btn-agent btn-sm" data-act="seg">${ic('search')}Ask TRACE to check segment mix</button></div>` : ''}
+        ${h.id === 'h4' && S.seg === 'idle' ? `<div><button class="btn btn-agent btn-sm" data-act="seg">${ic('search')}Ask VERITY to check segment mix</button></div>` : ''}
         ${h.id === 'h4' && S.seg === 'checking' ? `<div>${pill('agent','loader','Checking segment mix')}</div>` : ''}
-        <div><button class="link" data-panel="hyp:${h.id}">Open in TRACE panel</button></div></div>` : ''}
+        <div><button class="link" data-panel="hyp:${h.id}">Open in VERITY panel</button></div></div>` : ''}
     </div>`;
   }).join('')}</div>`;
 
@@ -1362,7 +1381,7 @@ function stage3() {
 
   // Conclusion
   const blocked = conflictOpen() || isLow();
-  const superseded = revised() ? `<div class="super" style="margin-bottom:10px"><span class="tag">Superseded, Mon 16 Nov 08:20</span><p>Most likely cause: the Sat 01:55 field rename left merchant_category empty for card-network payments. Friday’s threshold change weakened as an explanation.</p><small>Superseded on Thu 19 Nov 15:14. The rename explained only about 5 of the 8 points. TRACE had relied on Fraud Ops’ planned impact and a thin review sample for the threshold band.</small></div>` : '';
+  const superseded = revised() ? `<div class="super" style="margin-bottom:10px"><span class="tag">Superseded, Mon 16 Nov 08:20</span><p>Most likely cause: the Sat 01:55 field rename left merchant_category empty for card-network payments. Friday’s threshold change weakened as an explanation.</p><small>Superseded on Thu 19 Nov 15:14. The rename explained only about 5 of the 8 points. VERITY had relied on Fraud Ops’ planned impact and a thin review sample for the threshold band.</small></div>` : '';
   const conclusion = blocked ? `<div class="paused"><div style="display:flex;gap:10px;align-items:center">${pill('warn','alert','Root-cause conclusion paused')}</div>
       <p class="voice" style="margin-top:10px">${isLow() ? 'I can describe what happened, but not why. A root-cause conclusion needs Data Pipeline Logs. Retry the source, or continue knowing the decision stage will only offer low-risk next steps.' : 'I won’t state a root cause while two sources contradict each other. Run the column-name check above to resolve it.'}</p></div>`
     : `${superseded}<article class="card" aria-labelledby="rc-h"><div class="card-in">
@@ -1377,7 +1396,7 @@ function stage3() {
   const lastUpd = revised() ? 'Thu 19 Nov 15:14' : S.seg === 'done' ? 'Mon 08:16' : S.ch.status === 'done' ? 'Mon 08:14' : S.conflict === 'resolved' ? 'Mon 08:11' : 'Mon 08:07';
   return {
     body:`<header class="page-hd"><div class="meta">${blocked ? pill('warn','alert', isLow() ? 'Low confidence' : 'Evidence conflicts') : revised() ? pill('warn','undo','Revised') : pill('agent','trace','Hypothesis, not yet confirmed')}</div><h2>Findings</h2>
-      <p>What TRACE thinks happened, the evidence for and against it, and what it still doesn’t know.</p>
+      <p>What VERITY thinks happened, the evidence for and against it, and what it still doesn’t know.</p>
       <div class="coverage"><div><b>${srcN} of 4</b>sources reviewed</div><div><b>${evIds.length}</b>evidence items</div><div><b class="warn">${lead.gap.length + (S.ch.status === 'done' && !revised() ? 1 : 0)}</b>known gaps</div><div><b>${lastUpd}</b>last updated</div></div></header>
       ${lowBanner}${conflict}${revBanner}
       <section class="sec" aria-label="Leading hypothesis">${leadHtml}</section>
@@ -1385,18 +1404,18 @@ function stage3() {
       <section class="sec" aria-labelledby="ev-h"><div class="sec-hd"><h3 id="ev-h">Evidence</h3><small>Select a card to inspect its source</small><span class="end"><button class="link" data-panel="conf">${ic('info')}How confidence works</button></span></div>${evHtml}</section>
       <section class="sec" aria-labelledby="ch-h">${chHtml}</section>
       <section class="sec" aria-labelledby="rc-sec"><div class="sec-hd"><h3 id="rc-sec">Root-cause conclusion</h3></div>${conclusion}</section>`,
-    foot:`<button class="btn btn-ghost" data-stage="2">${ic('left')}Investigation</button><div class="end">${conflictOpen() ? `<span class="hint">Resolve the conflict before deciding.</span><button class="btn btn-agent" disabled>Continue to decision</button>` : S.ch.status === 'checking' || S.seg === 'checking' ? `<span class="hint">TRACE is re-checking.</span><button class="btn btn-agent" disabled>Continue to decision</button>` : `<button class="btn btn-agent" data-stage="4">Continue to decision</button>`}</div>`
+    foot:`<button class="btn btn-ghost" data-stage="2">${ic('left')}Investigation</button><div class="end">${conflictOpen() ? `<span class="hint">Resolve the conflict before deciding.</span><button class="btn btn-agent" disabled>Continue to decision</button>` : S.ch.status === 'checking' || S.seg === 'checking' ? `<span class="hint">VERITY is re-checking.</span><button class="btn btn-agent" disabled>Continue to decision</button>` : `<button class="btn btn-agent" data-stage="4">Continue to decision</button>`}</div>`
   };
 }
 function challengeSection() {
   const c = S.ch;
   if (revised()) return `<div class="sec-hd"><h3 id="ch-h">Your challenge</h3><small>Mon 16 Nov, kept for the record</small></div><div class="push"><div class="thread-in">${hnote(c.text || 'I think Friday’s decline-rule change caused this, not a data issue. Fraud Ops changed the threshold.', '08:12', 'Maya', 'challenged')}${tnote('I re-checked the timing and kept the rename first. That was incomplete: see the revised diagnosis below.', '08:14')}</div></div>`;
-  if (c.status === 'idle') return `<div class="push"><h3 id="ch-h">Disagree, or know something TRACE doesn’t?</h3><p class="sub">Challenge the leading hypothesis, add context, or ask TRACE to recheck a source. It re-examines the evidence before answering.</p>
+  if (c.status === 'idle') return `<div class="push"><h3 id="ch-h">Disagree, or know something VERITY doesn’t?</h3><p class="sub">Challenge the leading hypothesis, add context, or ask VERITY to recheck a source. It re-examines the evidence before answering.</p>
     <label class="sr" for="ch-text">Your challenge or context</label><textarea id="ch-text" placeholder="For example: Fraud Ops changed a threshold on Friday">${esc(c.text)}</textarea>
-    <div class="row"><button class="suggest" data-fill="I think Friday’s decline-rule change caused this, not a data issue. Fraud Ops changed the threshold.">Friday’s threshold change caused this</button><button class="suggest" data-fill="Could this be a change in customer-segment mix instead?">Check segment mix instead</button><button class="suggest" data-fill="Recheck Model Registry: did anything deploy over the weekend?">Recheck Model Registry</button><span style="flex:1"></span><button class="btn btn-ink btn-sm" data-act="challenge" id="ch-btn" ${c.text.trim() ? '' : 'disabled'}>Challenge TRACE</button></div></div>`;
+    <div class="row"><button class="suggest" data-fill="I think Friday’s decline-rule change caused this, not a data issue. Fraud Ops changed the threshold.">Friday’s threshold change caused this</button><button class="suggest" data-fill="Could this be a change in customer-segment mix instead?">Check segment mix instead</button><button class="suggest" data-fill="Recheck Model Registry: did anything deploy over the weekend?">Recheck Model Registry</button><span style="flex:1"></span><button class="btn btn-ink btn-sm" data-act="challenge" id="ch-btn" ${c.text.trim() ? '' : 'disabled'}>Challenge VERITY</button></div></div>`;
   const ph = c.phase;
   const rows = [['mon','Hourly precision, Fri 17:00 – Sat 02:00'],['mon','Flag share by score band 0.78–0.82'],['mon','Analyst-review coverage for that band']];
-  return `<div class="sec-hd"><h3 id="ch-h">Challenge</h3><small>${c.status === 'checking' ? 'TRACE is re-checking' : 'Re-investigated'}</small></div>
+  return `<div class="sec-hd"><h3 id="ch-h">Challenge</h3><small>${c.status === 'checking' ? 'VERITY is re-checking' : 'Re-investigated'}</small></div>
   <div class="push"><div class="thread-in">
     ${hnote(c.text, '08:12', 'Maya', 'challenged')}
     ${ph >= 1 ? `<div class="fade">${tnote('That’s a real alternative, and I ranked it low partly on timing. To test it properly I need to know whether precision dropped between the threshold change and the rename, and how many flags the new threshold added.', '08:12')}</div>` : ''}
@@ -1419,11 +1438,11 @@ function stage4() {
   const tabsHtml = `<div class="subtabs" role="group" aria-label="Decision sections">${tabs.map(([k, l, d]) => `<button aria-pressed="${S.dtab === k}" data-dtab="${k}"><span class="sdot ${d}"></span>${l}</button>`).join('')}</div>`;
   let body = '';
   if (S.dtab === 'rec') body = holdLow ? recHold() : recBody();
-  if (S.dtab === 'appr') body = holdLow ? `<div class="banner warn">${ic('alert')}<div><b>Nothing to approve yet</b><p>TRACE doesn’t recommend a production change on incomplete evidence. Retry Data Pipeline Logs first.</p></div><div class="acts"><button class="btn btn-line btn-sm" data-act="retry">Retry the source</button></div></div>` : approvalBody();
+  if (S.dtab === 'appr') body = holdLow ? `<div class="banner warn">${ic('alert')}<div><b>Nothing to approve yet</b><p>VERITY doesn’t recommend a production change on incomplete evidence. Retry Data Pipeline Logs first.</p></div><div class="acts"><button class="btn btn-line btn-sm" data-act="retry">Retry the source</button></div></div>` : approvalBody();
   if (S.dtab === 'mon') body = monitorBody();
   if (S.dtab === 'rec2') body = recordBody();
   return {
-    body:`<header class="page-hd"><div class="meta">${S.closed ? pill('ok','check','Case closed') : revised() ? pill('warn','undo','Revised recommendation') : pill('ink','users','Your decision')}</div><h2>Decision & follow-through</h2><p>TRACE recommends; you decide; ${x.team} carries out any change. Approval is not the same as execution, and each step is recorded.</p></header>${tabsHtml}${body}`,
+    body:`<header class="page-hd"><div class="meta">${S.closed ? pill('ok','check','Case closed') : revised() ? pill('warn','undo','Revised recommendation') : pill('ink','users','Your decision')}</div><h2>Decision & follow-through</h2><p>VERITY recommends; you decide; ${x.team} carries out any change. Approval is not the same as execution, and each step is recorded.</p></header>${tabsHtml}${body}`,
     foot:`<button class="btn btn-ghost" data-stage="3">${ic('left')}Findings</button><div class="end">${nextAction4()}</div>`
   };
 }
@@ -1440,7 +1459,7 @@ function nextAction4() {
   if (a.mon === 'early') return `<span class="hint">Prototype control</span><button class="btn btn-agent" data-act="advance">${ic('clock')}Simulate 72 hours later</button>`;
   if (a.mon === 'final' && ov()) return `<span class="hint">Recovery criteria not met.</span><button class="btn btn-ink" data-act="reconsider">Reconsider your decision</button>`;
   if (a.mon === 'final' && S.wrong.status === 'flagged') return `<button class="btn btn-ink" data-act="focus-context">Add context</button>`;
-  if (S.wrong.status === 'checking') return `<button class="btn btn-agent" aria-busy="true" disabled>TRACE is re-investigating</button>`;
+  if (S.wrong.status === 'checking') return `<button class="btn btn-agent" aria-busy="true" disabled>VERITY is re-investigating</button>`;
   if (a.mon === 'final') return `<button class="btn btn-line" data-act="reopen-inv">Reopen investigation</button><button class="btn btn-ink" data-act="close">${ic('check')}Close case</button>`;
   return '';
 }
@@ -1448,32 +1467,32 @@ function flowStrip() {
   const a = A(), x = ACT[S.cur];
   const s = (cond, now) => cond ? 'done' : now ? 'now' : 'todo';
   const items = [
-    ['trace', 'TRACE', 'Prepared handoff', a.h !== 'none' ? (S.cur === 'cr' ? 'Mon 08:18' : 'Thu 15:16') : 'Not yet', s(a.h !== 'none' && a.h !== 'draft', a.h === 'none' || a.h === 'draft')],
+    ['trace', 'VERITY', 'Prepared handoff', a.h !== 'none' ? (S.cur === 'cr' ? 'Mon 08:18' : 'Thu 15:16') : 'Not yet', s(a.h !== 'none' && a.h !== 'draft', a.h === 'none' || a.h === 'draft')],
     ['maya', 'Maya', 'Sent request', a.h === 'sent' || a.h === 'responded' ? (S.cur === 'cr' ? 'Mon 08:20' : 'Thu 15:30') : 'Not yet', s(a.h === 'sent' || a.h === 'responded', a.h === 'draft')],
     ['mlops', x.team, 'Validated and responded', a.h === 'responded' ? (S.cur === 'cr' ? 'Mon 09:42' : 'Thu 16:40') : a.h === 'sent' ? 'Waiting' : 'Not yet', a.h === 'responded' ? 'done' : a.h === 'sent' ? 'wait' : 'todo'],
-    ['maya', 'Maya', a.appr === 'rejected' ? 'Rejected' : a.appr && ov() ? 'Overrode TRACE' : 'Approved change', a.appr ? (S.cur === 'cr' ? 'Mon 10:05' : 'Thu 16:45') : 'Not yet', s(!!a.appr, a.h === 'responded')]
+    ['maya', 'Maya', a.appr === 'rejected' ? 'Rejected' : a.appr && ov() ? 'Overrode VERITY' : 'Approved change', a.appr ? (S.cur === 'cr' ? 'Mon 10:05' : 'Thu 16:45') : 'Not yet', s(!!a.appr, a.h === 'responded')]
   ];
   return `<ol class="flow" aria-label="Handoff status">${items.map(([av, who, t, w, st]) => `<li data-s="${st}"><span class="who"><span class="av sm ${av}" aria-hidden="true">${av === 'trace' ? ic('trace') : av === 'maya' ? 'M' : x.team === 'MLOps' ? 'ML' : 'FO'}</span>${who}</span><b>${t}</b><span class="when">${w}</span></li>`).join('')}</ol>`;
 }
 function recHold() {
   return `<article class="rec" style="border-color:var(--warn-line)"><div class="rec-top"><div class="lead-meta">${pill('warn','alert','Hold')}<span class="end">${conf('Low')}</span></div>
     <h3>Don’t change production yet. Retry Data Pipeline Logs, or ask MLOps to read the job history for you.</h3>
-    <p class="why">TRACE can show that merchant_category stopped arriving, but not why. Any fix chosen now could target the wrong cause.</p></div>
+    <p class="why">VERITY can show that merchant_category stopped arriving, but not why. Any fix chosen now could target the wrong cause.</p></div>
     <div class="rec4"><div><h4>What would unblock this</h4><p>Data Pipeline Logs for txn_feature_enrichment since Fri 13 Nov.</p></div><div><h4>Low-risk step available</h4><p>A read-only request to MLOps for the job history. No production change.</p></div></div></article>
-    <div class="p-actions"><button class="btn btn-agent" data-act="retry">${ic('restart')}Retry Data Pipeline Logs</button><button class="btn btn-line" data-act="ask" data-q="What can you still tell me without the pipeline logs?">Ask what TRACE can still tell you</button></div>`;
+    <div class="p-actions"><button class="btn btn-agent" data-act="retry">${ic('restart')}Retry Data Pipeline Logs</button><button class="btn btn-line" data-act="ask" data-q="What can you still tell me without the pipeline logs?">Ask what VERITY can still tell you</button></div>`;
 }
 function recBody() {
   const a = A(), x = ACT[S.cur], H = hyps();
   const evs = x.evidence.map(i => `<button class="evlink" data-ev="${i}">${esc(EV[i].title)}</button>`).join(', ');
   return `<article class="rec" aria-labelledby="rec-h"><div class="rec-top">
-      <div class="lead-meta">${pill('agent','trace','TRACE recommends')}<span>${revised() ? 'Revised Thu 19 Nov 15:14' : 'Mon 16 Nov 08:20'}</span><span class="end">${conf(revised() ? 'High' : H[0].conf, 'in the diagnosis')}</span></div>
+      <div class="lead-meta">${pill('agent','trace','VERITY recommends')}<span>${revised() ? 'Revised Thu 19 Nov 15:14' : 'Mon 16 Nov 08:20'}</span><span class="end">${conf(revised() ? 'High' : H[0].conf, 'in the diagnosis')}</span></div>
       <h3 id="rec-h">${x.rec}</h3><p class="why">${x.why}</p></div>
-    <div class="rec4"><div><h4>Evidence</h4><p>${evs}</p></div><div><h4>Expected outcome</h4><p>${x.expect}</p></div><div><h4>Risks and limitations</h4><p>${x.risk}</p></div><div><h4>Who acts</h4><p>${x.teamFull} executes. You approve. TRACE monitors, read-only.</p></div></div></article>
+    <div class="rec4"><div><h4>Evidence</h4><p>${evs}</p></div><div><h4>Expected outcome</h4><p>${x.expect}</p></div><div><h4>Risks and limitations</h4><p>${x.risk}</p></div><div><h4>Who acts</h4><p>${x.teamFull} executes. You approve. VERITY monitors, read-only.</p></div></div></article>
   ${revised() && S.cur === 'thr' ? `<div class="super" style="margin-top:12px"><span class="tag">Previous recommendation, completed</span><p style="text-decoration:none;color:var(--text-2)">${ACT.cr.rec}</p><small>Approved Mon 10:05, executed by MLOps Mon 14:20. Kept in place: it fixed about 5 of the 8 points.</small></div>` : ''}
   <section class="sec" aria-labelledby="ho-h"><div class="sec-hd"><h3 id="ho-h">${x.team} handoff</h3><small>${a.h === 'none' ? 'Not prepared yet' : a.h === 'draft' ? 'Draft, not sent' : a.h === 'sent' ? 'Sent, waiting for a response' : 'Response received'}</small><span class="end">${a.h !== 'none' ? `<button class="link" data-act="handoff">${ic('doc')}${a.h === 'draft' ? 'Edit draft' : 'View request'}</button>` : ''}</span></div>
     ${flowStrip()}
     ${a.h === 'responded' ? `<div class="card card-in" style="margin-top:10px"><div class="hnote" style="grid-template-columns:26px 1fr"><span class="av mlops" aria-hidden="true">${S.cur === 'cr' ? 'ML' : 'FO'}</span><div><span class="who"><b>${x.team}</b> responded, <span class="mono">${S.cur === 'cr' ? 'Mon 09:42' : 'Thu 16:40'}</span> <span class="sim-tag">Simulated</span></span><p style="margin-top:4px;font-size:14px">${S.cur === 'cr' ? 'Confirmed in a staging replay: the model input reads merchant_category, the feed sends merchant_cat_code. Restoring the mapping returned completeness to 99.6%. Change CR-1187 is ready. We won’t deploy until Maya approves.' : 'We agree the weekend band share was far above plan. We can restore 0.82 today once Maya approves, and we’ll revisit the original goal of the change separately.'}</p></div></div></div>` : ''}
-    ${a.h === 'none' ? `<p class="muted" style="font-size:13px;margin-top:10px">TRACE drafts the request from this investigation. You review and edit it, then send it yourself.</p>` : ''}
+    ${a.h === 'none' ? `<p class="muted" style="font-size:13px;margin-top:10px">VERITY drafts the request from this investigation. You review and edit it, then send it yourself.</p>` : ''}
   </section>
   <section class="sec" aria-labelledby="alt4-h"><div class="sec-hd"><h3 id="alt4-h">Alternatives considered</h3></div>
     <div class="card card-in"><ul class="altlist">${x.alts.map(([t, d, tag]) => `<li><div><b>${t}</b><p>${d}</p></div>${pill(tag === 'Slower' ? 'warn' : 'grey', tag === 'Slower' ? 'clock' : 'minus', tag)}</li>`).join('')}</ul></div></section>`;
@@ -1482,19 +1501,19 @@ function approvalBody() {
   const a = A(), x = ACT[S.cur];
   if (a.h !== 'responded' && !a.appr) return `<div class="banner sim">${ic('clock')}<div><b>Approval opens once ${x.team} respond</b><p>${x.team} first validate the problem and define the exact change. Then you approve, reject or modify it here.</p></div><div class="acts">${a.h === 'none' ? `<button class="btn btn-line btn-sm" data-act="handoff">Prepare handoff</button>` : ''}</div></div>`;
   const o = ov();
-  const rows = o ? [['Proposed action', o.proposed],['What will change', o.changes],['TRACE’s position', 'Not recommended. ' + ACT.cr.why],['Expected consequences', o.expect],['Risks', o.risk],['Reversible', o.reversible],['Carried out by', o.team === 'Nobody' ? 'Nobody. No change is made.' : `${x.teamFull}. Not TRACE.`]]
-    : [['Proposed action', x.proposed],['What will change', x.changes],['Why', x.why],['Expected consequences', x.expect],['Risks', x.risk],['Reversible', x.reversible],['Carried out by', `${x.teamFull}. Not TRACE.`]];
+  const rows = o ? [['Proposed action', o.proposed],['What will change', o.changes],['VERITY’s position', 'Not recommended. ' + ACT.cr.why],['Expected consequences', o.expect],['Risks', o.risk],['Reversible', o.reversible],['Carried out by', o.team === 'Nobody' ? 'Nobody. No change is made.' : `${x.teamFull}. Not VERITY.`]]
+    : [['Proposed action', x.proposed],['What will change', x.changes],['Why', x.why],['Expected consequences', x.expect],['Risks', x.risk],['Reversible', x.reversible],['Carried out by', `${x.teamFull}. Not VERITY.`]];
   const choose = S.cur === 'cr' && !a.appr ? `<fieldset class="choose"><legend>Which action do you want to approve?</legend>
-      ${[['rec', `${x.change}: restore the field mapping`, 'TRACE recommends'], ['rollback', OVR.rollback.label, 'Override'], ['wait', OVR.wait.label, 'Override']].map(([k, l, tag]) => `<label class="opt ${a.choice === k ? 'on' : ''}"><input type="radio" name="choice" value="${k}" ${a.choice === k ? 'checked' : ''}><span>${l}</span>${k === 'rec' ? pill('agent','trace',tag) : pill('ink','users',tag)}</label>`).join('')}</fieldset>` : '';
+      ${[['rec', `${x.change}: restore the field mapping`, 'VERITY recommends'], ['rollback', OVR.rollback.label, 'Override'], ['wait', OVR.wait.label, 'Override']].map(([k, l, tag]) => `<label class="opt ${a.choice === k ? 'on' : ''}"><input type="radio" name="choice" value="${k}" ${a.choice === k ? 'checked' : ''}><span>${l}</span>${k === 'rec' ? pill('agent','trace',tag) : pill('ink','users',tag)}</label>`).join('')}</fieldset>` : '';
   const disagree = o && !a.appr ? `<div class="card card-in" style="margin:0 20px 14px;border-color:var(--agent-line)">${tnote(o.note)}</div>` : '';
-  const status = a.appr === 'approved' ? `<div class="banner ${a.exec === 'done' ? 'ok' : 'ink'}" style="margin-top:12px">${ic(a.exec === 'done' ? 'check' : 'shield')}<div><b>${o ? (a.exec === 'done' ? (o.team === 'Nobody' ? 'Holding, as you decided' : `Executed by ${x.team}`) : 'Approved by you, against TRACE’s recommendation. Not yet executed.') : a.exec === 'done' ? `Executed by ${x.team}` : 'Approved by you. Not yet executed.'}</b><p>${o ? (a.exec === 'done' ? o.after : `MLOps will carry out the rollback; TRACE will report when they confirm.`) + ` Your reason: “${esc(a.reason)}”.` : a.exec === 'done' ? (S.cur === 'cr' ? 'MLOps report CR-1187 live in production at Mon 14:20 UTC. TRACE is monitoring.' : 'Fraud Ops restored FR-R12 to 0.82 at Fri 20 Nov 09:00 UTC. TRACE is monitoring.') : `Approved ${S.cur === 'cr' ? 'Mon 10:05' : 'Thu 16:45'}. ${x.team} will carry out the change; TRACE will report when they confirm.`}</p></div><span></span></div>`
+  const status = a.appr === 'approved' ? `<div class="banner ${a.exec === 'done' ? 'ok' : 'ink'}" style="margin-top:12px">${ic(a.exec === 'done' ? 'check' : 'shield')}<div><b>${o ? (a.exec === 'done' ? (o.team === 'Nobody' ? 'Holding, as you decided' : `Executed by ${x.team}`) : 'Approved by you, against VERITY’s recommendation. Not yet executed.') : a.exec === 'done' ? `Executed by ${x.team}` : 'Approved by you. Not yet executed.'}</b><p>${o ? (a.exec === 'done' ? o.after : `MLOps will carry out the rollback; VERITY will report when they confirm.`) + ` Your reason: “${esc(a.reason)}”.` : a.exec === 'done' ? (S.cur === 'cr' ? 'MLOps report CR-1187 live in production at Mon 14:20 UTC. VERITY is monitoring.' : 'Fraud Ops restored FR-R12 to 0.82 at Fri 20 Nov 09:00 UTC. VERITY is monitoring.') : `Approved ${S.cur === 'cr' ? 'Mon 10:05' : 'Thu 16:45'}. ${x.team} will carry out the change; VERITY will report when they confirm.`}</p></div><span></span></div>`
     : a.appr === 'rejected' ? `<div class="banner bad" style="margin-top:12px">${ic('x')}<div><b>Rejected by you</b><p>Nothing changed in production. Reason recorded: “${esc(a.reason)}”.</p></div><div class="acts"><button class="btn btn-line btn-sm" data-act="unreject">Reconsider</button></div></div>` : '';
   const ft = a.appr ? '' : `<div class="approve-ft">
       <label class="chk"><input type="checkbox" id="rev" ${a.reviewed ? 'checked' : ''}><span>I’ve reviewed the diagnosis, the evidence and exactly what this change will do.</span></label>
-      <div class="field"><label for="reason">${o ? 'Why are you choosing differently from TRACE?' : 'Note for the decision record'} <span class="muted" style="font-weight:400">(${o ? 'required' : 'required if you reject'})</span></label><textarea id="reason" rows="2" aria-describedby="${a.err ? 'reason-err' : ''}">${esc(a.reason)}</textarea>${a.err ? `<p class="err" id="reason-err" role="alert">${a.err}</p>` : ''}</div>
+      <div class="field"><label for="reason">${o ? 'Why are you choosing differently from VERITY?' : 'Note for the decision record'} <span class="muted" style="font-weight:400">(${o ? 'required' : 'required if you reject'})</span></label><textarea id="reason" rows="2" aria-describedby="${a.err ? 'reason-err' : ''}">${esc(a.reason)}</textarea>${a.err ? `<p class="err" id="reason-err" role="alert">${a.err}</p>` : ''}</div>
       ${a.modify ? `<div class="modify"><b style="font-size:13px">Modify instead</b><div class="abtns"><button class="btn btn-line btn-sm" data-act="more">${ic('search')}Request further investigation</button><button class="btn btn-line btn-sm" data-act="handoff">${ic('edit')}Change the request to ${x.team}</button><button class="btn btn-ghost btn-sm" data-act="modify">Cancel</button></div></div>` : ''}
-      <div class="abtns"><button class="btn btn-ink" data-act="approve" ${a.reviewed ? '' : 'disabled'} aria-describedby="appr-hint">${ic('shield')}${o ? 'Approve against TRACE’s recommendation' : 'Approve'}</button><button class="btn btn-bad" data-act="reject">Reject</button><button class="btn btn-ghost" data-act="modify" aria-expanded="${a.modify}">Modify or investigate further</button><span class="hint muted" id="appr-hint" style="font-size:12px;margin-left:auto">${a.reviewed ? `Approving lets ${x.team} execute. TRACE never changes production.` : 'Tick the review box to enable approval.'}</span></div></div>`;
-  return `<article class="approve" aria-labelledby="ap-h"><div class="approve-hd">${ic('shield')}<h3 id="ap-h">Approval: ${o ? o.change : x.change}</h3><span class="end">${a.appr === 'approved' ? pill(o ? 'ink' : 'ok', o ? 'users' : 'check', o ? 'Approved, overriding TRACE' : 'Approved') : a.appr === 'rejected' ? pill('bad','x','Rejected') : pill('ink','clock','Awaiting your decision')}</span></div>
+      <div class="abtns"><button class="btn btn-ink" data-act="approve" ${a.reviewed ? '' : 'disabled'} aria-describedby="appr-hint">${ic('shield')}${o ? 'Approve against VERITY’s recommendation' : 'Approve'}</button><button class="btn btn-bad" data-act="reject">Reject</button><button class="btn btn-ghost" data-act="modify" aria-expanded="${a.modify}">Modify or investigate further</button><span class="hint muted" id="appr-hint" style="font-size:12px;margin-left:auto">${a.reviewed ? `Approving lets ${x.team} execute. VERITY never changes production.` : 'Tick the review box to enable approval.'}</span></div></div>`;
+  return `<article class="approve" aria-labelledby="ap-h"><div class="approve-hd">${ic('shield')}<h3 id="ap-h">Approval: ${o ? o.change : x.change}</h3><span class="end">${a.appr === 'approved' ? pill(o ? 'ink' : 'ok', o ? 'users' : 'check', o ? 'Approved, overriding VERITY' : 'Approved') : a.appr === 'rejected' ? pill('bad','x','Rejected') : pill('ink','clock','Awaiting your decision')}</span></div>
     ${choose}${disagree}<dl class="approve-bd">${rows.map(([k, v]) => `<div class="arow"><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${ft}</article>${status}`;
 }
 function monitorBody() {
@@ -1537,12 +1556,12 @@ function wrongSection() {
   const w = S.wrong;
   if (w.status === 'flagged') return `<section class="sec" aria-labelledby="wr-h"><div class="banner warn">${ic('alert')}<div><b id="wr-h">Recovery criteria not met</b><p>The mapping fix worked (empty field back to 0.5%), but precision recovered only about 5 of the 8 points.</p></div><span></span></div>
     <div class="card card-in" style="margin-top:10px">${tnote('This contradicts my diagnosis. The rename can’t be the whole explanation. Before I guess at what else is going on, is there anything you or Fraud Ops know about that I might have weighed wrongly?', 'Thu 14:25')}</div>
-    <div class="push" style="margin-top:10px"><h3>Add context</h3><p class="sub">This reopens the investigation. TRACE will revisit the evidence it relied on.</p>
-      <label class="sr" for="wr-text">Context for TRACE</label><textarea id="wr-text" placeholder="What do you know that TRACE might not?">${esc(w.text)}</textarea>
-      <div class="row"><button class="suggest" data-wfill="Dan from Fraud Ops says Friday’s threshold change flagged far more weekend payments than they planned. I raised this on Monday.">Friday’s threshold change hit far more weekend payments</button><span style="flex:1"></span><button class="btn btn-ink btn-sm" data-act="wrong-submit" id="wr-btn" ${w.text.trim() ? '' : 'disabled'}>Send to TRACE</button></div></div></section>`;
+    <div class="push" style="margin-top:10px"><h3>Add context</h3><p class="sub">This reopens the investigation. VERITY will revisit the evidence it relied on.</p>
+      <label class="sr" for="wr-text">Context for VERITY</label><textarea id="wr-text" placeholder="What do you know that VERITY might not?">${esc(w.text)}</textarea>
+      <div class="row"><button class="suggest" data-wfill="Dan from Fraud Ops says Friday’s threshold change flagged far more weekend payments than they planned. I raised this on Monday.">Friday’s threshold change hit far more weekend payments</button><span style="flex:1"></span><button class="btn btn-ink btn-sm" data-act="wrong-submit" id="wr-btn" ${w.text.trim() ? '' : 'disabled'}>Send to VERITY</button></div></div></section>`;
   const ph = w.phase;
   const rows = [['mon','Re-read precision by score band, reviews now complete'],['mon','Recompute weekend share of the 0.78–0.82 band'],['fs','Confirm the rename’s effect is fully fixed']];
-  return `<section class="sec" aria-labelledby="wr2-h"><div class="sec-hd"><h3 id="wr2-h">Investigation reopened</h3><small>${w.status === 'checking' ? 'TRACE is re-investigating' : 'Diagnosis revised'}</small></div>
+  return `<section class="sec" aria-labelledby="wr2-h"><div class="sec-hd"><h3 id="wr2-h">Investigation reopened</h3><small>${w.status === 'checking' ? 'VERITY is re-investigating' : 'Diagnosis revised'}</small></div>
     <div class="push"><div class="thread-in">${hnote(w.text, 'Thu 15:10')}
     ${ph >= 1 ? `<div class="fade">${tnote('Thank you. On Monday I weakened the threshold explanation using Fraud Ops’ planned impact and a Friday-night sample where only 12% of the relevant flags had been reviewed. Those reviews are now complete, so I’m re-reading that band.', 'Thu 15:11')}</div>` : ''}
     ${ph >= 2 ? `<ul class="recheck fade">${rows.map((r, i) => { const st = ph >= 3 + i ? 'done' : ph === 2 + i ? 'prog' : 'pend'; return `<li>${src(r[0])}<span>${r[1]}</span><span class="st ${st}">${STW[st]}</span></li>`; }).join('')}</ul>` : ''}
@@ -1559,7 +1578,7 @@ function recordBody(filter = S.actFilter) {
   const av = { ops:'<span class="av ops" aria-hidden="true">DO</span>', sys:`<span class="av sys" aria-hidden="true">${ic('bell')}</span>`, trace:`<span class="av trace" aria-hidden="true">${ic('trace')}</span>`, maya:'<span class="av maya" aria-hidden="true">M</span>', mlops:'<span class="av mlops" aria-hidden="true">ML</span>', fops:'<span class="av mlops" aria-hidden="true">FO</span>' };
   const map = { all:() => true, trace:e => e.who === 'trace', maya:e => e.who === 'maya', teams:e => ['mlops','fops','ops'].includes(e.who) };
   const list = S.log.filter(map[filter]);
-  return `<div class="filters" role="group" aria-label="Filter the record">${[['all','All'],['trace','TRACE'],['maya','Maya'],['teams','MLOps and Fraud Ops']].map(([k, l]) => `<button aria-pressed="${filter === k}" data-filter="${k}">${l}</button>`).join('')}</div>
+  return `<div class="filters" role="group" aria-label="Filter the record">${[['all','All'],['trace','VERITY'],['maya','Maya'],['teams','MLOps and Fraud Ops']].map(([k, l]) => `<button aria-pressed="${filter === k}" data-filter="${k}">${l}</button>`).join('')}</div>
     <div class="card card-in"><ol class="audit">${list.map(e => `<li class="${e.sup ? 'sup' : ''}"><time>${e.t}</time>${av[e.who]}<div><b>${esc(e.name)}</b>${e.sup ? '<span class="tagx">Superseded</span>' : ''}${e.tag ? `<span class="tagx">${e.tag}</span>` : ''}<p class="what">${esc(e.what)}</p>${e.det ? `<p class="det">${esc(e.det)}</p>` : ''}</div></li>`).join('')}</ol></div>`;
 }
 
@@ -1569,19 +1588,19 @@ function recordBody(filter = S.actFilter) {
 function nextStep() {
   const a = A(), x = ACT[S.cur], o = ov();
   if (S.closed) return ['Closed', 'Nothing needs you on this case.', 'ok'];
-  if (S.inv.status === 'idle') return ['Needs you', 'Decide whether TRACE should investigate', 'bad'];
-  if (S.inv.status === 'running' || S.inv.retrying) return ['TRACE working', 'TRACE is checking the four sources', 'agent'];
+  if (S.inv.status === 'idle') return ['Needs you', 'Decide whether VERITY should investigate', 'bad'];
+  if (S.inv.status === 'running' || S.inv.retrying) return ['VERITY working', 'VERITY is checking the four sources', 'agent'];
   if (isLow()) return ['Needs you', 'A source is down: retry it or continue with low confidence', 'warn'];
   if (conflictOpen()) return ['Needs you', 'Two sources disagree: run the resolving check', 'warn'];
-  if (S.wrong.status === 'checking') return ['TRACE working', 'TRACE is re-investigating with your context', 'agent'];
-  if (S.wrong.status === 'flagged') return ['Needs you', 'Recovery not met: add context so TRACE can re-check', 'warn'];
-  if (S.reached < 4) return ['Needs you', 'Review TRACE’s findings', 'bad'];
+  if (S.wrong.status === 'checking') return ['VERITY working', 'VERITY is re-investigating with your context', 'agent'];
+  if (S.wrong.status === 'flagged') return ['Needs you', 'Recovery not met: add context so VERITY can re-check', 'warn'];
+  if (S.reached < 4) return ['Needs you', 'Review VERITY’s findings', 'bad'];
   if (a.appr === 'rejected') return ['Needs you', 'You rejected the change: choose a next step', 'warn'];
   if (a.h === 'none' || a.h === 'draft') return ['Needs you', `Review and send the ${x.team} handoff`, 'bad'];
   if (a.h === 'sent') return [`Waiting on ${x.team}`, `${x.team} are validating the request`, 'agent'];
   if (!a.appr) return ['Needs you', `Approve, reject or modify ${x.change}`, 'bad'];
   if (a.exec === 'deploying') return [`Waiting on ${x.team}`, `${x.team} are carrying out the change`, 'agent'];
-  if (a.mon === 'early') return ['Monitoring', 'TRACE is watching the 72-hour recovery window', 'agent'];
+  if (a.mon === 'early') return ['Monitoring', 'VERITY is watching the 72-hour recovery window', 'agent'];
   if (o) return ['Needs you', 'Recovery not met after your override: reconsider', 'warn'];
   return ['Needs you', 'Recovery criteria met: close the case', 'ok'];
 }
@@ -1607,7 +1626,7 @@ function pageOverview() {
   const waiting = [];
   if (a.h === 'sent') waiting.push(['team', `${x.team} are validating your ${S.cur === 'cr' ? 'field-mapping' : 'threshold'} request`, S.cur === 'cr' ? 'Sent Mon 08:20' : 'Sent Thu 15:30']);
   if (a.exec === 'deploying') waiting.push(['team', `${x.team} are carrying out ${o ? o.change : x.change}`, S.cur === 'cr' ? 'Approved Mon 10:05' : 'Approved Thu 16:45']);
-  if (a.mon === 'early' && false) waiting.push(['trace', `TRACE is monitoring recovery after ${o ? o.change : x.change}`, `Closes ${S.cur === 'cr' ? 'Thu 19 Nov 14:20' : 'Mon 23 Nov 09:00'}`]);
+  if (a.mon === 'early' && false) waiting.push(['trace', `VERITY is monitoring recovery after ${o ? o.change : x.change}`, `Closes ${S.cur === 'cr' ? 'Thu 19 Nov 14:20' : 'Mon 23 Nov 09:00'}`]);
   const shownNow = hv === 'Monitoring' ? CASE.now : hv, recovered = ht === 'ok';
   const delta = recovered ? `<span class="delta ok">${ic('up')}within 1 pp</span>` : hv === '87.9%' ? `<span class="delta warn">${ic('down')}−3.3 pp</span>` : `<span class="delta">${ic('down')}${CASE.delta}</span>`;
   const rows = S.closed
@@ -1651,7 +1670,7 @@ function pageOverview() {
 }
 function pageCases() {
   const [s] = stageInfo(S.stage), [tag, step] = nextStep();
-  return `<div class="view" id="view" tabindex="-1"><header class="page-hd"><h2>Cases</h2><p>TRACE opens a case when Model Monitoring raises an alert. Each case keeps its investigation, evidence, conversation and decision record.</p></header>
+  return `<div class="view" id="view" tabindex="-1"><header class="page-hd"><h2>Cases</h2><p>VERITY opens a case when Model Monitoring raises an alert. Each case keeps its investigation, evidence, conversation and decision record.</p></header>
     <section class="sec" style="margin-top:0"><div class="sec-hd"><h3>Open</h3></div><div class="card"><table class="table"><thead><tr><th>Case</th><th>Model</th><th>Stage</th><th>Next step</th><th>Opened</th></tr></thead><tbody>
       ${S.closed ? '' : `<tr class="click" data-nav="case" tabindex="0"><td><span class="mono">${CASE.id}</span><br>${CASE.title}</td><td class="mono">${CASE.model} ${CASE.ver}</td><td>${['Case overview','Investigation','Findings','Decision'][S.stage - 1]}<br><span class="muted" style="font-size:12px">${s}</span></td><td>${step}</td><td class="mono">Mon 07:41</td></tr>`}
       <tr><td><span class="mono">FR-2043</span><br>Feature drift on <span class="mono">device_age</span></td><td class="mono">chargeback-risk-gbm</td><td>Not started</td><td class="muted">Low severity, not part of this prototype</td><td class="mono">Mon 06:10</td></tr></tbody></table></div></section>
@@ -1667,12 +1686,12 @@ function pageModels() {
       <dl class="kv" style="margin-top:12px"><dt>Purpose</dt><dd>Scores every card payment for fraud in real time</dd><dt>Inputs</dt><dd>42 features from the Feature Store</dd><dt>Environment</dt><dd>${CASE.env}</dd><dt>Open case</dt><dd><button class="evlink mono" data-nav="case">${CASE.id}</button></dd></dl></div>
       <div class="card-in" style="border-top:1px solid var(--line)"><div class="sec-hd" style="margin-bottom:4px"><h3 style="font-size:13px">Versions</h3>${src('mr')}</div>
       <table class="table"><thead><tr><th>Version</th><th>Stage</th><th>Deployed</th><th>Reads merchant_category</th></tr></thead><tbody><tr><td class="mono">v14</td><td>Production</td><td class="mono">Wed 21 Oct</td><td>Yes</td></tr><tr><td class="mono">v13</td><td>Archived</td><td class="mono">Wed 2 Sep</td><td>Yes</td></tr></tbody></table>
-      <p class="muted" style="font-size:12px;margin-top:8px">TRACE reads the Model Registry, not the Experiment Tracker. Training runs and experiments aren’t visible here.</p></div></article>
+      <p class="muted" style="font-size:12px;margin-top:8px">VERITY reads the Model Registry, not the Experiment Tracker. Training runs and experiments aren’t visible here.</p></div></article>
     <section class="sec"><div class="sec-hd"><h3>Other models</h3></div><div class="card"><table class="table"><thead><tr><th>Model</th><th>Monitored metric</th><th>Status</th></tr></thead><tbody>
       <tr><td class="mono">chargeback-risk-gbm</td><td>AUC 0.871</td><td>${pill('warn','alert','Minor drift, FR-2043')}</td></tr><tr><td class="mono">aml-txn-gbm</td><td>Recall 92.4%</td><td>${pill('ok','check','Healthy')}</td></tr><tr><td class="mono">credit-limit-lr</td><td>MAE within band</td><td>${pill('ok','check','Healthy')}</td></tr></tbody></table></div></section></div>`;
 }
 function pageActivity() {
-  return `<div class="view" id="view" tabindex="-1"><header class="page-hd"><h2>Activity</h2><p>Every action by TRACE, Maya and the teams she works with, in order. The same record appears in each case’s decision stage.</p></header>${recordBody()}</div>`;
+  return `<div class="view" id="view" tabindex="-1"><header class="page-hd"><h2>Activity</h2><p>Every action by VERITY, Maya and the teams she works with, in order. The same record appears in each case’s decision stage.</p></header>${recordBody()}</div>`;
 }
 
 /* =====================================================================
@@ -1686,8 +1705,8 @@ function panelDefault() {
       : `On FR-2041: ${step.charAt(0).toLowerCase() + step.slice(1)}.`;
     return { title:'Briefing', body:`${tnote(brief)}<div class="p-lbl" style="margin-top:16px">Open case</div><button class="prow" data-nav="case"><span class="av sm trace" aria-hidden="true">${ic('trace')}</span><span>${CASE.id}<span class="d">${tag}: ${step}</span></span>${ic('right')}</button>` };
   }
-  if (S.nav !== 'case') return { title:'TRACE', body:`${tnote('I keep the case context while you look around. Ask me anything about FR-2041 below.')}<div class="p-lbl" style="margin-top:16px">Current case</div><button class="prow" data-nav="case"><span class="av sm trace" aria-hidden="true">${ic('trace')}</span><span>${CASE.id}<span class="d">${stageInfo(S.stage)[0]}</span></span>${ic('right')}</button>` };
-  if (S.stage === 1) return { title:'TRACE’s plan', body:planBody() };
+  if (S.nav !== 'case') return { title:'VERITY', body:`${tnote('I keep the case context while you look around. Ask me anything about FR-2041 below.')}<div class="p-lbl" style="margin-top:16px">Current case</div><button class="prow" data-nav="case"><span class="av sm trace" aria-hidden="true">${ic('trace')}</span><span>${CASE.id}<span class="d">${stageInfo(S.stage)[0]}</span></span>${ic('right')}</button>` };
+  if (S.stage === 1) return { title:'VERITY’s plan', body:planBody() };
   if (S.stage === 2) {
     const running = S.inv.status === 'running' || S.inv.retrying;
     return { title: running ? 'Investigating' : 'Investigation progress', body:`${S.inv.status === 'idle' ? planBody() : `
@@ -1707,34 +1726,34 @@ function panelDefault() {
   const a = A(), x = ACT[S.cur];
   const line = (who, txt, st) => `<li><span class="k" style="background:${st === 'done' ? 'var(--ok-soft)' : st === 'now' ? 'var(--ink-soft)' : 'var(--sunken)'};color:${st === 'done' ? 'var(--ok)' : 'var(--text-2)'}">${st === 'done' ? ic('check') : '·'}</span><div><b style="font-weight:500">${txt}</b><p>${who}</p></div></li>`;
   return { title:'Follow-through', body:`<div class="p-lbl">${x.team} track${S.cur === 'thr' ? ' (revised)' : ''}</div><ol class="plist">
-      ${line('TRACE', 'Handoff prepared', a.h !== 'none' ? 'done' : 'now')}
+      ${line('VERITY', 'Handoff prepared', a.h !== 'none' ? 'done' : 'now')}
       ${line('Maya', 'Request sent', a.h === 'sent' || a.h === 'responded' ? 'done' : a.h === 'draft' ? 'now' : '')}
       ${line(x.team, 'Validated and responded', a.h === 'responded' ? 'done' : '')}
       ${line('Maya', a.appr === 'rejected' ? 'Rejected' : 'Approved', a.appr ? 'done' : a.h === 'responded' ? 'now' : '')}
       ${line(x.team, 'Executed the change', a.exec === 'done' ? 'done' : '')}
-      ${line('TRACE', 'Monitored 72 h', a.mon === 'final' ? 'done' : a.mon === 'early' ? 'now' : '')}</ol>
-    <div class="p-lbl">Guardrails</div><ul class="list ag"><li>${ic('lock')}<span>TRACE stays read-only throughout.</span></li><li>${ic('shield')}<span>Production changes need your approval.</span></li><li>${ic('users')}<span>${x.team} execute; TRACE reports what they confirm.</span></li></ul>
+      ${line('VERITY', 'Monitored 72 h', a.mon === 'final' ? 'done' : a.mon === 'early' ? 'now' : '')}</ol>
+    <div class="p-lbl">Guardrails</div><ul class="list ag"><li>${ic('lock')}<span>VERITY stays read-only throughout.</span></li><li>${ic('shield')}<span>Production changes need your approval.</span></li><li>${ic('users')}<span>${x.team} execute; VERITY reports what they confirm.</span></li></ul>
     ${S.cur === 'cr' && !isLow() ? `<div class="p-actions"><button class="btn btn-line btn-sm" data-panel="why-rec">Why this recommendation</button></div>` : ''}` };
 }
 function planBody() {
   return `${tnote('Here’s what I’ll check, in order. Everything is read-only.')}
     <div class="p-lbl">Checks</div><ol class="plist">${STEPS.map((s, i) => `<li><span class="k">${i + 1}</span><div><b style="font-weight:500">${s.did}</b><p>${s.why}</p></div>${s.src === 'trace' ? '' : `<span title="${SRC[s.src].name}">${ic(s.src)}</span>`}</li>`).join('')}</ol>
-    <div class="p-lbl">Limits</div><div class="scope"><div><h4>${ic('lock')}TRACE can</h4><ul><li>Read the four sources</li><li>Query aggregates and logs</li><li>Recommend and explain</li></ul></div><div><h4>${ic('shield')}Needs you</h4><ul><li>Any production change</li><li>Sending to other teams</li><li>Closing the case</li></ul></div></div>
-    <p class="p-txt" style="margin-top:10px">TRACE has no access to the Experiment Tracker or to customer-level records.</p>`;
+    <div class="p-lbl">Limits</div><div class="scope"><div><h4>${ic('lock')}VERITY can</h4><ul><li>Read the four sources</li><li>Query aggregates and logs</li><li>Recommend and explain</li></ul></div><div><h4>${ic('shield')}Needs you</h4><ul><li>Any production change</li><li>Sending to other teams</li><li>Closing the case</li></ul></div></div>
+    <p class="p-txt" style="margin-top:10px">VERITY has no access to the Experiment Tracker or to customer-level records.</p>`;
 }
 function confKey() {
-  return `<div class="ckey"><span><i style="background:var(--ok)"></i>Verified observation or supporting</span><span><i style="background:var(--bad)"></i>Contradictory</span><span><i style="background:var(--agent)"></i>Hypothesis (TRACE’s judgement)</span><span><i style="background:var(--warn)"></i>Unknown or missing</span></div>`;
+  return `<div class="ckey"><span><i style="background:var(--ok)"></i>Verified observation or supporting</span><span><i style="background:var(--bad)"></i>Contradictory</span><span><i style="background:var(--agent)"></i>Hypothesis (VERITY’s judgement)</span><span><i style="background:var(--warn)"></i>Unknown or missing</span></div>`;
 }
 function panelView(v) {
   if (v.startsWith('ev:')) {
     const id = v.slice(3), e = EV[id];
     const rels = Object.entries(e.rel || {}).map(([h, k]) => `<span class="rel ${k}">${ic(relIcon[k][0])}${relIcon[k][1]} ${h.toUpperCase()}</span>`).join(' ');
     return { title:'Evidence', body:`${src(e.src)}<h3 style="margin-top:8px">${esc(e.title)}</h3>
-      <div class="p-lbl">What TRACE queried <span class="pill grey" style="height:18px">Read-only</span></div><p class="p-txt">${esc(e.q)}</p>
+      <div class="p-lbl">What VERITY queried <span class="pill grey" style="height:18px">Read-only</span></div><p class="p-txt">${esc(e.q)}</p>
       <div class="p-lbl">Source observation</div><p class="p-obs">${esc(e.obs)}</p>
       ${e.ba ? `<div class="ba">${e.ba.map(([l, v, c]) => `<div><span>${l}</span><b class="${c || ''}">${v}</b></div>`).join('')}</div>` : ''}
       ${e.chart ? chart(e.chart, 340, 130) : ''}
-      <div class="p-lbl">TRACE’s interpretation</div><p class="p-int">${esc(e.interp)}</p>
+      <div class="p-lbl">VERITY’s interpretation</div><p class="p-int">${esc(e.interp)}</p>
       <div class="p-lbl">Relationship</div><p class="p-txt" style="display:flex;gap:12px;flex-wrap:wrap">${rels}</p>
       <div class="p-lbl">Limitations</div><p class="p-txt">${esc(e.lim)}</p>
       <dl class="kv" style="margin-top:14px"><dt>Source time</dt><dd class="mono">${e.when} UTC</dd><dt>Window</dt><dd class="mono" style="font-size:12px">${e.win}</dd></dl>
@@ -1745,9 +1764,9 @@ function panelView(v) {
     return { title:'Connected source', body:`<h3 style="display:flex;gap:8px;align-items:center">${ic(k)}${s.name}</h3><p class="p-txt">${s.what}.</p>
       <dl class="kv" style="margin-top:12px"><dt>Access</dt><dd>Read-only, aggregates and logs</dd><dt>Status</dt><dd><span class="st ${st}">${STW[st]}</span></dd><dt>Check</dt><dd>${step.did}</dd></dl>
       ${st === 'fail' ? `<div class="banner warn" style="margin-top:14px">${ic('cloudoff')}<div><b>Not responding</b><p>No response after 30 s. Retried once at 08:04.</p></div><span></span></div><div class="p-actions"><button class="btn btn-agent btn-sm" data-act="retry">Retry now</button></div>` : st === 'done' ? `<div class="p-lbl">Observation</div><p class="p-obs">${esc(e.obs)}</p><div class="p-actions"><button class="btn btn-line btn-sm" data-panel="ev:${S.scenario === 'conflict' && k === 'pl' ? 'job' : step.ev}">Inspect evidence</button></div>` : ''}
-      ${k === 'mr' ? `<p class="p-txt" style="margin-top:12px">Not the Experiment Tracker. TRACE has no access to experiment runs.</p>` : ''}` };
+      ${k === 'mr' ? `<p class="p-txt" style="margin-top:12px">Not the Experiment Tracker. VERITY has no access to experiment runs.</p>` : ''}` };
   }
-  if (v === 'sources') return { title:'Connected systems', body:`<p class="p-txt">TRACE is authorised to read four systems. It can’t write to any of them.</p><div style="margin-top:10px">${Object.keys(SRC).map(k => `<button class="prow" data-panel="src:${k}">${ic(k)}<span>${SRC[k].name}<span class="d">${SRC[k].what}</span></span><span class="st ${k === 'pl' && isLow() ? 'fail' : 'done'}">${k === 'pl' && isLow() ? 'Unavailable' : 'Connected'}</span></button>`).join('')}</div><p class="p-txt" style="margin-top:12px">Not connected: Experiment Tracker, Fraud Ops rule system, customer records.</p>` };
+  if (v === 'sources') return { title:'Connected systems', body:`<p class="p-txt">VERITY is authorised to read four systems. It can’t write to any of them.</p><div style="margin-top:10px">${Object.keys(SRC).map(k => `<button class="prow" data-panel="src:${k}">${ic(k)}<span>${SRC[k].name}<span class="d">${SRC[k].what}</span></span><span class="st ${k === 'pl' && isLow() ? 'fail' : 'done'}">${k === 'pl' && isLow() ? 'Unavailable' : 'Connected'}</span></button>`).join('')}</div><p class="p-txt" style="margin-top:12px">Not connected: Experiment Tracker, Fraud Ops rule system, customer records.</p>` };
   if (v.startsWith('hyp:')) {
     const h = hyps().find(x => x.id === v.slice(4));
     return { title:'Hypothesis', body:`<div style="display:flex;gap:8px;align-items:center">${pill(h.tone, toneIcon[h.tone], h.status)}<span class="mono muted">${h.id.toUpperCase()}</span></div><p class="p-int p-head">${esc(h.title)}</p><p class="p-txt" style="margin-top:8px">${esc(h.expl)}</p>
@@ -1757,13 +1776,13 @@ function panelView(v) {
       <div class="p-lbl">Missing</div><ul class="list gap">${h.gap.length ? h.gap.map(i => `<li>${ic('gap')}${evItem(i).replace(/<\/?li>/g, '')}</li>`).join('') : '<li class="muted">Nothing outstanding</li>'}</ul>
       ${h.id === 'h4' && S.seg === 'idle' ? `<div class="p-actions"><button class="btn btn-agent btn-sm" data-act="seg">Check segment mix</button></div>` : ''}` };
   }
-  if (v.startsWith('gap:')) { const g = GAPS[v.slice(4)]; return { title:'Missing information', body:`${pill('warn','gap','Unknown')}<h3 style="margin-top:10px">${g.title}</h3><p class="p-txt" style="margin-top:6px">${g.note}</p><div class="p-lbl">Effect</div><p class="p-txt">TRACE keeps this visible and lowers confidence until it’s resolved. It never fills the gap with a guess.</p>${v === 'gap:plOff' ? `<div class="p-actions"><button class="btn btn-agent btn-sm" data-act="retry">Retry Data Pipeline Logs</button></div>` : ''}` }; }
-  if (v === 'mlops') return { title:'Evidence from MLOps', body:`<span class="src">${ic('users')}MLOps, human-reported</span><h3 style="margin-top:8px">${MLOPS_EV.title}</h3><p class="p-obs" style="margin-top:8px">${MLOPS_EV.note}</p><div class="p-lbl">Why it raises confidence</div><p class="p-int">MLOps can see the model input pipeline, which TRACE can’t. Their replay independently confirms the mechanism.</p><dl class="kv" style="margin-top:12px"><dt>Received</dt><dd class="mono">Mon 16 Nov 09:42 UTC</dd><dt>Status</dt><dd>Simulated response</dd></dl>` };
-  if (v === 'conf') return { title:'How confidence works', body:`<p class="p-int">TRACE uses three qualitative levels, not percentages. There isn’t a defensible way to compute a probability from four sources.</p>
-      <div class="p-lbl">Levels</div><div style="display:grid;gap:10px;margin-top:6px">${conf('High','',false)}<p class="p-txt" style="margin-top:-6px">Independent sources agree on timing and mechanism, and someone with access TRACE lacks has confirmed it.</p>${conf('Moderate','',false)}<p class="p-txt" style="margin-top:-6px">Timing and mechanism fit across sources, but key validation is outstanding.</p>${conf('Low','',false)}<p class="p-txt" style="margin-top:-6px">A source is missing, sources conflict, or the explanation fits only part of the evidence.</p></div>
-      <div class="p-lbl">Kinds of statement</div>${confKey()}<p class="p-txt" style="margin-top:8px"><span class="mono">Mono text</span> is data from a source. Text with the <span class="ai-inline">TRACE mark</span> is TRACE’s interpretation.</p>` };
+  if (v.startsWith('gap:')) { const g = GAPS[v.slice(4)]; return { title:'Missing information', body:`${pill('warn','gap','Unknown')}<h3 style="margin-top:10px">${g.title}</h3><p class="p-txt" style="margin-top:6px">${g.note}</p><div class="p-lbl">Effect</div><p class="p-txt">VERITY keeps this visible and lowers confidence until it’s resolved. It never fills the gap with a guess.</p>${v === 'gap:plOff' ? `<div class="p-actions"><button class="btn btn-agent btn-sm" data-act="retry">Retry Data Pipeline Logs</button></div>` : ''}` }; }
+  if (v === 'mlops') return { title:'Evidence from MLOps', body:`<span class="src">${ic('users')}MLOps, human-reported</span><h3 style="margin-top:8px">${MLOPS_EV.title}</h3><p class="p-obs" style="margin-top:8px">${MLOPS_EV.note}</p><div class="p-lbl">Why it raises confidence</div><p class="p-int">MLOps can see the model input pipeline, which VERITY can’t. Their replay independently confirms the mechanism.</p><dl class="kv" style="margin-top:12px"><dt>Received</dt><dd class="mono">Mon 16 Nov 09:42 UTC</dd><dt>Status</dt><dd>Simulated response</dd></dl>` };
+  if (v === 'conf') return { title:'How confidence works', body:`<p class="p-int">VERITY uses three qualitative levels, not percentages. There isn’t a defensible way to compute a probability from four sources.</p>
+      <div class="p-lbl">Levels</div><div style="display:grid;gap:10px;margin-top:6px">${conf('High','',false)}<p class="p-txt" style="margin-top:-6px">Independent sources agree on timing and mechanism, and someone with access VERITY lacks has confirmed it.</p>${conf('Moderate','',false)}<p class="p-txt" style="margin-top:-6px">Timing and mechanism fit across sources, but key validation is outstanding.</p>${conf('Low','',false)}<p class="p-txt" style="margin-top:-6px">A source is missing, sources conflict, or the explanation fits only part of the evidence.</p></div>
+      <div class="p-lbl">Kinds of statement</div>${confKey()}<p class="p-txt" style="margin-top:8px"><span class="mono">Mono text</span> is data from a source. Text with the <span class="ai-inline">VERITY mark</span> is VERITY’s interpretation.</p>` };
   if (v === 'why-rec') return { title:'Why this recommendation', body:`<p class="p-int">${ACT.cr.why}</p><div class="p-lbl">Compared with</div><ul class="list out">${ACT.cr.alts.map(([t, d]) => `<li>${ic('x')}<span><b style="font-weight:500;color:var(--text)">${t}.</b> ${d}</span></li>`).join('')}</ul>` };
-  if (v === 'plan') return { title:'TRACE’s plan', body:planBody() };
+  if (v === 'plan') return { title:'VERITY’s plan', body:planBody() };
   if (v === 'assumptions') return { title:'Scenario assumptions', body:`<p class="p-txt">This is a simulated case. These details were invented for the prototype and aren’t real data.</p><ul class="p-alist">${ASSUME.map(([k, v]) => `<li><b>${k}</b>${v}</li>`).join('')}</ul>` };
   return panelDefault();
 }
@@ -1779,11 +1798,11 @@ function renderPanel() {
         <span class="end">${top ? `<button class="iconbtn" data-act="panel-home" aria-label="Close detail">${ic('close')}</button>` : ''}</span></div>
       <div class="p-bd" aria-live="polite">${view.body}</div>
     </section>
-    <section class="p-chat ${S.chatMin ? 'min' : ''}" aria-label="Conversation with TRACE">
+    <section class="p-chat ${S.chatMin ? 'min' : ''}" aria-label="Conversation with VERITY">
       <div class="c-hd">${ic('chat')}<h2>Conversation</h2><span class="muted" style="font-size:12px;margin-left:6px">${S.chat.length} messages</span><span class="end"><button class="btn btn-ghost btn-sm" data-act="chat-min" aria-expanded="${!S.chatMin}">${S.chatMin ? 'Expand' : 'Reduce'}${ic(S.chatMin ? 'chevup' : 'chev')}</button></span></div>
-      <div class="c-thread" id="thread" aria-live="polite">${S.chat.map(m => `<div class="cm ${m.who}">${m.who === 'trace' ? `<span class="av sm trace" aria-hidden="true">${ic('trace')}</span>` : '<span class="av sm maya" aria-hidden="true">M</span>'}<div><span class="who"><b>${m.who === 'trace' ? 'TRACE' : 'Maya'}</b><span class="mono">${m.t}</span></span><p class="m">${esc(m.m)}</p></div></div>`).join('')}${S.busyChat ? `<div class="cm trace typing"><span class="av sm trace" aria-hidden="true">${ic('trace')}</span><div><span class="who"><b>TRACE</b></span><p class="m">Checking the evidence…</p></div></div>` : ''}</div>
+      <div class="c-thread" id="thread" aria-live="polite">${S.chat.map(m => `<div class="cm ${m.who}">${m.who === 'trace' ? `<span class="av sm trace" aria-hidden="true">${ic('trace')}</span>` : '<span class="av sm maya" aria-hidden="true">M</span>'}<div><span class="who"><b>${m.who === 'trace' ? 'VERITY' : 'Maya'}</b><span class="mono">${m.t}</span></span><p class="m">${esc(m.m)}</p></div></div>`).join('')}${S.busyChat ? `<div class="cm trace typing"><span class="av sm trace" aria-hidden="true">${ic('trace')}</span><div><span class="who"><b>VERITY</b></span><p class="m">Checking the evidence…</p></div></div>` : ''}</div>
       ${sugg.length ? `<div class="c-sugg" aria-label="Suggested questions">${sugg.map(q => `<button data-act="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>` : ''}
-      <form class="c-in" id="chat-form"><label class="sr" for="chat-in">Message TRACE</label><input id="chat-in" autocomplete="off" placeholder="Ask, add context or challenge TRACE" value="${esc(S.chatDraft)}"><button class="btn btn-agent" type="submit" aria-label="Send">${ic('send')}</button></form>
+      <form class="c-in" id="chat-form"><label class="sr" for="chat-in">Message VERITY</label><input id="chat-in" autocomplete="off" placeholder="Ask, add context or challenge VERITY" value="${esc(S.chatDraft)}"><button class="btn btn-agent" type="submit" aria-label="Send">${ic('send')}</button></form>
     </section>`;
   const th = $('thread'); if (th) th.scrollTop = th.scrollHeight;
   if (keep) document.querySelector('.p-bd').scrollTop = keep;
@@ -1861,16 +1880,16 @@ function renderDrawer() {
         ${e.ba ? `<div class="ba">${e.ba.map(([l, v, c]) => `<div><span>${l}</span><b class="${c || ''}">${v}</b></div>`).join('')}</div>` : ''}
         ${e.chart ? `<div class="card card-in">${chart(e.chart)}</div>` : ''}
         <div class="d-sec"><h3>Raw output</h3><pre style="margin:0;padding:12px;border-radius:var(--r-sm);background:var(--sunken);font:400 12px/1.6 var(--mono);white-space:pre-wrap">${esc(e.raw)}</pre></div>
-        <div class="d-sec"><h3>TRACE’s interpretation</h3><p class="voice">${esc(e.interp)}</p></div>
+        <div class="d-sec"><h3>VERITY’s interpretation</h3><p class="voice">${esc(e.interp)}</p></div>
         <div class="d-sec"><h3>Limitations</h3><p style="font-size:13px;color:var(--text-2)">${esc(e.lim)}</p></div>
       </div>
       <div class="d-ft"><span class="muted" style="font-size:12px">Aggregates only. No customer-level data.</span><div class="end"><button class="btn btn-line" data-act="drawer-close">Close</button></div></div></section>`;
   } else {
     const x = ACT[S.cur], h = S.ho, sent = A().h === 'sent' || A().h === 'responded';
     root.innerHTML = `<div class="scrim" data-act="drawer-close"></div><section class="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title">
-      <div class="d-hd"><div><span class="pill ${sent ? 'ok' : 'agent'}">${ic(sent ? 'check' : 'trace')}${sent ? 'Sent by Maya' : 'Prepared by TRACE, not sent'}</span><h2 id="d-title" style="margin-top:8px">${x.team} handoff</h2><p>${CASE.id}. Review and edit before sending. Nothing is sent until you do.</p></div><button class="iconbtn" data-act="drawer-close" aria-label="Close">${ic('close')}</button></div>
+      <div class="d-hd"><div><span class="pill ${sent ? 'ok' : 'agent'}">${ic(sent ? 'check' : 'trace')}${sent ? 'Sent by Maya' : 'Prepared by VERITY, not sent'}</span><h2 id="d-title" style="margin-top:8px">${x.team} handoff</h2><p>${CASE.id}. Review and edit before sending. Nothing is sent until you do.</p></div><button class="iconbtn" data-act="drawer-close" aria-label="Close">${ic('close')}</button></div>
       <div class="d-bd">
-        <div class="who3"><div><span>Prepared</span><b>TRACE</b>Drafted from the case</div><div class="${sent ? '' : 'on'}"><span>Approves and sends</span><b>Maya</b>${sent ? 'Sent' : 'Your review'}</div><div><span>Receives and acts</span><b>${x.team}</b>${A().h === 'responded' ? 'Responded' : sent ? 'Received' : 'Not sent yet'}</div></div>
+        <div class="who3"><div><span>Prepared</span><b>VERITY</b>Drafted from the case</div><div class="${sent ? '' : 'on'}"><span>Approves and sends</span><b>Maya</b>${sent ? 'Sent' : 'Your review'}</div><div><span>Receives and acts</span><b>${x.team}</b>${A().h === 'responded' ? 'Responded' : sent ? 'Received' : 'Not sent yet'}</div></div>
         <div class="field"><label for="ho-sum">Investigation summary</label><textarea id="ho-sum" data-ho="sum" rows="2" ${sent ? 'readonly' : ''}>${esc(h.sum)}</textarea></div>
         <div class="field"><label for="ho-issue">Suspected issue</label><textarea id="ho-issue" data-ho="issue" rows="3" ${sent ? 'readonly' : ''}>${esc(h.issue)}</textarea></div>
         <div class="d-sec"><h3>Relevant evidence</h3><div class="evpick">${x.evidence.map(id => `<label><input type="checkbox" data-hoev="${id}" ${h.ev.includes(id) ? 'checked' : ''} ${sent ? 'disabled' : ''}><span>${esc(EV[id].title)}<small>${SRC[EV[id].src].name}, ${EV[id].when}</small></span></label>`).join('')}</div></div>
@@ -1896,7 +1915,7 @@ document.addEventListener('keydown', e => {
 });
 function newHandoff() {
   const x = ACT[S.cur];
-  return { sum: S.cur === 'cr' ? 'Precision on card-fraud-xgb v14 fell from 91.2% to 83.2% from Sat 14 Nov 03:00. Recall unchanged. TRACE reviewed all four connected sources.' : 'After CR-1187, precision recovered to 87.9%, not 91.2%. TRACE re-investigated and found the FR-R12 threshold change explains the remaining gap.', issue:x.issue, val:x.validation, fix:x.fix, imp:x.impact, ev:[...x.evidence] };
+  return { sum: S.cur === 'cr' ? 'Precision on card-fraud-xgb v14 fell from 91.2% to 83.2% from Sat 14 Nov 03:00. Recall unchanged. VERITY reviewed all four connected sources.' : 'After CR-1187, precision recovered to 87.9%, not 91.2%. VERITY re-investigated and found the FR-R12 threshold change explains the remaining gap.', issue:x.issue, val:x.validation, fix:x.fix, imp:x.impact, ev:[...x.evidence] };
 }
 
 /* =====================================================================
@@ -1906,11 +1925,11 @@ function openPop(btn, kind) {
   const r = btn.getBoundingClientRect(), root = $('pop-root');
   if (root.dataset.for === kind) { closePop(); return; }
   const [s] = agentState();
-  const html = kind === 'status' ? `<h4>TRACE status</h4><ul>${[['working','Investigating','Reading sources or re-checking evidence','var(--agent)'],['waiting','Waiting for Maya','Something needs your review or decision','var(--ink)'],['idle','Ready','Idle, or waiting on another team','var(--dot)'],['done','Completed','Case closed and recorded','var(--ok)']].map(([k, t, d, c]) => `<li class="${s === k ? 'cur' : ''}"><i style="background:${c}"></i><span><b style="font-weight:600">${t}</b><br>${d}</span></li>`).join('')}</ul>`
+  const html = kind === 'status' ? `<h4>VERITY status</h4><ul>${[['working','Investigating','Reading sources or re-checking evidence','var(--agent)'],['waiting','Waiting for Maya','Something needs your review or decision','var(--ink)'],['idle','Ready','Idle, or waiting on another team','var(--dot)'],['done','Completed','Case closed and recorded','var(--ok)']].map(([k, t, d, c]) => `<li class="${s === k ? 'cur' : ''}"><i style="background:${c}"></i><span><b style="font-weight:600">${t}</b><br>${d}</span></li>`).join('')}</ul>`
     : kind === 'notes' ? `<h4>Notifications</h4><ul>${S.log.slice(-4).reverse().map(e => `<li><i style="background:var(--line-2)"></i><span><span class="mono" style="font-size:11px">${e.t}</span><br>${esc(e.name)}: ${esc(e.what)}</span></li>`).join('')}</ul>`
     : `<p style="color:var(--text-2)">${esc(btn.dataset.popText)}</p>`;
   root.dataset.for = kind;
-  root.innerHTML = `<div class="pop" role="dialog" aria-label="${kind === 'status' ? 'TRACE status' : kind === 'notes' ? 'Notifications' : 'Details'}" style="top:${r.bottom + 8}px;left:${Math.min(Math.max(12, r.left), innerWidth - 302)}px">${html}</div>`;
+  root.innerHTML = `<div class="pop" role="dialog" aria-label="${kind === 'status' ? 'VERITY status' : kind === 'notes' ? 'Notifications' : 'Details'}" style="top:${r.bottom + 8}px;left:${Math.min(Math.max(12, r.left), innerWidth - 302)}px">${html}</div>`;
   S.notes = 0; if (kind === 'notes') renderTop();
 }
 function closePop() { const r = $('pop-root'); r.innerHTML = ''; delete r.dataset.for; }
@@ -1940,7 +1959,7 @@ function render(focusMain) {
   renderPanel();
   paint($('app'));
   const nsc = $('scroll');
-  if (focusMain) { nsc.scrollTop = 0; $('view') && $('view').focus({ preventScroll:true }); document.title = `${S.nav === 'case' ? ['Case overview','Investigation','Findings','Decision'][S.stage - 1] : S.nav[0].toUpperCase() + S.nav.slice(1)}, TRACE`; }
+  if (focusMain) { nsc.scrollTop = 0; $('view') && $('view').focus({ preventScroll:true }); document.title = `${S.nav === 'case' ? ['Case overview','Investigation','Findings','Decision'][S.stage - 1] : S.nav[0].toUpperCase() + S.nav.slice(1)}, VERITY`; }
   else if (keep) { nsc.style.scrollBehavior = 'auto'; nsc.scrollTop = keep; nsc.style.scrollBehavior = ''; }
 }
 const goStage = n => { if (n > S.reached) return; S.nav = 'case'; S.stage = n; S.panel = []; S.sel = null; render(true); };
@@ -1953,7 +1972,7 @@ let timer;
 function startInvestigation() {
   S.inv.status = 'running'; S.inv.done = 0; reach(2); S.stage = 2; S.panel = [];
   log({ t:'Mon 16 Nov 08:02', who:'maya', name:'Maya', what:'Started the investigation' });
-  log({ t:'Mon 16 Nov 08:02', who:'trace', name:'TRACE', what:'Began read-only checks across the four connected sources' });
+  log({ t:'Mon 16 Nov 08:02', who:'trace', name:'VERITY', what:'Began read-only checks across the four connected sources' });
   render(true); tick();
 }
 function tick() {
@@ -1961,12 +1980,12 @@ function tick() {
   timer = setTimeout(() => {
     const i = S.inv.done, st = STEPS[i];
     const fail = S.scenario === 'low' && i === 2 && !S.inv.retried;
-    if (fail) { S.inv.failed = true; log({ t:'Mon 16 Nov 08:04', who:'trace', name:'TRACE', what:'Data Pipeline Logs did not respond after 30 s and one retry', det:'Marked the check Unavailable. Conclusions that depend on job history are on hold.' }); toast('Data Pipeline Logs unavailable', 'warn'); }
-    else { const ev = st.id === 's3' && S.scenario === 'conflict' ? 'job' : st.ev; seen(ev); log({ t:`Mon 16 Nov ${st.t}`, who:'trace', name:'TRACE', what:`${st.did}${st.src === 'trace' ? '' : ` (${SRC[st.src].name})`}`, det:EV[ev].obs }); }
+    if (fail) { S.inv.failed = true; log({ t:'Mon 16 Nov 08:04', who:'trace', name:'VERITY', what:'Data Pipeline Logs did not respond after 30 s and one retry', det:'Marked the check Unavailable. Conclusions that depend on job history are on hold.' }); toast('Data Pipeline Logs unavailable', 'warn'); }
+    else { const ev = st.id === 's3' && S.scenario === 'conflict' ? 'job' : st.ev; seen(ev); log({ t:`Mon 16 Nov ${st.t}`, who:'trace', name:'VERITY', what:`${st.did}${st.src === 'trace' ? '' : ` (${SRC[st.src].name})`}`, det:EV[ev].obs }); }
     S.inv.done++;
     if (S.inv.done >= STEPS.length) {
       S.inv.status = 'done';
-      log({ t:'Mon 16 Nov 08:07', who:'trace', name:'TRACE', what: S.inv.failed ? 'Finished with low confidence: 3 of 4 sources' : S.scenario === 'conflict' ? 'Finished: found conflicting evidence between Feature Store and Data Pipeline Logs' : 'Ranked four explanations. H1 field rename leading (moderate); model release ruled out' });
+      log({ t:'Mon 16 Nov 08:07', who:'trace', name:'VERITY', what: S.inv.failed ? 'Finished with low confidence: 3 of 4 sources' : S.scenario === 'conflict' ? 'Finished: found conflicting evidence between Feature Store and Data Pipeline Logs' : 'Ranked four explanations. H1 field rename leading (moderate); model release ruled out' });
       trace(S.inv.failed ? 'Done, with a gap: Data Pipeline Logs didn’t respond. I can retry, or continue without them and hold back any production recommendation.' : 'First pass complete. The field rename upstream is my leading signal. Review the findings when you’re ready.', '08:07');
       toast(S.inv.failed ? 'Investigation finished with one source unavailable' : 'Investigation complete: 4 of 4 sources', S.inv.failed ? 'warn' : 'ok');
       if (!S.inv.failed) reach(3);
@@ -1978,11 +1997,11 @@ function tick() {
 function retry() {
   if (!S.inv.failed || S.inv.retried) return;
   S.inv.retrying = true;
-  log({ t:'Mon 16 Nov 08:08', who:'maya', name:'Maya', what:'Asked TRACE to retry Data Pipeline Logs' });
+  log({ t:'Mon 16 Nov 08:08', who:'maya', name:'Maya', what:'Asked VERITY to retry Data Pipeline Logs' });
   S.nav = 'case'; S.stage = 2; S.panel = []; render(true);
   setTimeout(() => {
     S.inv.retrying = false; S.inv.retried = true; seen('rename'); reach(3);
-    log({ t:'Mon 16 Nov 08:09', who:'trace', name:'TRACE', what:'Data Pipeline Logs responded. Found the field rename in txn_feature_enrichment', det:'Confidence in H1 raised from low to moderate.' });
+    log({ t:'Mon 16 Nov 08:09', who:'trace', name:'VERITY', what:'Data Pipeline Logs responded. Found the field rename in txn_feature_enrichment', det:'Confidence in H1 raised from low to moderate.' });
     trace('Data Pipeline Logs responded. The field was renamed upstream at Sat 01:55, which explains why it’s empty. Confidence is back to moderate.', '08:09');
     toast('Evidence updated: Data Pipeline Logs responded', 'ok'); render(false);
   }, T(1600));
@@ -1992,7 +2011,7 @@ function startChallenge(fromChat) {
   S.ch.status = 'checking'; S.ch.phase = 0; S.panel = [];
   if (!fromChat) S.chat.push({ who:'maya', t:'08:12', m:S.ch.text });
   log({ t:'Mon 16 Nov 08:12', who:'maya', name:'Maya', what:'Challenged the leading hypothesis', det:S.ch.text });
-  toast('Challenge received. TRACE is re-checking', 'ink');
+  toast('Challenge received. VERITY is re-checking', 'ink');
   render(false);
   document.getElementById('ch-h')?.scrollIntoView({ block:'start', behavior: RM ? 'auto' : 'smooth' });
   const adv = () => {
@@ -2000,8 +2019,8 @@ function startChallenge(fromChat) {
     if (S.ch.phase === 5) seen('thrCheck');
     if (S.ch.phase >= 6) {
       S.ch.status = 'done';
-      log({ t:'Mon 16 Nov 08:13', who:'trace', name:'TRACE', what:'Re-read Model Monitoring: precision 90.9% between threshold change and rename', det:'New evidence: Precision held after the threshold change' });
-      log({ t:'Mon 16 Nov 08:14', who:'trace', name:'TRACE', what:'Kept H1 first; H2 threshold change weakened. Added a known gap: thin review coverage for band 0.78–0.82' });
+      log({ t:'Mon 16 Nov 08:13', who:'trace', name:'VERITY', what:'Re-read Model Monitoring: precision 90.9% between threshold change and rename', det:'New evidence: Precision held after the threshold change' });
+      log({ t:'Mon 16 Nov 08:14', who:'trace', name:'VERITY', what:'Kept H1 first; H2 threshold change weakened. Added a known gap: thin review coverage for band 0.78–0.82' });
       trace('I re-checked, and I’m keeping the rename first: precision held at 90.9% for nine hours after the threshold change. I can’t fully rule out a smaller contribution, because few flags in that band had been reviewed. I’ve recorded that gap.', '08:14');
       toast('Hypothesis ranking updated', 'agent');
       render(false); return;
@@ -2013,21 +2032,21 @@ function startChallenge(fromChat) {
 function startSeg(fromChat) {
   S.seg = 'checking'; S.open.h4 = true;
   if (!fromChat) S.chat.push({ who:'maya', t:'08:15', m:'Check customer-segment mix' });
-  log({ t:'Mon 16 Nov 08:15', who:'maya', name:'Maya', what:'Asked TRACE to investigate customer-segment mix' });
+  log({ t:'Mon 16 Nov 08:15', who:'maya', name:'Maya', what:'Asked VERITY to investigate customer-segment mix' });
   render(false);
   setTimeout(() => {
     S.seg = 'done'; seen('seg');
-    log({ t:'Mon 16 Nov 08:16', who:'trace', name:'TRACE', what:'Checked segment mix (aggregates only). H4 weakened: explains under 0.3 pp' });
+    log({ t:'Mon 16 Nov 08:16', who:'trace', name:'VERITY', what:'Checked segment mix (aggregates only). H4 weakened: explains under 0.3 pp' });
     trace('Segment shares moved by at most 0.6 points, and precision fell 7–9 points inside every segment. Mix explains under 0.3 points of the drop. I’ve marked it weakened, not ruled out.', '08:16');
     toast('Evidence updated: segment mix checked'); render(false);
   }, T(1800));
 }
 function resolveConflict() {
   S.conflict = 'checking'; render(false);
-  log({ t:'Mon 16 Nov 08:10', who:'maya', name:'Maya', what:'Asked TRACE to run the column-name check' });
+  log({ t:'Mon 16 Nov 08:10', who:'maya', name:'Maya', what:'Asked VERITY to run the column-name check' });
   setTimeout(() => {
     S.conflict = 'resolved'; seen('schema'); seen('rename'); reach(4);
-    log({ t:'Mon 16 Nov 08:11', who:'trace', name:'TRACE', what:'Resolved conflicting evidence: the job loaded every row under a new column name', det:'Both sources were right. H1 confidence raised from low to moderate.' });
+    log({ t:'Mon 16 Nov 08:11', who:'trace', name:'VERITY', what:'Resolved conflicting evidence: the job loaded every row under a new column name', det:'Both sources were right. H1 confidence raised from low to moderate.' });
     trace('Both sources were right. The job loaded every row, but wrote merchant_cat_code. The model still reads merchant_category, so it gets nothing. Confidence back to moderate, and I can now state a most likely cause.', '08:11');
     toast('Conflict resolved. Hypothesis updated', 'ok'); render(false);
   }, T(1500));
@@ -2044,8 +2063,8 @@ function startWrong(fromChat) {
     if (S.wrong.phase >= 6) {
       S.wrong.status = 'revised';
       S.log.forEach(e => { if (/Ranked four explanations|Kept H1 first|most likely cause/i.test(e.what)) e.sup = true; });
-      log({ t:'Thu 19 Nov 15:13', who:'trace', name:'TRACE', what:'Re-read precision by score band with complete reviews: band 0.78–0.82 was 9.8% of weekend flags at 41% precision' });
-      log({ t:'Thu 19 Nov 15:14', who:'trace', name:'TRACE', what:'Revised diagnosis: two causes. Rename ≈ 5 pp (fixed), threshold change ≈ 3 pp (open)', det:'Previous diagnosis marked superseded. TRACE acknowledged it relied on planned impact and thin review coverage.', tag:'Revision' });
+      log({ t:'Thu 19 Nov 15:13', who:'trace', name:'VERITY', what:'Re-read precision by score band with complete reviews: band 0.78–0.82 was 9.8% of weekend flags at 41% precision' });
+      log({ t:'Thu 19 Nov 15:14', who:'trace', name:'VERITY', what:'Revised diagnosis: two causes. Rename ≈ 5 pp (fixed), threshold change ≈ 3 pp (open)', det:'Previous diagnosis marked superseded. VERITY acknowledged it relied on planned impact and thin review coverage.', tag:'Revision' });
       trace('I was wrong to present the rename as the whole story. The threshold change cost about 3 points: weekend traffic put far more flags in the new band than Fraud Ops planned. My Monday diagnosis is kept as superseded. I now recommend asking Fraud Ops to restore 0.82.', 'Thu 15:14');
       toast('Diagnosis revised', 'warn'); render(false); return;
     }
@@ -2061,7 +2080,7 @@ function sendHandoff() {
   setTimeout(() => {
     a.h = 'responded';
     log({ t: S.cur === 'cr' ? 'Mon 16 Nov 09:42' : 'Thu 19 Nov 16:40', who: S.cur === 'cr' ? 'mlops' : 'fops', name: x.team, what: S.cur === 'cr' ? 'Confirmed the mapping mismatch in a staging replay and prepared change CR-1187' : 'Agreed the weekend band share exceeded plan; ready to restore 0.82 on approval', tag:'Simulated' });
-    if (S.cur === 'cr') log({ t:'Mon 16 Nov 09:43', who:'trace', name:'TRACE', what:'Raised H1 confidence from moderate to high based on MLOps’ staging replay' });
+    if (S.cur === 'cr') log({ t:'Mon 16 Nov 09:43', who:'trace', name:'VERITY', what:'Raised H1 confidence from moderate to high based on MLOps’ staging replay' });
     trace(S.cur === 'cr' ? 'MLOps confirmed the mapping mismatch in staging. I’ve raised my confidence to high. The change, CR-1187, is ready for your approval.' : 'Fraud Ops agree and are ready to restore 0.82 once you approve.', S.cur === 'cr' ? '09:42' : 'Thu 16:40');
     toast(`${x.team} responded. Approval needed`, 'agent');
     if (S.nav === 'case' && S.stage === 4) S.dtab = 'appr';
@@ -2072,14 +2091,14 @@ function approve() {
   const a = A(), x = ACT[S.cur];
   a.reason = ($('reason') || {}).value?.trim() || a.reason;
   const o = ov();
-  if (o && !a.reason) { a.err = 'Add a reason. When you choose differently from TRACE, the decision record needs to say why.'; render(false); $('reason')?.focus(); return; }
+  if (o && !a.reason) { a.err = 'Add a reason. When you choose differently from VERITY, the decision record needs to say why.'; render(false); $('reason')?.focus(); return; }
   a.appr = 'approved'; a.exec = 'deploying'; a.err = ''; a.modify = false;
-  log({ t: S.cur === 'cr' ? 'Mon 16 Nov 10:05' : 'Thu 19 Nov 16:45', who:'maya', name:'Maya', what: o ? `Overrode TRACE: approved “${o.label}” instead of ${x.change}` : `Approved ${x.change}`, det:a.reason || 'No note added', tag: o ? 'Override' : undefined });
+  log({ t: S.cur === 'cr' ? 'Mon 16 Nov 10:05' : 'Thu 19 Nov 16:45', who:'maya', name:'Maya', what: o ? `Overrode VERITY: approved “${o.label}” instead of ${x.change}` : `Approved ${x.change}`, det:a.reason || 'No note added', tag: o ? 'Override' : undefined });
   if (o) {
-    log({ t:'Mon 16 Nov 10:05', who:'trace', name:'TRACE', what:'Recorded Maya’s override and her reason. Will monitor the outcome against the same recovery criteria' });
+    log({ t:'Mon 16 Nov 10:05', who:'trace', name:'VERITY', what:'Recorded Maya’s override and her reason. Will monitor the outcome against the same recovery criteria' });
     trace(`Understood. I’ve recorded your decision and your reason. I’ll monitor the outcome against the same criteria and tell you plainly what happens.`, '10:05');
     toast('Override recorded', 'ink');
-    if (o.team === 'Nobody') { a.exec = 'done'; a.mon = 'early'; log({ t:'Mon 16 Nov 10:06', who:'trace', name:'TRACE', what:'No production change made. Watching precision and chargebacks' }); S.dtab = 'mon'; render(false); return; }
+    if (o.team === 'Nobody') { a.exec = 'done'; a.mon = 'early'; log({ t:'Mon 16 Nov 10:06', who:'trace', name:'VERITY', what:'No production change made. Watching precision and chargebacks' }); S.dtab = 'mon'; render(false); return; }
     render(false);
     setTimeout(() => { a.exec = 'done'; a.mon = 'early'; log({ t:'Mon 16 Nov 14:20', who:'mlops', name:'MLOps', what:o.did, tag:'Simulated' }); toast('MLOps confirmed the rollback. Monitoring started', 'ok'); if (S.nav === 'case' && S.stage === 4) S.dtab = 'mon'; render(false); }, T(2000));
     return;
@@ -2088,7 +2107,7 @@ function approve() {
   setTimeout(() => {
     a.exec = 'done'; a.mon = 'early';
     log({ t: S.cur === 'cr' ? 'Mon 16 Nov 14:20' : 'Fri 20 Nov 09:00', who: S.cur === 'cr' ? 'mlops' : 'fops', name:x.team, what: S.cur === 'cr' ? 'Deployed CR-1187 to production and started the backfill' : 'Restored FR-R12 decision threshold to 0.82', tag:'Simulated' });
-    log({ t: S.cur === 'cr' ? 'Mon 16 Nov 14:21' : 'Fri 20 Nov 09:01', who:'trace', name:'TRACE', what:'Started a 72-hour monitoring window against the recovery criteria' });
+    log({ t: S.cur === 'cr' ? 'Mon 16 Nov 14:21' : 'Fri 20 Nov 09:01', who:'trace', name:'VERITY', what:'Started a 72-hour monitoring window against the recovery criteria' });
     trace(`${x.team} confirmed the change is live. I’m monitoring for 72 hours and won’t call it resolved before then.`, S.cur === 'cr' ? '14:21' : 'Fri 09:01');
     toast(`${x.team} confirmed execution. Monitoring started`, 'ok');
     if (S.nav === 'case' && S.stage === 4) S.dtab = 'mon';
@@ -2099,16 +2118,16 @@ function advance() {
   const a = A(), o = ov(), wrongCase = S.scenario === 'wrong' && S.cur === 'cr' && !o;
   a.mon = 'final';
   if (o) {
-    log({ t:'Thu 19 Nov 16:10', who:'trace', name:'TRACE', what:`Recovery criteria not met after Maya’s override: precision ${o.mon.prec}. Recommendation unchanged (CR-1187)` });
+    log({ t:'Thu 19 Nov 16:10', who:'trace', name:'VERITY', what:`Recovery criteria not met after Maya’s override: precision ${o.mon.prec}. Recommendation unchanged (CR-1187)` });
     trace(o.verdict, 'Thu 16:10');
     toast('Recovery criteria not met', 'warn');
   } else if (wrongCase) {
     S.wrong.status = 'flagged';
-    log({ t:'Thu 19 Nov 14:25', who:'trace', name:'TRACE', what:'Recovery criteria not met: precision 87.9% vs 91.2% baseline. Flagged the diagnosis as incomplete' });
+    log({ t:'Thu 19 Nov 14:25', who:'trace', name:'VERITY', what:'Recovery criteria not met: precision 87.9% vs 91.2% baseline. Flagged the diagnosis as incomplete' });
     trace('Precision only reached 87.9%. The mapping fix worked, but it doesn’t explain the whole drop. Tell me anything you know that I might have weighed wrongly.', 'Thu 14:25');
     toast('Recovery criteria not met', 'warn');
   } else {
-    log({ t: S.cur === 'cr' ? 'Thu 19 Nov 16:10' : 'Mon 23 Nov 09:00', who:'trace', name:'TRACE', what:`All four recovery criteria met. Precision ${S.cur === 'cr' ? '90.6%' : '90.8%'}` });
+    log({ t: S.cur === 'cr' ? 'Thu 19 Nov 16:10' : 'Mon 23 Nov 09:00', who:'trace', name:'VERITY', what:`All four recovery criteria met. Precision ${S.cur === 'cr' ? '90.6%' : '90.8%'}` });
     trace('All four recovery criteria are met. You can close the case.', S.cur === 'cr' ? 'Thu 16:10' : 'Mon 09:00');
     toast('Recovery criteria met', 'ok');
   }
@@ -2149,7 +2168,7 @@ document.addEventListener('click', e => {
     case 'panel-home': S.panel = []; S.sel = null; render(false); break;
     case 'nav-min': navMin = !navMin; renderNav(); $('nav').querySelector('.nav-tog')?.focus(); break;
     case 'chat-min': S.chatMin = !S.chatMin; renderPanel(); paint($('panel')); break;
-    case 'handoff': if (!S.ho || S.ho.for !== S.cur) { S.ho = newHandoff(); S.ho.for = S.cur; } if (A0.h === 'none') { A0.h = 'draft'; log({ t: S.cur === 'cr' ? 'Mon 16 Nov 08:18' : 'Thu 19 Nov 15:16', who:'trace', name:'TRACE', what:`Prepared a ${ACT[S.cur].team} handoff draft for Maya’s review` }); toast('Handoff prepared. Review before sending'); } S.drawer = 'handoff'; render(false); renderDrawer(); paint($('drawer-root')); break;
+    case 'handoff': if (!S.ho || S.ho.for !== S.cur) { S.ho = newHandoff(); S.ho.for = S.cur; } if (A0.h === 'none') { A0.h = 'draft'; log({ t: S.cur === 'cr' ? 'Mon 16 Nov 08:18' : 'Thu 19 Nov 15:16', who:'trace', name:'VERITY', what:`Prepared a ${ACT[S.cur].team} handoff draft for Maya’s review` }); toast('Handoff prepared. Review before sending'); } S.drawer = 'handoff'; render(false); renderDrawer(); paint($('drawer-root')); break;
     case 'ho-save': S.drawer = null; renderDrawer(); toast('Draft saved'); render(false); break;
     case 'ho-send': sendHandoff(); renderDrawer(); break;
     case 'drawer-close': closeDrawer(); break;
@@ -2195,7 +2214,7 @@ document.addEventListener('keydown', e => {
 function preloadInvestigation() {
   S.inv = { status:'done', done:5, failed:false, retried:false, continued:false, retrying:false };
   ['prec','miss','rename','reg','thr'].forEach(seen); reach(3);
-  STEPS.forEach(s => log({ t:`Mon 16 Nov ${s.t}`, who:'trace', name:'TRACE', what:`${s.did}${s.src === 'trace' ? '' : ` (${SRC[s.src].name})`}`, det:EV[s.ev].obs }));
+  STEPS.forEach(s => log({ t:`Mon 16 Nov ${s.t}`, who:'trace', name:'VERITY', what:`${s.did}${s.src === 'trace' ? '' : ` (${SRC[s.src].name})`}`, det:EV[s.ev].obs }));
 }
 function setupScenario(sc) {
   if (sc === 'main') { S.stage = 1; S.nav = 'overview'; }
@@ -2203,17 +2222,17 @@ function setupScenario(sc) {
   if (sc === 'conflict') {
     preloadInvestigation(); S.seen = S.seen.filter(x => x !== 'rename'); seen('job');
     S.log = S.log.filter(e => !/Checked pipeline/.test(e.what));
-    log({ t:'Mon 16 Nov 08:04', who:'trace', name:'TRACE', what:'Checked pipeline changes and job history (Data Pipeline Logs)', det:EV.job.obs });
-    log({ t:'Mon 16 Nov 08:07', who:'trace', name:'TRACE', what:'Finished: found conflicting evidence between Feature Store and Data Pipeline Logs' });
+    log({ t:'Mon 16 Nov 08:04', who:'trace', name:'VERITY', what:'Checked pipeline changes and job history (Data Pipeline Logs)', det:EV.job.obs });
+    log({ t:'Mon 16 Nov 08:07', who:'trace', name:'VERITY', what:'Finished: found conflicting evidence between Feature Store and Data Pipeline Logs' });
     trace('I found conflicting evidence. Feature Store says merchant_category is empty for a third of payments; Data Pipeline Logs say the job loaded every row. I’ve paused my root-cause recommendation.', '08:07');
     S.stage = 3;
   }
   if (sc === 'wrong') {
     preloadInvestigation(); reach(4);
     S.ch = { status:'done', text:'I think Friday’s decline-rule change caused this, not a data issue. Fraud Ops changed the threshold.', phase:6 }; seen('thrCheck');
-    log({ t:'Mon 16 Nov 08:07', who:'trace', name:'TRACE', what:'Ranked four explanations. H1 field rename leading (moderate); model release ruled out' });
+    log({ t:'Mon 16 Nov 08:07', who:'trace', name:'VERITY', what:'Ranked four explanations. H1 field rename leading (moderate); model release ruled out' });
     log({ t:'Mon 16 Nov 08:12', who:'maya', name:'Maya', what:'Challenged the leading hypothesis', det:S.ch.text });
-    log({ t:'Mon 16 Nov 08:14', who:'trace', name:'TRACE', what:'Kept H1 first; H2 threshold change weakened. Added a known gap: thin review coverage for band 0.78–0.82' });
+    log({ t:'Mon 16 Nov 08:14', who:'trace', name:'VERITY', what:'Kept H1 first; H2 threshold change weakened. Added a known gap: thin review coverage for band 0.78–0.82' });
     log({ t:'Mon 16 Nov 08:20', who:'maya', name:'Maya', what:'Reviewed and sent the handoff to MLOps' });
     log({ t:'Mon 16 Nov 09:42', who:'mlops', name:'MLOps', what:'Confirmed the mapping mismatch in a staging replay and prepared change CR-1187', tag:'Simulated' });
     log({ t:'Mon 16 Nov 10:05', who:'maya', name:'Maya', what:'Approved CR-1187' });
